@@ -1,11 +1,7 @@
-/*****************************************************************************/
-/* This is the program skeleton for homework 2 in CS 184 by Ravi Ramamoorthi */
-/* Extends HW 1 to deal with shading, more transforms and multiple objects   */
-/*****************************************************************************/
+#ifndef __INCLUDESVARIABLES
+#define __INCLUDESVARIABLES
 
-// This is the basic include file for the global variables in the program.  
-// Since all files need access to it, we define EXTERN as either blank or 
-// extern, depending on if included in the main program or not.  
+#include <glm/glm.hpp>
 
 #ifdef MAINPROGRAM 
 #define EXTERN 
@@ -13,44 +9,11 @@
 #define EXTERN extern 
 #endif 
 
-#include <vector>
-
-EXTERN vec3 eye; // The (regularly updated) vector coordinates of the eye 
-EXTERN vec3 up;  // The (regularly updated) vector coordinates of the up 
-
-EXTERN vec3 eyeinit ; 
-EXTERN vec3 upinit ; 
-EXTERN vec3 center ; 
-EXTERN int w, h ; 
-EXTERN float fovy ; 
+EXTERN glm::vec3 eye; // The (regularly updated) vector coordinates of the eye 
+EXTERN glm::vec3 up;  // The (regularly updated) vector coordinates of the up 
+EXTERN glm::vec3 center; // The center vector where the eye is looking at.
 
 EXTERN GLuint vertexshader, fragmentshader, shaderprogram ; // shaders
-
-// Lighting parameter array, similar to that in the fragment shader
-const int numLights = 10 ; 
-EXTERN GLfloat lightposn [4*numLights] ; // Light Positions
-EXTERN GLfloat lightcolor[4*numLights] ; // Light Colors
-EXTERN GLfloat lightransf[4*numLights] ; // Lights transformed by modelview
-EXTERN int numused ;                     // How many lights are used 
-
-// Materials (read from file) 
-// With multiple objects, these are colors for each.
-EXTERN GLfloat ambient[4] ; 
-EXTERN GLfloat diffuse[4] ; 
-EXTERN GLfloat specular[4] ; 
-EXTERN GLfloat shininess ; 
-
-struct object {
-  GLfloat size ;
-  GLfloat ambient[4] ; 
-  GLfloat diffuse[4] ; 
-  GLfloat specular[4] ;
-  GLfloat shininess ;
-  mat4 transform ; 
-};
-
-EXTERN std::vector<object> objects;
-
 
 // Variables to set uniform params for lighting fragment shader 
 EXTERN GLuint lightcol ; 
@@ -61,3 +24,5 @@ EXTERN GLuint ambientcol ;
 EXTERN GLuint diffusecol ; 
 EXTERN GLuint specularcol ; 
 EXTERN GLuint shininesscol ;
+
+#endif // __INCLUDESVARIABLES

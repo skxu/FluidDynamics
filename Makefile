@@ -15,18 +15,22 @@ endif
 
 RM = /bin/rm -f 
 all: fluidsim
-fluidsim: main.o shaders.o Transform.o display.o scene.o variables.h shaders.h scene.h Transform.h display.h
-	$(CC) $(CFLAGS) -o fluidsim shaders.o main.o Transform.o display.o scene.o $(INCFLAGS) $(LDFLAGS) 
+fluidsim: main.o shaders.o Transform.o scene.o table.o entity.o container.o
+	$(CC) $(CFLAGS) -o fluidsim shaders.o main.o Transform.o scene.o table.o container.o entity.o $(INCFLAGS) $(LDFLAGS) 
 main.o: main.cpp shaders.h Transform.h variables.h
 	$(CC) $(CFLAGS) $(INCFLAGS) -c main.cpp
 shaders.o: shaders.cpp shaders.h
 	$(CC) $(CFLAGS) $(INCFLAGS) -c shaders.cpp
-display.o: display.cpp variables.h display.h
-	$(CC) $(CFLAGS) $(INCFLAGS) -c display.cpp
-scene.o: scene.cpp variables.h scene.h
+scene.o: scene.cpp scene.h
 	$(CC) $(CFLAGS) $(INCFLAGS) -c scene.cpp
 Transform.o: Transform.cpp Transform.h 
-	$(CC) $(CFLAGS) $(INCFLAGS) -c Transform.cpp  
+	$(CC) $(CFLAGS) $(INCFLAGS) -c Transform.cpp 
+entity.o: entity.cpp entity.h variables.h
+	$(CC) $(CFLAGS) $(INCFLAGS) -c entity.cpp 
+table.o: table.cpp table.h
+	$(CC) $(CFLAGS) $(INCFLAGS) -c table.cpp
+container.o: container.cpp container.h
+	$(CC) $(CFLAGS) $(INCFLAGS) -c container.cpp
 clean: 
 	$(RM) *.o fluidsim
 

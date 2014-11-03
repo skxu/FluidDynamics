@@ -1,44 +1,53 @@
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <deque>
-#include <stack>
 #include <GL/glut.h>
+#include <glm/glm.hpp>
 #include "shaders.h"
 #include "Transform.h"
-#include <math.h>
-#include <sys/time.h>
+#include "scene.h"
 
 using namespace std;
 
 // Main variables in the program.  
 #define MAINPROGRAM 
-#include "variables.h" 
+#include "variables.h"
 
-void display(void) ;  // prototype for display function.
-void initializeScene(void);
+Scene* scene;
+
+void display() {
+  glClearColor(0,0,0,1);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glMatrixMode(GL_MODELVIEW);
+  glm::mat4 mv ;
+  mv = glm::lookAt(eye,center,up) ;
+  glLoadMatrixf(&mv[0][0]) ;
+  scene->draw(mv);
+  glutSwapBuffers();
+}
 
 void reshape(int width, int height) {
-  w = width;
-  h = height;
-  mat4 mv; // for lookat
-  float aspect = w / (float) h, zNear = 0.001, zFar = 99.99 ;
+  glm::mat4 mv; // for lookat
+  float aspect = width / (float) height, zNear = 0.001, zFar = 99.99 ;
+  float fovy = 45.0;
   glMatrixMode(GL_PROJECTION);
   mv = Transform::perspective(fovy,aspect,zNear,zFar);
   mv = glm::transpose(mv);
   glLoadMatrixf(&mv[0][0]);
-  glViewport(0,0,w,h);
+  glViewport(0,0,width,height);
 }
 
 
 void keyboard(unsigned char key, int x, int y) {
   switch (key) {
   case 'a':
-    Transform::left(3, eye, up);
+    Transform::left(2, eye, up);
     break;
   case 'd':
-    Transform::left(-3, eye, up);
+    Transform::left(-2, eye, up);
+    break;
+  case 'w':
+    Transform::up(2, eye, up);
+    break;
+  case 's':
+    Transform::up(-2, eye, up);
     break;
   case 'q':
     exit(0);
@@ -75,12 +84,10 @@ void initShaderVars() {
 }
 
 void initVars() {
-  w = 500;
-  h = 500;
-  eye = vec3(2,0,0);
-  center = vec3(0,0,0);
-  up = vec3(0,1,0);
-  fovy = 45.0;
+  eye = glm::vec3(0,-5,0);
+  center = glm::vec3(0,0,0);
+  up = glm::vec3(0,0,1);
+  Transform::up(30, eye, up);
 }
 
 int main (int argc, char* argv[]) {
@@ -89,13 +96,15 @@ int main (int argc, char* argv[]) {
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
   glutCreateWindow("CS194: Fluid Simulation");
   initShaderVars();
+  scene = new Scene();
+  glEnable (GL_BLEND);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable (GL_DEPTH_TEST);
-  initializeScene();
   glutDisplayFunc(display);
   glutKeyboardFunc(keyboard);
   glutReshapeFunc(reshape);
   glutKeyboardUpFunc(keyUp);
-  glutReshapeWindow(w,h);
+  glutReshapeWindow(800,800);
   glutIdleFunc(idleFunc);
   glutPassiveMotionFunc(mouse);
   glutMainLoop();
