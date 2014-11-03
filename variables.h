@@ -7,8 +7,6 @@
 // Since all files need access to it, we define EXTERN as either blank or 
 // extern, depending on if included in the main program or not.  
 
-#include <vector>
-
 #ifdef MAINPROGRAM 
 #define EXTERN 
 #else 
@@ -17,20 +15,30 @@
 
 EXTERN vec3 eye; // The (regularly updated) vector coordinates of the eye 
 EXTERN vec3 up;  // The (regularly updated) vector coordinates of the up 
+
+EXTERN vec3 eyeinit ; 
+EXTERN vec3 upinit ; 
 EXTERN vec3 center ; 
 EXTERN int w, h ; 
 EXTERN float fovy ; 
 
 EXTERN GLuint vertexshader, fragmentshader, shaderprogram ; // shaders
-enum shape {cube, sphere} ; 
 
+// Lighting parameter array, similar to that in the fragment shader
+const int numLights = 10 ; 
+EXTERN GLfloat lightposn [4*numLights] ; // Light Positions
+EXTERN GLfloat lightcolor[4*numLights] ; // Light Colors
+EXTERN GLfloat lightransf[4*numLights] ; // Lights transformed by modelview
+EXTERN int numused ;                     // How many lights are used 
+
+// Materials (read from file) 
+// With multiple objects, these are colors for each.
 EXTERN GLfloat ambient[4] ; 
 EXTERN GLfloat diffuse[4] ; 
-EXTERN GLfloat specular[4] ;
+EXTERN GLfloat specular[4] ; 
 EXTERN GLfloat shininess ; 
 
 struct object {
-  shape type ; 
   GLfloat size ;
   GLfloat ambient[4] ; 
   GLfloat diffuse[4] ; 
@@ -39,19 +47,11 @@ struct object {
   mat4 transform ; 
 };
 
-EXTERN std::vector<object> objects;
-
-// Lighting parameter array, similar to that in the fragment shader
-const int maxNumLights = 10; 
-EXTERN GLfloat lightposn [4*maxNumLights] ;  // Light Positions
-EXTERN GLfloat lightcolor[4*maxNumLights] ;  // Light Colors
-EXTERN GLfloat lighttransf[4*maxNumLights] ; // Lights transformed by modelview
-EXTERN int numLights;                        // How many lights are used 
 
 // Variables to set uniform params for lighting fragment shader 
 EXTERN GLuint lightcol ; 
 EXTERN GLuint lightpos ; 
-EXTERN GLuint numused; 
+EXTERN GLuint numusedcol ; 
 EXTERN GLuint enablelighting ; 
 EXTERN GLuint ambientcol ; 
 EXTERN GLuint diffusecol ; 

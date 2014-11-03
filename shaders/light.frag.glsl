@@ -15,10 +15,15 @@ varying vec3 mynormal ;
 varying vec4 myvertex ;
 
 const int numLights = 10 ; 
-uniform bool enablelighting ;        // are we lighting at all (global).
-uniform vec4 lightposn[numLights] ;  // positions of lights 
+uniform bool enablelighting ; // are we lighting at all (global).
+uniform vec4 lightposn[numLights] ; // positions of lights 
 uniform vec4 lightcolor[numLights] ; // colors of lights
-uniform int numused ;                // number of lights used
+uniform int numused ;               // number of lights used
+
+// Now, set the material parameters.  These could be varying and/or bound to 
+// a buffer.  But for now, I'll just make them uniform.  
+// I use ambient, diffuse, specular, shininess as in OpenGL.  
+// But, the ambient is just additive and doesn't multiply the lights.  
 
 uniform vec4 ambient ; 
 uniform vec4 diffuse ; 
@@ -28,6 +33,7 @@ uniform float shininess ;
 void main (void) 
 {
     if (enablelighting) {       
+        
         vec4 finalcolor ; 
 
         // Implementation of Fragment Shader
@@ -73,10 +79,11 @@ void main (void)
             vec4 phong = specular * lightColor * pow(max(nDotH, 0.0), shininess);
             
             vec4 lightContribution = lambert + phong;
+            
             finalcolor += lightContribution;
         }
         
-	    gl_FragColor = finalcolor;
-    }
+	 gl_FragColor = finalcolor;
+        }
 
 }

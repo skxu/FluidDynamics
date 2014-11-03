@@ -1,5 +1,6 @@
 # version 120 
 
+
 // Mine is an old machine.  For version 130 or higher, do 
 // out vec4 color ;  
 // out vec4 mynormal ; 
@@ -16,5 +17,6 @@ void main() {
     color = gl_Color ; 
     mynormal = gl_Normal ; 
     myvertex = gl_Vertex ; 
+
 }
 
