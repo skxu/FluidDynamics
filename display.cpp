@@ -20,10 +20,10 @@ using namespace std ;
 void transformvec(const GLfloat input[4], GLfloat output[4]);
 void addLight(GLfloat r, GLfloat b, GLfloat g, GLfloat a, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
 void renderLights();
-void drawSphere(mat4 mv); // temporary
+void drawSphere(mat4 &mv); // temporary
 
 void display() {
-  glClearColor(0,0,0,1);
+  glClearColor(0.1,0.1,0.1,1);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_MODELVIEW);
 
@@ -35,8 +35,7 @@ void display() {
   /** BEGIN DRAW **/
 
   // First add lights
-  addLight(1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0);
-  addLight(-1.0, -3.0, 2.0, 0.0, 0.0, 0.0, 1.0, 1.0);
+  addLight(1000.0, 0.0, 0.0, 1.0, 0.0, 0.1, 0.3, 1.0);
   renderLights();
 
   drawSphere(mv);
@@ -91,11 +90,11 @@ void renderLights() {
   glUniform1i(numused, numLights);
 }
 
-void drawSphere(mat4 mv) {
+void drawSphere(mat4 &mv) {
   GLfloat ambient[4] = {0.2, 0.2, 0.2, 1};
   GLfloat diffuse[4] = {0.2, 0.2, 0.2, 1};
   GLfloat specular[4] = {0.2, 0.2, 0.2, 1};
-  GLfloat shininess = 2.0;
+  GLfloat shininess = 1.0;
   glUniform4fv(ambientcol, 1, ambient);
   glUniform4fv(diffusecol, 1, diffuse);
   glUniform4fv(specularcol, 1, specular);
