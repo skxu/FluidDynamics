@@ -33,10 +33,15 @@ void reshape(int width, int height) {
 
 
 void keyboard(unsigned char key, int x, int y) {
-  if (key == 'a') {
+  switch (key) {
+  case 'a':
     Transform::left(3, eye, up);
-  } else if (key == 'd') {
+    break;
+  case 'd':
     Transform::left(-3, eye, up);
+    break;
+  case 'q':
+    exit(0);
   }
 }
 

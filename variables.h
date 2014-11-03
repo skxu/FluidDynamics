@@ -13,6 +13,8 @@
 #define EXTERN extern 
 #endif 
 
+#include <vector>
+
 EXTERN vec3 eye; // The (regularly updated) vector coordinates of the eye 
 EXTERN vec3 up;  // The (regularly updated) vector coordinates of the up 
 
@@ -46,6 +48,8 @@ struct object {
   GLfloat shininess ;
   mat4 transform ; 
 };
+
+EXTERN std::vector<object> objects;
 
 
 // Variables to set uniform params for lighting fragment shader 
