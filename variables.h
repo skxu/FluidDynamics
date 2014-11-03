@@ -44,26 +44,25 @@ struct object {
   GLfloat ambient[4] ; 
   GLfloat diffuse[4] ; 
   GLfloat specular[4] ;
-  GLfloat emission[4] ; 
   GLfloat shininess ;
   mat4 transform ; 
 };
 
-struct light {
-  GLfloat lightcolor[4] ;
-  GLfloat lightposn[4] ;
-};
-
 EXTERN std::vector<object> objects;
-EXTERN std::vector<light> lights;
+
+// Lighting parameter array, similar to that in the fragment shader
+const int maxNumLights = 10; 
+EXTERN GLfloat lightposn [4*maxNumLights] ; // Light Positions
+EXTERN GLfloat lightcolor[4*maxNumLights] ; // Light Colors
+EXTERN GLfloat lighttransf[4*maxNumLights] ;// Lights transformed by modelview
+EXTERN int numLights;                    // How many lights are used 
 
 // Variables to set uniform params for lighting fragment shader 
 EXTERN GLuint lightcol ; 
 EXTERN GLuint lightpos ; 
-EXTERN GLuint numusedcol ; 
+EXTERN GLuint numused; 
 EXTERN GLuint enablelighting ; 
 EXTERN GLuint ambientcol ; 
 EXTERN GLuint diffusecol ; 
 EXTERN GLuint specularcol ; 
-EXTERN GLuint emissioncol ; 
 EXTERN GLuint shininesscol ;

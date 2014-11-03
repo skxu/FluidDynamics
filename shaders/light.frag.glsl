@@ -13,11 +13,6 @@
 varying vec4 color ;
 varying vec3 mynormal ; 
 varying vec4 myvertex ;
-uniform int isTex ;
-uniform sampler2D tex;
-
-uniform int isBump;
-uniform sampler2D normalTexture;
 
 const int numLights = 10 ; 
 uniform bool enablelighting ; // are we lighting at all (global).
@@ -25,29 +20,20 @@ uniform vec4 lightposn[numLights] ; // positions of lights
 uniform vec4 lightcolor[numLights] ; // colors of lights
 uniform int numused ;               // number of lights used
 
-// Now, set the material parameters.  These could be varying and/or bound to 
-// a buffer.  But for now, I'll just make them uniform.  
-// I use ambient, diffuse, specular, shininess as in OpenGL.  
-// But, the ambient is just additive and doesn't multiply the lights.  
-
 uniform vec4 ambient ; 
 uniform vec4 diffuse ; 
 uniform vec4 specular ; 
-uniform vec4 emission ; 
 uniform float shininess ; 
 
 void main (void) 
 {
-   if(isTex > 0){
-      gl_FragColor = texture2D(tex, gl_TexCoord[0].st);
-   }
-    else if (enablelighting) {       
-        
+
+    if (enablelighting) {       
         vec4 finalcolor ; 
 
         // Implementation of Fragment Shader
         
-        finalcolor = ambient + emission;
+        finalcolor = ambient;
         
         const vec3 eyepos = vec3(0,0,0) ; 
 		vec4 _mypos = gl_ModelViewMatrix * myvertex ; 
@@ -55,11 +41,6 @@ void main (void)
 		vec3 eyedir = normalize(eyepos - mypos) ;
 
 		vec3 normal = normalize((gl_ModelViewMatrixInverseTranspose*vec4(mynormal,0.0)).xyz) ; 
-
-        if(isBump > 0){
-            normal = 2.0 * texture2D (normalTexture, gl_TexCoord[0].st).rgb - 1.0;
-            normal = normalize (normal);
-        }
         
         //Iterate through all lights
         for(int i = 0; i < numused; i++){
@@ -92,12 +73,10 @@ void main (void)
             float nDotH = dot(normal, halfVec);
             vec4 phong = specular * lightColor * pow(max(nDotH, 0.0), shininess);
             
-            vec4 lightContribution = lambert + phong;
-            
-            finalcolor += lightContribution;
+            finalcolor += (lambert + phong);
         }
         
-	 gl_FragColor = finalcolor;
-        }
+	gl_FragColor = finalcolor;
+    }
 
 }

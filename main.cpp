@@ -34,14 +34,14 @@ void keyboard(unsigned char key, int x, int y) {
 }
 
 void idleFunc () {
-
+  glutPostRedisplay();
 }
 
 void keyUp (unsigned char key, int x, int y) {
 
 }
 
-void init() {
+void initShaderParams() {
   // Initialize shaders
   vertexshader = initshaders(GL_VERTEX_SHADER, "shaders/light.vert.glsl") ;
   fragmentshader = initshaders(GL_FRAGMENT_SHADER, "shaders/light.frag.glsl") ;
@@ -49,23 +49,32 @@ void init() {
   enablelighting = glGetUniformLocation(shaderprogram,"enablelighting") ;
   lightpos = glGetUniformLocation(shaderprogram,"lightposn") ;       
   lightcol = glGetUniformLocation(shaderprogram,"lightcolor") ;       
-  numusedcol = glGetUniformLocation(shaderprogram,"numused") ;       
+  numused = glGetUniformLocation(shaderprogram,"numused") ;       
   ambientcol = glGetUniformLocation(shaderprogram,"ambient") ;       
   diffusecol = glGetUniformLocation(shaderprogram,"diffuse") ;       
-  specularcol = glGetUniformLocation(shaderprogram,"specular") ;       
-  emissioncol = glGetUniformLocation(shaderprogram,"emission") ;       
+  specularcol = glGetUniformLocation(shaderprogram,"specular") ;             
   shininesscol = glGetUniformLocation(shaderprogram,"shininess") ;
-  
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-int main (int argc, char* argv[]) {
+void initValues() {
+  // Scren values
   w = 800, h = 800;
+
+  // Camera values
+  eye = vec3(2.0, 0.0, 0.0);
+  up = vec3(0.0, 1.0, 0.0);
+  center = vec3(0.0, 0.0, 0.0);
+  //
+}
+
+int main (int argc, char* argv[]) {
+  initValues();
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
   glutCreateWindow("Fluid Simulation");
-  init();
+  initShaderParams();
   glutDisplayFunc(display);
   glutKeyboardFunc(keyboard);
   glutReshapeFunc(reshape);
