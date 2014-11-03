@@ -13,6 +13,7 @@
 #include <deque>
 #include <stack>
 #include <GL/glut.h>
+#include "Transform.h"
 
 using namespace std ;
 #include "variables.h"
@@ -29,13 +30,14 @@ void display() {
 
   // First include the camera transform
   mat4 mv ;
-  mv = glm::lookAt(eye,center,up) ;
-  glLoadMatrixf(&mv[0][0]) ;
+  mv = Transform::lookAt(eye, center, up);
+  mv = glm::transpose(mv);
+  glLoadMatrixf(&mv[0][0]);
 
   /** BEGIN DRAW **/
 
   // First add lights
-  addLight(1000.0, 0.0, 0.0, 1.0, 0.0, 0.1, 0.3, 1.0);
+  addLight(1.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.8, 1.0);
   renderLights();
 
   drawSphere(mv);
@@ -85,21 +87,21 @@ void renderLights() {
     lighttransf[i*4+2] = out[2];
     lighttransf[i*4+3] = out[3];
   }
-  glUniform4fv(lightpos, numLights, lighttransf);
-  glUniform4fv(lightcol, numLights, lightcolor);
+  glUniform4fv(lightpos, maxNumLights, lighttransf);
+  glUniform4fv(lightcol, maxNumLights, lightcolor);
   glUniform1i(numused, numLights);
 }
 
 void drawSphere(mat4 &mv) {
-  GLfloat ambient[4] = {0.2, 0.2, 0.2, 1};
-  GLfloat diffuse[4] = {0.2, 0.2, 0.2, 1};
-  GLfloat specular[4] = {0.2, 0.2, 0.2, 1};
+  GLfloat ambient[4] = {0.3, 0.2, 0.2, 1.0};
+  GLfloat diffuse[4] = {0.2, 0.2, 0.2, 1.0};
+  GLfloat specular[4] = {0.3, 0.3, 0.3, 1.0};
   GLfloat shininess = 1.0;
   glUniform4fv(ambientcol, 1, ambient);
   glUniform4fv(diffusecol, 1, diffuse);
   glUniform4fv(specularcol, 1, specular);
   glUniform1f(shininesscol, shininess);
-  glLoadMatrixf(&(mv[0][0]));
-  glutSolidSphere(0.2, 40, 40);
+  glLoadMatrixf(&mv[0][0]);
+  glutSolidSphere(0.2, 20, 20);
 }
 

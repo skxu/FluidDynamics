@@ -16,6 +16,5 @@ void main() {
     color = gl_Color ; 
     mynormal = gl_Normal ; 
     myvertex = gl_Vertex ; 
-
 }
 

@@ -7,15 +7,7 @@
 // Since all files need access to it, we define EXTERN as either blank or 
 // extern, depending on if included in the main program or not.  
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 #include <vector>
-
-typedef glm::mat3 mat3 ;
-typedef glm::mat4 mat4 ; 
-typedef glm::vec3 vec3 ; 
-typedef glm::vec4 vec4 ; 
-const float pi = 3.14159265 ; // For portability across platforms
 
 #ifdef MAINPROGRAM 
 #define EXTERN 
@@ -34,8 +26,7 @@ enum shape {cube, sphere} ;
 
 EXTERN GLfloat ambient[4] ; 
 EXTERN GLfloat diffuse[4] ; 
-EXTERN GLfloat specular[4] ; 
-EXTERN GLfloat emission[4] ; 
+EXTERN GLfloat specular[4] ;
 EXTERN GLfloat shininess ; 
 
 struct object {
@@ -52,10 +43,10 @@ EXTERN std::vector<object> objects;
 
 // Lighting parameter array, similar to that in the fragment shader
 const int maxNumLights = 10; 
-EXTERN GLfloat lightposn [4*maxNumLights] ; // Light Positions
-EXTERN GLfloat lightcolor[4*maxNumLights] ; // Light Colors
-EXTERN GLfloat lighttransf[4*maxNumLights] ;// Lights transformed by modelview
-EXTERN int numLights;                    // How many lights are used 
+EXTERN GLfloat lightposn [4*maxNumLights] ;  // Light Positions
+EXTERN GLfloat lightcolor[4*maxNumLights] ;  // Light Colors
+EXTERN GLfloat lighttransf[4*maxNumLights] ; // Lights transformed by modelview
+EXTERN int numLights;                        // How many lights are used 
 
 // Variables to set uniform params for lighting fragment shader 
 EXTERN GLuint lightcol ; 

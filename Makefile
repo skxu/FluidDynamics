@@ -15,14 +15,16 @@ endif
 
 RM = /bin/rm -f 
 all: fluidsim
-fluidsim: main.o shaders.o display.o variables.h shaders.h
-	$(CC) $(CFLAGS) -o fluidsim shaders.o main.o display.o $(INCFLAGS) $(LDFLAGS) 
-main.o: main.cpp shaders.h variables.h
+fluidsim: main.o shaders.o Transform.o display.o variables.h shaders.h Transform.h
+	$(CC) $(CFLAGS) -o fluidsim shaders.o main.o Transform.o display.o $(INCFLAGS) $(LDFLAGS) 
+main.o: main.cpp shaders.h Transform.h variables.h
 	$(CC) $(CFLAGS) $(INCFLAGS) -c main.cpp
 shaders.o: shaders.cpp shaders.h
 	$(CC) $(CFLAGS) $(INCFLAGS) -c shaders.cpp
 display.o: display.cpp variables.h
 	$(CC) $(CFLAGS) $(INCFLAGS) -c display.cpp 
+Transform.o: Transform.cpp Transform.h 
+	$(CC) $(CFLAGS) $(INCFLAGS) -c Transform.cpp 
 clean: 
 	$(RM) *.o fluidsim
 

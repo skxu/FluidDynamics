@@ -8,6 +8,7 @@
 #include "shaders.h"
 #include <math.h>
 #include <sys/time.h>
+#include "Transform.h"
 
 using namespace std;
 
@@ -24,13 +25,19 @@ void reshape(int width, int height) {
   float aspect = w / (float) h, zNear = 0.001, zFar = 99.99;
   float fovy = 45.0;
   glMatrixMode(GL_PROJECTION);
-  mv = glm::perspective(fovy,aspect,zNear,zFar);
+  mv = Transform::perspective(fovy,aspect,zNear,zFar);
+  mv = glm::transpose(mv);
   glLoadMatrixf(&mv[0][0]);
   glViewport(0,0,w,h);
 }
 
 void keyboard(unsigned char key, int x, int y) {
-    
+    if (key == 'a') {
+      Transform::left(3, eye, up);
+    } else if (key == 'd') {
+      Transform::left(-3, eye, up);
+    }
+
 }
 
 void idleFunc () {
@@ -56,17 +63,20 @@ void initShaderParams() {
   shininesscol = glGetUniformLocation(shaderprogram,"shininess") ;
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable (GL_DEPTH_TEST);
+  glDepthMask (GL_TRUE);
+  glDepthFunc (GL_LEQUAL);
+  glCullFace(GL_FRONT);
 }
 
 void initValues() {
-  // Scren values
+  // Screen values
   w = 800, h = 800;
 
   // Camera values
-  eye = vec3(2.0, 0.0, 0.0);
+  eye = vec3(1.0, 0.0, 0.0);
   up = vec3(0.0, 1.0, 0.0);
   center = vec3(0.0, 0.0, 0.0);
-  //
 }
 
 int main (int argc, char* argv[]) {
