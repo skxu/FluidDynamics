@@ -15,13 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\src\Particle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\maintemp.cpp">
+    <ClCompile Include="..\..\test\ParticleTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
