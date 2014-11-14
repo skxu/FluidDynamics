@@ -1,4 +1,4 @@
-#include <GL/glut.h>
+#include <GLUT/glut.h>
 #include <glm/glm.hpp>
 #include "scene.h"
 #include "Transform.h"

@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <GL/glut.h>
+#include <GLUT/glut.h>
 #include <glm/glm.hpp>
 #include <sys/time.h>
 #include "shaders.h"

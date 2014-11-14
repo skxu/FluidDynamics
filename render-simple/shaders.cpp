@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string.h>
-#include <GL/glut.h>
-#include <GL/glext.h>
+#include <GLUT/glut.h>
+#include "glext.h"
 
 using namespace std ;
 

@@ -5,7 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <GL/glut.h>
+#include <GLUT/glut.h>
 #include <glm/glm.hpp>
 #include <map>
 #include <vector>
