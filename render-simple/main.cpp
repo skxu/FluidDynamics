@@ -1,7 +1,11 @@
 #include <algorithm>
+#include <ctype.h>
 #include <GLUT/glut.h>
 #include <glm/glm.hpp>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/time.h>
+#include <unistd.h>
 #include "shaders.h"
 #include "Transform.h"
 #include "scene.h"
@@ -28,6 +32,8 @@ void keyUp (unsigned char key, int x, int y);
 void mouse(int x, int y);
 void initShaderVars();
 void initVars();
+void initScene(int argc, char* argv[]);
+void printUsage();
 double getSecondsFromTimeVal(timeval & t);
 
 
@@ -141,13 +147,47 @@ void initVars() {
   pauseanim = false;
 }
 
+void initScene(int argc, char* argv[]) {
+  char * filename = NULL;
+  int c;
+
+  if (argc == 1) {
+    cout << "[Error]: Must specify an input file. Usage is: " << endl;
+    printUsage();
+    exit(1);
+  }
+
+  while ((c = getopt (argc, argv, "f:")) != -1) {
+    switch (c)
+    {
+      case 'f':
+        filename = optarg;
+        break;
+    }
+  }
+
+  if (filename == NULL) {
+    cout << "[Error]: Unable to read input file. Usage is: " << endl;
+    printUsage();
+    exit(1);
+  }
+
+  scene = new Scene(filename);
+}
+
+void printUsage() {
+  cout << "   ./fluidsim" << endl;
+  cout << "\t-f\tINPUT_FILENAME" << endl;
+}
+
 int main (int argc, char* argv[]) {
   initVars();
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
   glutCreateWindow("CS194: Fluid Simulation");
   initShaderVars();
-  scene = new Scene("../inputs/data-test.txt");
+  initScene(argc, argv);
+
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable (GL_DEPTH_TEST);
