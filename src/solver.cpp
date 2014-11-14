@@ -5,7 +5,7 @@ Solver::Solver(std::vector<Particle> particleList)
 	currentParticles = particleList;
 }
 
-Particle Solver::UpdateParticle(Particle particle, std::vector<Particle> neighborList)
+Particle Solver::UpdateParticle(Particle particle, std::vector<Particle>* neighborList)
 {
    //TODO
 	Particle p = Particle();
@@ -22,7 +22,7 @@ void Solver::UpdateAll()
 	{
 		Particle p = currentParticles[i];
 		//TODO: Get neighbors
-		std::vector<Particle> neighbors  = CalcNeighbors(p);
+		std::vector<Particle>* neighbors = CalcNeighbors(p);
 		
 		//UPDATE the particle
 		Particle updatedParticle = UpdateParticle(p, neighbors);
@@ -39,10 +39,10 @@ void Solver::SetParticles(std::vector<Particle> particleList)
 }
 
 
-std::vector<Particle> Solver::CalcNeighbors(Particle particle)
+std::vector<Particle>* Solver::CalcNeighbors(Particle particle)
 {
 
-	std::vector<Particle> neighbors;
+	std::vector<Particle> * neighbors = new std::vector<Particle>();
 	//TODO SOMEHOW GET NEIGHBORS YEAH
 
 	return neighbors;

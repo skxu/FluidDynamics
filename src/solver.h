@@ -10,9 +10,9 @@ class Solver
 private:
 	std::vector<Particle> currentParticles;
 
-	Particle UpdateParticle(Particle particle, std::vector<Particle> neighborList);
+	Particle UpdateParticle(Particle particle, std::vector<Particle>* neighborList);
 
-	std::vector<Particle> CalcNeighbors(Particle particle);
+	std::vector<Particle> *CalcNeighbors(Particle particle);
 
 public: 
 	Solver(std::vector<Particle> initialParticles);
