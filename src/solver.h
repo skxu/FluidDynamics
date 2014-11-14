@@ -14,6 +14,8 @@ private:
 
 	std::vector<Particle> *CalcNeighbors(Particle particle);
 
+
+
 public: 
 	Solver(std::vector<Particle> initialParticles);
 
