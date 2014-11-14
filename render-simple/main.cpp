@@ -147,7 +147,7 @@ int main (int argc, char* argv[]) {
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
   glutCreateWindow("CS194: Fluid Simulation");
   initShaderVars();
-  scene = new Scene("../inputs/data-test.txt");
+  scene = new Scene("../inputs/test-two-particles.txt");
   glEnable (GL_BLEND);
   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable (GL_DEPTH_TEST);
