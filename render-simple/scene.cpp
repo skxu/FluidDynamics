@@ -121,13 +121,22 @@ glm::mat4 Scene::translateMtx(float x, float y, float z) {
   return glm::transpose(Transform::translate(x, y, z));
 }
 
-void Scene::draw(glm::mat4& mv, int timeIndex) {
+glm::mat4 Scene::scaleMtx(float x, float y, float z) {
+  return glm::transpose(Transform::scale(x, y, z));
+}
+
+void Scene::draw(glm::mat4& mv, int timeidx) {
   renderLights();
+  renderParticles(mv, timeidx);
+  renderTable(mv);
+}
+
+void Scene::renderParticles(glm::mat4 &mv, int timeidx) {
   GLfloat ambient [4] = {0.1, 0.1, 0.1, 1};
   GLfloat diffuse [4] = {0.1, 0.1, 0.4, 1};
-  GLfloat specular[4] = {0.1, 0.1, 0.4, 1};
+  GLfloat specular[4] = {0.1, 0.1, 0.5, 1};
   GLfloat shininess = 4;
-  vector<float>* partlist = (*(timetopartlist))[timeIndex];
+  vector<float>* partlist = (*(timetopartlist))[timeidx];
   for (vector<float>::iterator obj = partlist->begin(); obj != partlist->end(); obj+=3) {
     glUniform4fv(ambientcol, 1, ambient);
     glUniform4fv(diffusecol, 1, diffuse);
@@ -135,8 +144,24 @@ void Scene::draw(glm::mat4& mv, int timeIndex) {
     glUniform1i(shininesscol, shininess);
     glm::mat4 translate = translateMtx(*obj, *(obj+1), *(obj+2));
     glLoadMatrixf(&(mv * translate)[0][0]);
-    glutSolidSphere(0.01, 20, 20);
+    glutSolidSphere(PARTICLE_RADIUS, 20, 20);
   }
+}
+
+void Scene::renderTable(glm::mat4 &mv) {
+  GLfloat ambient [4] = {0.2, 0.2, 0.2, 1};
+  GLfloat diffuse [4] = {0.2, 0.2, 0.2, 1};
+  GLfloat specular[4] = {0.3, 0.3, 0.3, 1};
+  GLfloat shininess = 4;
+  glUniform4fv(ambientcol, 1, ambient);
+  glUniform4fv(diffusecol, 1, diffuse);
+  glUniform4fv(specularcol, 1, specular);
+  glUniform1i(shininesscol, shininess);
+  float scalevals[3] = {1.5, 1.5, 0.1};
+  glm::mat4 translate = translateMtx(0, 0, -scalevals[2]-PARTICLE_RADIUS); // small offset so particles near table don't go into the table
+  glm::mat4 scale = scaleMtx(scalevals[0], scalevals[1], scalevals[2]);
+  glLoadMatrixf(&(mv * translate * scale)[0][0]);
+  glutSolidCube(2); // (Cube with (1,1,1), (1,1,-1), (-1,1,1), (1,-1,1), etc...)
 }
 
 void Scene::destroy() {
