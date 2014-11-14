@@ -3,8 +3,8 @@ TARGET = solveFluid
 
 default: solveFluid
 
-solveFluid: maintemp.cpp solver.cpp Particle.cpp vec3.cpp
-	$(CC) -o solveFluid solver.cpp Particle.cpp vec3.cpp maintemp.cpp
+solveFluid: main.cpp solver.cpp Particle.cpp vec3.cpp
+	$(CC) -o solveFluid solver.cpp Particle.cpp vec3.cpp main.cpp
 
 clean:
 	$(RM) *.o solveFluid
