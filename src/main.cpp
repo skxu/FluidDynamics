@@ -3,6 +3,9 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #define pVec std::vector<Particle*>
 
@@ -13,18 +16,43 @@
 float particle_density = DEFAULT_DENSITY;
 float particle_pressure = DEFAULT_PRESSURE;
 int timesteps = DEFAULT_TIMESTEPS;
+char* input_file = NULL;
+char* output_file = NULL;
 
 int Initialize(pVec* particles);
 
 int main(int argc, char* argv[])
 {
+	int c;
 
-
-	if (argc == 3)
+	while ((c = getopt(argc, argv, "d:p:t:o:i:")) != -1) 
 	{
-		particle_pressure = atof(argv[1]);
-		particle_density = atof(argv[2]);
-		timesteps = atoi(argv[3]);
+		switch (c)
+		{
+			case 'd':
+				particle_density = atof(optarg);
+				break;
+			case 'p':
+				particle_pressure = atof(optarg);
+				break;
+			case 't':
+				timesteps = atoi(optarg);
+				break;
+			case 'i':
+				input_file = optarg;
+				break;
+			case 'o':
+				output_file = optarg;
+				break;
+			default:
+				break;
+
+		}
+	}
+
+	if (input_file == NULL || output_file == NULL)
+	{
+		std::cout << "[Error]: Must specify input & output file" <<std::endl;
 	}
 
 	pVec particles;
@@ -36,7 +64,7 @@ int main(int argc, char* argv[])
 	
 	Solver solver = Solver(particles);
 	std::ofstream output;
-	output.open("../outputs/output.txt");
+	output.open(output_file);
 	for (int timestep=0; timestep<timesteps; timestep++) 
 	{
 		pVec currentParticles = solver.GetParticles();
@@ -60,7 +88,7 @@ int main(int argc, char* argv[])
 
 int Initialize(pVec* particles)
 {
-	std::ifstream inFile("../inputs/init.txt");
+	std::ifstream inFile(input_file);
 	if (!inFile.is_open()) { return -1; }
 	
 	
