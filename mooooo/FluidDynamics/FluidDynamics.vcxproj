@@ -101,6 +101,7 @@
     <ClCompile Include="..\..\src\Particle.cpp" />
     <ClCompile Include="..\..\src\solver.cpp" />
     <ClCompile Include="..\..\src\vec3.cpp" />
+    <ClCompile Include="..\..\src\WeightSolver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Particle.h" />

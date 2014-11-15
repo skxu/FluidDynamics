@@ -12,3 +12,21 @@ vec3::vec3(const vec3 &other)
 {
 	memcpy(this, &other, sizeof(vec3));
 }
+
+vec3 vec3::operator*(float scalar)
+{
+	return vec3(x*scalar, y*scalar, z*scalar);
+}
+
+vec3 vec3::operator+(vec3 other)
+{
+	return vec3(x+other.x, y+other.y, z+other.z);
+}
+
+vec3 vec3::operator+=(vec3 other)
+{
+	x += other.x;
+	y += other.y;
+	z += other.z;
+	return *this;
+}
