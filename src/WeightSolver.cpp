@@ -56,7 +56,7 @@ fVec* WeightSolver::CalculateFirstDerivativesWeights(fVec distances)
 		}
 		else if (q < 1)
 		{
-			w = -6 * pow(1-q, 2);
+			w = -6 * pow(1.0f - q, 2);
 		}
 		w *= 8 / pi;
 		weights->push_back(w);
@@ -80,7 +80,7 @@ fVec* WeightSolver::CalculateSecondDerivativesWeights(fVec distances)
 		}
 		else if (q < 1)
 		{
-			w = 12 * (1 - q);
+			w = 12 * (1.0f - q);
 		}
 		w *= 8 / pi;
 		weights->push_back(w);
