@@ -10,7 +10,7 @@
 #define DEFAULT_PRESSURE 11.0
 #define DEFAULT_TIMESTEPS 300
 
-float partilce_density = DEFAULT_DENSITY;
+float particle_density = DEFAULT_DENSITY;
 float particle_pressure = DEFAULT_PRESSURE;
 int timesteps = DEFAULT_TIMESTEPS;
 
@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
 	if (argc == 3)
 	{
 		particle_pressure = atof(argv[1]);
-		partilce_density = atof(argv[2]);
+		particle_density = atof(argv[2]);
 		timesteps = atoi(argv[3]);
 	}
 
@@ -81,7 +81,7 @@ int Initialize(pVec* particles)
 
 
 		p->acc = vec3(0.0, 0.0, 0.0);
-		p->density = partilce_density;
+		p->density = particle_density;
 		p->pressure = particle_pressure;
 		particles->push_back(p);
 	} 
