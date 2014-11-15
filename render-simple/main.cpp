@@ -10,8 +10,6 @@
 #include "Transform.h"
 #include "scene.h"
 
-using namespace std;
-
 // Main variables in the program.  
 #define MAINPROGRAM 
 #include "variables.h"
@@ -84,10 +82,10 @@ void keyboard(unsigned char key, int x, int y) {
     timeidx = 0;
     break;
   case 'n':
-    timeidx = max(0, timeidx -1);
+    timeidx = std::max(0, timeidx -1);
     break;
   case 'm':
-    timeidx = min(timeidx+1, scene->numTimeSteps()-1);
+    timeidx = std::min(timeidx+1, scene->numTimeSteps()-1);
     break;
   case 'q':
     scene->destroy();
@@ -109,7 +107,7 @@ void updatetimeidx() {
     double start_time_s = getSecondsFromTimeVal(starttv);
     double diff_time_s = getSecondsFromTimeVal(endtv) - start_time_s;
     if (diff_time_s >= (1.0/FPS)) {
-      timeidx = min(timeidx+1, scene->numTimeSteps()-1);
+      timeidx = std::min(timeidx+1, scene->numTimeSteps()-1);
       gettimeofday(&starttv, NULL);
     }
   }
@@ -157,7 +155,7 @@ void initScene(int argc, char* argv[]) {
   int c;
 
   if (argc == 1) {
-    cout << "[Error]: Must specify an input file. Usage is: " << endl;
+    std::cout << "[Error]: Must specify an input file. Usage is: " << std::endl;
     printUsage();
     exit(1);
   }
@@ -172,7 +170,7 @@ void initScene(int argc, char* argv[]) {
   }
 
   if (filename == NULL) {
-    cout << "[Error]: Unable to read input file. Usage is: " << endl;
+    std::cout << "[Error]: Unable to read input file. Usage is: " << std::endl;
     printUsage();
     exit(1);
   }
@@ -182,8 +180,8 @@ void initScene(int argc, char* argv[]) {
 
 // Print usage of command line args
 void printUsage() {
-  cout << "   ./fluidsim" << endl;
-  cout << "\t-f\tINPUT_FILENAME" << endl;
+  std::cout << "   ./fluidsim" << std::endl;
+  std::cout << "\t-f\tINPUT_FILENAME" << std::endl;
 }
 
 // Main function that calls OpenGL loop and sets callbacks
