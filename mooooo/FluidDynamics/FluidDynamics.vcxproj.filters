@@ -21,10 +21,13 @@
     <ClCompile Include="..\..\src\Particle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\maintemp.cpp">
+    <ClCompile Include="..\..\src\vec3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\vec3.cpp">
+    <ClCompile Include="..\..\src\solver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -33,6 +36,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\vec3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\solver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

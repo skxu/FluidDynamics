@@ -1,15 +1,31 @@
 #include "solver.h"
 
-Solver::Solver(std::vector<Particle*> particleList)
+Solver::Solver(
+	std::vector<Particle*> particleList)
 {
 	currentParticles = particleList;
 }
 
-Particle* Solver::UpdateParticle(Particle* particle, std::vector<Particle*>* neighborList)
+/* Calculate density and pressure of a particle based on neighbors
+*/
+Particle* Solver::UpdateDensityPressure(
+	Particle* particle, 
+	std::vector<Particle*>* neighborList, 
+	std::vector<float> weights)
 {
    //TODO
-	Particle* p = particle;
+	Particle* p = new Particle(*particle);
 	p->neighbors = neighborList;
+
+	p->pressure = 0;
+	p->density = 0;
+	for (int i = 0; i < neighborList->size(); i++)
+	{
+		Particle* n = (*neighborList)[i];
+		float w = weights[i];
+		p->pressure += n->pressure * w;
+		p->density += n->density * w;
+	}
 	return p;
 }
 
@@ -23,9 +39,10 @@ void Solver::UpdateAll()
 		Particle* p = currentParticles[i];
 		//TODO: Get neighbors
 		std::vector<Particle*>* neighbors = CalcNeighbors(p);
+		std::vector<float> weights = std::vector<float>();
 		
 		//UPDATE the particle
-		Particle* updatedParticle = UpdateParticle(p, neighbors);
+		Particle* updatedParticle = UpdateDensityPressure(p, neighbors, weights);
 		updatedParticles->push_back(updatedParticle);
 
 	}
@@ -33,7 +50,8 @@ void Solver::UpdateAll()
 	currentParticles = *updatedParticles;
 }
 
-void Solver::SetParticles(std::vector<Particle*>* particleList)
+void Solver::SetParticles(
+	std::vector<Particle*>* particleList)
 {
 	currentParticles = *particleList;
 }
@@ -44,7 +62,8 @@ std::vector<Particle*> Solver::GetParticles()
 }
 
 
-std::vector<Particle*>* Solver::CalcNeighbors(Particle* particle)
+std::vector<Particle*>* Solver::CalcNeighbors(
+	Particle* particle)
 {
 
 	std::vector<Particle*> * neighbors = new std::vector<Particle*>();

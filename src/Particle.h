@@ -7,7 +7,7 @@ struct Particle {
 	vec3 pos;
 	vec3 vel;
 	vec3 acc;
-	float density, pressure;
+	float density, pressure, mass;
 	std::vector<Particle*>* neighbors;
 	Particle();
 
