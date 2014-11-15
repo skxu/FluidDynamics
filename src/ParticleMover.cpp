@@ -9,6 +9,7 @@ pVec* ParticleMover::updateVelocities(pVec* particles, float ts)
 		newP->vel += newP->acc * ts;
 		newParticles->push_back(newP);
 	}
+	return newParticles;
 }
 
 pVec* ParticleMover::updatePositions(pVec* particles, float ts)
@@ -20,4 +21,5 @@ pVec* ParticleMover::updatePositions(pVec* particles, float ts)
 		newP->pos += newP->vel * ts;
 		newParticles->push_back(newP);
 	}
+	return newParticles;
 }

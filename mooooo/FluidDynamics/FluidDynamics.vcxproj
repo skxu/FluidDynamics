@@ -99,12 +99,14 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\Particle.cpp" />
+    <ClCompile Include="..\..\src\ParticleMover.cpp" />
     <ClCompile Include="..\..\src\solver.cpp" />
     <ClCompile Include="..\..\src\vec3.cpp" />
     <ClCompile Include="..\..\src\WeightSolver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Particle.h" />
+    <ClInclude Include="..\..\src\ParticleMover.h" />
     <ClInclude Include="..\..\src\solver.h" />
     <ClInclude Include="..\..\src\vec3.h" />
     <ClInclude Include="..\..\src\WeightSolver.h" />
