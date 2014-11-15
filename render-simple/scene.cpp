@@ -157,7 +157,7 @@ void Scene::renderTable(glm::mat4 &mv) {
   glUniform4fv(diffusecol, 1, diffuse);
   glUniform4fv(specularcol, 1, specular);
   glUniform1i(shininesscol, shininess);
-  float scalevals[3] = {1.5, 1.5, 0.1};
+  float scalevals[3] = {3, 1, 0.05};
   glm::mat4 translate = translateMtx(0, 0, -scalevals[2]-PARTICLE_RADIUS); // small offset so particles near table don't go into the table
   glm::mat4 scale = scaleMtx(scalevals[0], scalevals[1], scalevals[2]);
   glLoadMatrixf(&(mv * translate * scale)[0][0]);

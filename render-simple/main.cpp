@@ -16,13 +16,14 @@ using namespace std;
 #define MAINPROGRAM 
 #include "variables.h"
 
-// Global variables are needed to synchronize across OpenGL functions
+// Global variables are needed to be accessible across OpenGL functions
 Scene* scene;
 int timeidx;
 struct timeval starttv, endtv;
 const int FPS = 20;
 bool pauseanim;
 
+// Prototype functions for main file
 void updatetimeidx();
 void display();
 void reshape(int width, int height);
@@ -36,7 +37,8 @@ void initScene(int argc, char* argv[]);
 void printUsage();
 double getSecondsFromTimeVal(timeval & t);
 
-
+/* Display: tells OpenGL what to render. Will tell the scene to
+ * draw all the objects in the scene. */
 void display() {
   glClearColor(0,0,0.2,1);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -48,6 +50,7 @@ void display() {
   glutSwapBuffers();
 }
 
+/* Reshape: reshapes the GLUT window of our program */
 void reshape(int width, int height) {
   glm::mat4 mv; // for lookat
   float aspect = width / (float) height, zNear = 0.001, zFar = 99.99 ;
@@ -59,14 +62,14 @@ void reshape(int width, int height) {
   glViewport(0,0,width,height);
 }
 
-
+/* Keyboard commands */
 void keyboard(unsigned char key, int x, int y) {
   switch (key) {
   case 'a':
-    Transform::left(2, eye, up);
+    Transform::left(-2, eye, up);
     break;
   case 'd':
-    Transform::left(-2, eye, up);
+    Transform::left(2, eye, up);
     break;
   case 'w':
     Transform::up(2, eye, up);
@@ -92,11 +95,14 @@ void keyboard(unsigned char key, int x, int y) {
   }
 }
 
+// Called indefinitely.
 void idleFunc ( ) {
   updatetimeidx();
   glutPostRedisplay();
 }
 
+/* Update time index, which determines which time stamp to render
+/* for our particles */
 void updatetimeidx() {
   if (!pauseanim) {
     gettimeofday(&endtv, NULL);
@@ -109,21 +115,18 @@ void updatetimeidx() {
   }
 }
 
+// Converts a timeval t to its seconds + useconds value.
 double getSecondsFromTimeVal(timeval & t) {
   return t.tv_sec + t.tv_usec/1000000.0;
 }
 
-
+// Action that takes place when you remove finger from key.
 void keyUp (unsigned char key, int x, int y) {
 
 }
 
-void mouse(int x, int y) {
-
-}
-
+// Initialize shaders and gets references to uniform values
 void initShaderVars() {
-  // Initialize shaders
   vertexshader = initshaders(GL_VERTEX_SHADER, "shaders/light.vert.glsl") ;
   fragmentshader = initshaders(GL_FRAGMENT_SHADER, "shaders/light.frag.glsl") ;
   shaderprogram = initprogram(vertexshader, fragmentshader) ; 
@@ -137,16 +140,18 @@ void initShaderVars() {
   shininesscol = glGetUniformLocation(shaderprogram,"shininess") ;
 }
 
+// Initializes all global variables
 void initVars() {
   eye = glm::vec3(0,-3,0);
   center = glm::vec3(0,0,0);
   up = glm::vec3(0,0,1);
-  Transform::up(45, eye, up);
+  Transform::up(40, eye, up);
   timeidx = 0;
   gettimeofday(&starttv, NULL);
   pauseanim = false;
 }
 
+// Initializes the scene with the specified input data from command line
 void initScene(int argc, char* argv[]) {
   char * filename = NULL;
   int c;
@@ -175,11 +180,13 @@ void initScene(int argc, char* argv[]) {
   scene = new Scene(filename);
 }
 
+// Print usage of command line args
 void printUsage() {
   cout << "   ./fluidsim" << endl;
   cout << "\t-f\tINPUT_FILENAME" << endl;
 }
 
+// Main function that calls OpenGL loop and sets callbacks
 int main (int argc, char* argv[]) {
   initVars();
   glutInit(&argc, argv);
@@ -197,7 +204,6 @@ int main (int argc, char* argv[]) {
   glutKeyboardUpFunc(keyUp);
   glutReshapeWindow(800,800);
   glutIdleFunc(idleFunc);
-  glutPassiveMotionFunc(mouse);
   glutMainLoop();
   return 0;
 }
