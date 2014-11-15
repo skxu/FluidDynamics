@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
 		for (int idx=0; idx<currentParticles.size(); idx++)
 		{
 			Particle* p = currentParticles[idx];
-			output << "Particle ";
+			output << "particle ";
 			output << p->pos.x;
 			output << " ";
 			output << p->pos.y;
