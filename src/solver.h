@@ -4,33 +4,35 @@
 #include "Particle.h"
 #include <vector>
 #include <map>
+
+#define pVec std::vector<Particle*>
+#define fVec std::vector<float>
 class Solver 
 {
 
 private:
-	std::vector<Particle*> currentParticles;
+    pVec currentParticles;
 
 
 
 
 
-	Particle* UpdateDensityPressure(		Particle* particle, 
-											std::vector<Particle*>* neighborList,
-											std::vector<float> weights);
+    Particle* UpdateDensityPressure(Particle* particle, pVec* neighborList,                
+        fVec weights);
 
-	std::vector<Particle*>* CalcNeighbors(	Particle* particle);
+    pVec* CalcNeighbors(Particle* particle);
 
-	//do we need this?
-	void SetParticles(						std::vector<Particle*>* particleList);
+    //do we need this?
+    void SetParticles(pVec* particleList);
 
 
 
 public: 
-	Solver(									std::vector<Particle*> initialParticles);
+    Solver(pVec initialParticles);
 
-	std::vector<Particle*> GetParticles();
+    pVec GetParticles();
 
-	void UpdateAll();
+    void UpdateAll();
 
 };
 
