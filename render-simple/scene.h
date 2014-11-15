@@ -10,8 +10,6 @@
 #include <map>
 #include <vector>
 
-using namespace std;
-
 class Scene {
   public:
     Scene(const char * filename);
@@ -22,7 +20,7 @@ class Scene {
   private:
     void addLight(GLfloat x, GLfloat y, GLfloat z, GLfloat w, GLfloat r, GLfloat g, GLfloat b, GLfloat a);
     void readFromFile(const char * filename);
-    bool readvals(stringstream &s, const int numvals, float* values, int linecount);
+    bool readvals(std::stringstream &s, const int numvals, float* values, int linecount);
     void renderLights();
     void renderParticles(glm::mat4 &mv, int timeidx);
     void renderTable(glm::mat4 &mv);
@@ -36,7 +34,7 @@ class Scene {
     GLfloat lightransf[4*numLights] ; // Lights transformed by modelview
     int numused ;                     // How many lights are used
 
-    map<int, vector<float>*>* timetopartlist;
+    std::map<int, std::vector<float>*>* timetopartlist;
 };
 
 #endif // __INCLUDESCENE
