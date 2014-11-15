@@ -23,3 +23,51 @@ fVec* WeightSolver::CalculateWeights(fVec distances)
 	}
 	return weights;
 }
+
+/* Give the first derivative of distances of particle's neighbors
+   Return the weights based on the B-Spline Kernel
+*/
+fVec* WeightSolver::CalculateFirstDerivativesWeights(fVec distances)
+{
+	fVec* weights = new fVec();
+	for each(float d in distances)
+	{
+		float w = 0.0f;
+		float q = d; //TODO: CHANGE ME PLEASE!
+		if (q < 0.5f)
+		{
+			w = -12 * q + 18 * pow(q, 2);
+		}
+		else if (q < 1)
+		{
+			w = -6 * pow(1-q, 2);
+		}
+		w *= 8 / pi;
+		weights->push_back(w);
+	}
+	return weights;
+}
+
+/* Give the second derivative of distances of particle's neighbors
+   Return the weights based on the B-Spline Kernel
+*/
+fVec* WeightSolver::CalculateSecondDerivativesWeights(fVec distances)
+{
+	fVec* weights = new fVec();
+	for each(float d in distances)
+	{
+		float w = 0.0f;
+		float q = d; //TODO: CHANGE ME PLEASE!
+		if (q < 0.5f)
+		{
+			w = -12 + 36 * q;
+		}
+		else if (q < 1)
+		{
+			w = 12 * (1 - q);
+		}
+		w *= 8 / pi;
+		weights->push_back(w);
+	}
+	return weights;
+}
