@@ -1,5 +1,21 @@
 #include "WeightSolver.h"
 
+/* B-Spline Kernel is:
+ * W(q) = {   8/pi * (1 - 6q^2 + 6q^3)  IF 0.0 <= q < 0.5
+ *            8/pi * (2 * (1-q)^3)      IF 0.5 <= q < 1.0
+ *            0                         IF 1.0 < q }
+ *
+ * First derivative is:
+ * W'(q) = {  8/pi * (-12q + 18q^2)     IF 0.0 <= q < 0.5
+ *            8/pi * (-6 * (1-q)^2)     IF 0.5 <= q < 1.0
+ *            0                         IF 1.0 < q }
+ *
+ * Second derivative is:
+ * W''(q) = { 8/pi * (-12 + 36q)        IF 0.0 <= q < 0.5
+ *            8/pi * (12 * (1-q))       IF 0.5 <= q < 1.0
+ *            0                         IF 1.0 < q }
+ */
+
 /* Give the distances of particle's neighbors
    Return the weights based on the B-Spline Kernel
 */
