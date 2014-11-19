@@ -3,7 +3,9 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#ifndef _WIN64
 #include <unistd.h>
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -24,7 +26,7 @@ int Initialize(pVec* particles);
 int main(int argc, char* argv[])
 {
 	int c;
-
+#ifndef _WIN64
 	while ((c = getopt(argc, argv, "d:p:t:o:i:")) != -1) 
 	{
 		switch (c)
@@ -49,6 +51,7 @@ int main(int argc, char* argv[])
 
 		}
 	}
+#endif
 
 	if (input_file == NULL || output_file == NULL)
 	{

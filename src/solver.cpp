@@ -79,10 +79,11 @@ pVec* Solver::CalcNeighbors(
 // uses distances to calculate the weights and take 
 // dot product between neighbors' mass and weights
 // implements (9.6) from fluid_notes.pdf
-float Solver::calcDensityField(*fVec first, *fVec masses) {
+float Solver::calcDensityField(fVec* first, fVec* masses) {
     float rho = 0.0f;
-    *fVec first = WeightSolver::CalculateWeights(distances);
-    for (int i = 0; i < masses.size(); i++) {
+	fVec distances;
+    first = WeightSolver::CalculateWeights(distances);
+    for (int i = 0; i < masses->size(); i++) {
         rho += (*first)[i]*(*masses)[i];
     }
     
@@ -93,10 +94,10 @@ float Solver::calcDensityField(*fVec first, *fVec masses) {
 // particle density and environmental density
 // implements the ideal gas state equation
 
-fVec* Solver::calcPressure(float k, float rho, *fVec densities) {
+fVec* Solver::calcPressure(float k, float rho, fVec* densities) {
     fVec* p = new fVec();
     float pressure = 0.0f;
-    for (float density in (*densities)) {
+    for each (float density in (*densities)) {
         pressure = k * (density - rho);
         p->push_back(pressure);
     }    
@@ -130,13 +131,14 @@ vec3* Solver::calcPressure(vec3 vec, fVec distances, float p, fVec pressures, fV
         gradient->y += c * y;
         gradient->z += c * z;
         
-        # can probably bring some terms out of the for loop to optimize
+        //can probably bring some terms out of the for loop to optimize
     }
     return gradient;
 }
 // uses relative velocity vector (vec is u_neighbor - u_particle) and laplacian of viscosity kernel
-float Solver::calcViscosity(vec3 vec, fVec distances, float mu, vec3 vel, float rho, float m) {
+vec3* Solver::calcViscosity(vec3 vec, fVec distances, float mu, vec3 vel, float rho, float m) {
     vec3* visc = new vec3(); 
+	fVec masses;
     float h = 5; //constant particle size?
     for (int i = 0; i < distances.size(); i++) {
         float x = vec.x;
@@ -163,5 +165,5 @@ float Solver::calcViscosity(vec3 vec, fVec distances, float mu, vec3 vel, float 
 }
 
 float Solver::l2Norm(vec3 vec) {
-
+	return 0.0f;
 }

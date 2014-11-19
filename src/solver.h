@@ -1,39 +1,42 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
+#include "Constants.h"
 #include "Particle.h"
 #include <vector>
 #include <map>
+#include "WeightSolver.h"
 
-#define pVec std::vector<Particle*>
-#define fVec std::vector<float>
-class Solver 
+class Solver
 {
-
 private:
-    pVec currentParticles;
+	pVec currentParticles;
 
 
 
 
 
-    Particle* UpdateDensityPressure(Particle* particle, pVec* neighborList,                
-        fVec weights);
+	Particle* UpdateDensityPressure(Particle* particle, pVec* neighborList,
+		fVec weights);
 
-    pVec* CalcNeighbors(Particle* particle);
+	pVec* CalcNeighbors(Particle* particle);
 
-    //do we need this?
-    void SetParticles(pVec* particleList);
+	//do we need this?
+	void SetParticles(pVec* particleList);
 
 
 
-public: 
-    Solver(pVec initialParticles);
+public:
+	Solver(pVec initialParticles);
 
-    pVec GetParticles();
+	pVec GetParticles();
 
-    void UpdateAll();
-
+	void UpdateAll();
+	float calcDensityField(fVec* first, fVec* masses);
+	fVec* calcPressure(float k, float rho, fVec* densities);
+	vec3* calcPressure(vec3 vec, fVec distances, float p, fVec pressures, fVec masses, float rho);
+	vec3* calcViscosity(vec3 vec, fVec distances, float mu, vec3 vel, float rho, float m);
+	float l2Norm(vec3 vec);
 };
 
 

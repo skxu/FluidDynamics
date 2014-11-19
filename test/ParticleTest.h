@@ -1,4 +1,4 @@
-#include "Particle.h"
+#include "../src/Particle.h"
 #include "assert.h"
 #include "stdlib.h"
 

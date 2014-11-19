@@ -1,10 +1,14 @@
 #include "solver.h"
 
-#define pi 3.14159265359
+#ifndef WEIGHTSOLVER_H
+#define WEIGHTSOLVER_H
 
 class WeightSolver
 {
+public:
 	static fVec* CalculateWeights(fVec distances);
-  static fVec* CalculateFirstDerivativesWeights(fVec distances);
-  static fVec* CalculateSecondDerivativesWeights(fVec distances);
+	static fVec* CalculateFirstDerivativesWeights(fVec distances);
+	static fVec* CalculateSecondDerivativesWeights(fVec distances);
 };
+
+#endif
