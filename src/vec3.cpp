@@ -30,3 +30,21 @@ vec3 vec3::operator+=(vec3 other)
 	z += other.z;
 	return *this;
 }
+
+vec3 vec3::operator-(vec3 other)
+{
+	return vec3(x-other.x, y-other.y, z-other.z);
+}
+
+vec3 vec3::operator-=(vec3 other)
+{
+	x -= other.x;
+	y -= other.y;
+	z -= other.z;
+	return *this;
+}
+
+float vec3::SumSquares()
+{
+	return x*x + y*y + z*z;
+}
