@@ -3,4 +3,7 @@
 #define fVec std::vector<float>
 
 //speed of sound in water as m/s 
-#define c 1483
+#define SPEED_SOUND 1483
+
+//reference density of water as kg/m^3
+#define DENSITY_WATER
