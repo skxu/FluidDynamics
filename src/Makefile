@@ -4,7 +4,7 @@ TARGET = solveFluid
 default: solveFluid
 
 solveFluid: *.cpp
-	$(CC) -O3 -o *.cpp
+	$(CC) *.cpp -o solveFluid
 
 clean:
 	$(RM) *.o  *.h.gch solveFluid

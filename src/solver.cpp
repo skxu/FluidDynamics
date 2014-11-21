@@ -26,13 +26,13 @@ void Solver::UpdateAll()
 	grid->setNeighbors(currentParticles);
 
 	//Update densities
-	updatedParticles = pdSolver->UpdateDensities(&currentParticles, cutoff);
+	pdSolver->UpdateDensities(&currentParticles, cutoff);
 
 	//Update pressures
-	updatedParticles = pdSolver->UpdatePressures(updatedParticles);
+	pdSolver->UpdatePressures(&currentParticles);
 
 	//Solve navier-stokes
-	updatedParticles = nsSolver->solve(updatedParticles, cutoff);
+	updatedParticles = nsSolver->solve(&currentParticles, cutoff);
 
 	currentParticles = *updatedParticles;
 
