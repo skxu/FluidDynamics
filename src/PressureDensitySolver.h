@@ -16,8 +16,8 @@ private:
 	static float calcPressure(Particle* p);
 
 public:
-	static pVec* UpdateDensities(pVec* particles, float h);
+	static void UpdateDensities(pVec* particles, float h);
 
-	static pVec* UpdatePressures(pVec* particles);
+	static void UpdatePressures(pVec* particles);
 
 };
