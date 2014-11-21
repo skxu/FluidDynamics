@@ -58,6 +58,10 @@ void Grid::setNeighbors(Particle *p){
     }
 }
 
+std::vector<Particle*>* Grid::getNeighbors(Particle *p){
+    return p->neighbors;
+}
+
 float Grid::getDistance(Particle* p1, Particle* p2){
     return sqrt(pow(p2->pos.x - p1->pos.x, 2)+pow(p2->pos.y - p1->pos.y,2)+pow(p2->pos.z - p1->pos.z,2));
 }

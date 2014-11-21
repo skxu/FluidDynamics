@@ -10,6 +10,7 @@ public:
     void setParticle(Particle* p);
     void updateParticle(Particle* p);
     void setNeighbors(Particle* p);
+    std::vector<Particle*>* getNeighbors(Particle* p);
     //TODO: figure out how to update neighbors after they move
     float getDistance(Particle* p1, Particle* p2);
     bool isValidPos(vec3 v);
