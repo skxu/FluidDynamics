@@ -11,7 +11,7 @@
  * Assumes that norm(r) <= h. *
  * Return type: float         *
  **/
-float PolynomialKernel::Value(vec3 r, float h)
+float VaryingPVKernel::Value(vec3 r, float h)
 {
   return 15.0 / (pi * pow(h, 6)) * pow(h - r.L2Distance(), 3);
 }
@@ -21,7 +21,7 @@ float PolynomialKernel::Value(vec3 r, float h)
  * Assumes that norm(r) <= h.      *
  * Return type: vec3               *
  **/
-vec3 PolynomialKernel::Gradient(vec3 r, float h)
+vec3 VaryingPVKernel::Gradient(vec3 r, float h)
 {
   float multiplier = -45.0 / (pi * pow(h, 6)) * pow(h - r.L2Distance(), 2);
   return r * (multiplier / r.L2Distance());
@@ -32,7 +32,7 @@ vec3 PolynomialKernel::Gradient(vec3 r, float h)
  * Assumes that norm(r) <= h.        *
  * Return type: float                *
  **/
-float PolynomialKernel::Lagragian(vec3 r, float h)
+float VaryingPVKernel::Lagragian(vec3 r, float h)
 {
   return 45.0 / (pi * pow(h, 6)) * (h - r.L2Distance());
 }
