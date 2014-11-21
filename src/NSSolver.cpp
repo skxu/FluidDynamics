@@ -8,7 +8,7 @@ NSSolver::NSSolver()
 
 pVec* NSSolver::solve(pVec* particles, float h)
 {
-	for each (Particle* p in *particles)
+	for (Particle* p: *particles)
 	{
 		p->acc = vec3();
 		
