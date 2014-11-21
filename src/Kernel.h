@@ -1,6 +1,7 @@
 #ifndef KERNEL_H
 #define KERNEL_H
 
+#include <math.h>
 #include "vec3.h"
 
 class Kernel

@@ -1,5 +1,4 @@
 #include "VaryingPVKernel.h"
-#include "Constants.h"
 
 /** 
  * Equations: http://cs.brown.edu/courses/cs195v/asgn/fluids.pdf  *

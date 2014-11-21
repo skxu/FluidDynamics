@@ -1,5 +1,4 @@
 #include "PolynomialKernel.h"
-#include "Constants.h"
 
 /** 
  * Equations: http://image.diku.dk/projects/media/kelager.06.pdf  *
