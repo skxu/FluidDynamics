@@ -14,9 +14,11 @@
 #define DEFAULT_DENSITY 10.0
 #define DEFAULT_PRESSURE 11.0
 #define DEFAULT_TIMESTEPS 300
+#define DEFAULT_CUTOFF 1
 
 float particle_density = DEFAULT_DENSITY;
 float particle_pressure = DEFAULT_PRESSURE;
+float cutoff = DEFAULT_CUTOFF;
 int timesteps = DEFAULT_TIMESTEPS;
 char* input_file = NULL;
 char* output_file = NULL;
@@ -27,7 +29,7 @@ int main(int argc, char* argv[])
 {
 	int c;
 #ifndef _WIN64
-	while ((c = getopt(argc, argv, "d:p:t:o:i:")) != -1) 
+	while ((c = getopt(argc, argv, "d:p:t:o:i:h:")) != -1) 
 	{
 		switch (c)
 		{
@@ -46,6 +48,10 @@ int main(int argc, char* argv[])
 			case 'o':
 				output_file = optarg;
 				break;
+			case 'h':
+				cutoff = atof(optarg);
+				break;
+
 			default:
 				break;
 
@@ -65,7 +71,7 @@ int main(int argc, char* argv[])
 		return -1;
 	}
 	
-	Solver solver = Solver(particles);
+	Solver solver = Solver(particles, cutoff);
 	std::ofstream output;
 	output.open(output_file);
 	for (int timestep=0; timestep<timesteps; timestep++) 
