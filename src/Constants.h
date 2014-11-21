@@ -10,3 +10,6 @@
 
 //gravity
 #define GRAVITY -9.8f
+
+//dynamical viscosity kg/ms
+#define MU 0.001

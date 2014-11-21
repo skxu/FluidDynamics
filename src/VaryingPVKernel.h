@@ -2,7 +2,7 @@
 #define VARYINGPVKERNEL_H
 
 #include "Constants.h"
-#include "Kernel.h"
+#include <math.h>
 #include "vec3.h"
 
 class VaryingPVKernel
