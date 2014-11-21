@@ -51,7 +51,6 @@ void Grid::updateParticle(Particle* p){
 
 void Grid::setNeighbors(Particle *p){
     vec3 v;
-    vec3* dVec; //the displacement vetor
     pVec particles;
     float distance;
     for (int i = p->gridPos.x-1; i < p->gridPos.x+2; i++){
