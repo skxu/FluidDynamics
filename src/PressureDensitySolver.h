@@ -7,7 +7,7 @@ private:
 	// uses distances to calculate the weights and take 
 	// dot product between neighbors' mass and weights
 	// implements (9.6) from fluid_notes.pdf
-	static float calcDensity(Particle* p);
+	static float calcDensity(Particle* p, float h);
 
 
 	// calculates the pressure using the difference in 
@@ -16,7 +16,7 @@ private:
 	static float calcPressure(Particle* p);
 
 public:
-	static pVec* UpdateDensities(pVec* particles);
+	static pVec* UpdateDensities(pVec* particles, float h);
 
 	static pVec* UpdatePressures(pVec* particles);
 
