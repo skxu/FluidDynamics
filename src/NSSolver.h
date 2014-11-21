@@ -1,14 +1,18 @@
+#ifndef NSSolver_H
+#define NSSolver_H
+
+#include "Constants.h"
+#include "Particle.h"
+#include "PolynomialKernel.h"
 
 class NSSolver
 {
 public:
-	// takes two particle's displacement vector and the distances
-	// of the neighbors around the particle of interest to calc
-	// the pressure kernel gradient
-	// implements (4) in http://cs.brown.edu/courses/cs195v/asgn/fluids.pdf
-	static vec3* calcPressure(vec3 vec, fVec distances, float p, fVec pressures, fVec masses, float rho);
+	bool pressure, viscosity, interactive, gravity;
 
-	// uses relative velocity vector (vec is u_neighbor - u_particle) and laplacian of viscosity kernel
-	static vec3* calcViscosity(vec3 vec, fVec distances, float mu, vec3 vel, float rho, float m);
+	NSSolver();
 
+	pVec* solve(pVec* particles, float h);
 };
+
+#endif
