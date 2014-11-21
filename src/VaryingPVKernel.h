@@ -5,6 +5,12 @@
 #include "Kernel.h"
 #include "vec3.h"
 
-class VaryingPVKernel : Kernel { };
+class VaryingPVKernel
+{
+public:
+  static float Value     (vec3 r, float h);
+  static vec3  Gradient  (vec3 r, float h);
+  static float Lagragian (vec3 r, float h);
+};
 
 #endif // VARYINGPVKERNEL_H
