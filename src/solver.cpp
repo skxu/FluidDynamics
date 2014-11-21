@@ -2,32 +2,44 @@
 
 
 Solver::Solver(
-	pVec particleList)
+	pVec particleList,
+	float hValue)
 {
+	cutoff = hValue;
 	currentParticles = particleList;
     grid = new Grid(420,420,420,4); //What are our parameters?!
     grid->setParticles(currentParticles);
+
+    //initialize solvers
+    nsSolver = new NSSolver();
+    pdSolver = new PDSolver();
+
 }
 
 void Solver::UpdateAll()
 {
-	//TODO
-	pVec* updatedParticles = new pVec();
+	
 
-	for (std::vector<int>::size_type i = 0; i != currentParticles.size(); i++) 
-	{
-		Particle* p = currentParticles[i];
-		//TODO: Get neighbors
-		pVec* neighbors = CalcNeighbors(p);
-		fVec weights = fVec();
-		
-		//UPDATE the particle
-		Particle* updatedParticle = UpdateDensityPressure(p, neighbors, weights);
-		updatedParticles->push_back(updatedParticle);
+	pVec* updatedParticles;	
 
-	}
+	//Calculate neighbors
+	grid->setNeighbors(currentParticles);
+
+	//Update densities
+	updatedParticles = pdSolver->UpdateDensities(currentParticles);
+
+	//Update pressures
+	updatedParticles = pdSolver->UpdatePressures(updatedParticles);
+
+	//Solve navier-stokes
+	updatedParticles = nsSolver->solve(updatedParticles, cutoff);
 
 	currentParticles = *updatedParticles;
+
+	grid->cleanGrid();
+
+	grid->setParticles(currentParticles);
+
 }
 
 void Solver::SetParticles(

@@ -6,13 +6,18 @@
 #include <vector>
 #include <map>
 #include "Grid.h"
+#include "PressureDensitySolver.h"
+#include "NSSolver.h"
 
 class Solver
 {
 private:
+	float cutoff;
+
 	pVec currentParticles;
 	Grid* grid;
-
+	PDSolver* pdSolver;
+	NSSolver* nsSolver;
 
 
 	//do we need this?
@@ -21,7 +26,7 @@ private:
 
 
 public:
-	Solver(pVec initialParticles);
+	Solver(pVec initialParticles, float hValue);
 
 	pVec GetParticles();
 
