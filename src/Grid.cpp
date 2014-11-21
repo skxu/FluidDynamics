@@ -17,10 +17,10 @@ std::vector<Particle*> Grid::getParticles(int index){
 void Grid::setParticle(Particle* p){
     p->neighbors = new std::vector<Particle*>();
     vec3 gridPosition = calcGridPos(p);
-    printf("our grid position is: (%f,%f,%f)\n",gridPosition.x,gridPosition.y,gridPosition.z);
+    //printf("our grid position is: (%f,%f,%f)\n",gridPosition.x,gridPosition.y,gridPosition.z);
     p->gridPos = gridPosition;
     int index = calcIndex(gridPosition);
-    printf("with index %d\n\n",index);
+    //printf("with index %d\n\n",index);
     grid[index].push_back(p);
 }
 
