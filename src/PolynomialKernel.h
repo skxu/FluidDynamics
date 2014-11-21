@@ -3,6 +3,7 @@
 
 #include "Constants.h"
 #include "vec3.h"
+#include <math.h>
 
 class PolynomialKernel 
 {
