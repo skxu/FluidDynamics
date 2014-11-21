@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 #include "WeightSolver.h"
+#include "Grid.h"
 
 class Solver
 {
