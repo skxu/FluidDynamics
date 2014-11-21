@@ -22,6 +22,7 @@ pVec Grid::getParticles(int index){
 
 void Grid::setParticle(Particle* p){
     p->neighbors = new std::vector<Particle*>();
+    p->neighborDirections = new std::vector<vec3*>();
     vec3 gridPosition = calcGridPos(p);
     //printf("our grid position is: (%f,%f,%f)\n",gridPosition.x,gridPosition.y,gridPosition.z);
     p->gridPos = gridPosition;
