@@ -3,7 +3,7 @@
 pVec* ParticleMover::updateVelocities(pVec* particles, float ts)
 {
 	pVec* newParticles = new pVec();
-	for each (Particle* p in *particles)
+	for (Particle* p: *particles)
 	{
 		Particle* newP = new Particle(*p);
 		newP->vel += newP->acc * ts;
@@ -15,7 +15,7 @@ pVec* ParticleMover::updateVelocities(pVec* particles, float ts)
 pVec* ParticleMover::updatePositions(pVec* particles, float ts)
 {
 	pVec* newParticles = new pVec();
-	for each (Particle* p in *particles)
+	for (Particle* p: *particles)
 	{
 		Particle* newP = new Particle(*p);
 		newP->pos += newP->vel * ts;
