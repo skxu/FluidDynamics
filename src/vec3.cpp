@@ -48,3 +48,8 @@ float vec3::SumSquares()
 {
 	return x*x + y*y + z*z;
 }
+
+float vec3::L2Distance()
+{
+	return sqrt(SumSquares());
+}

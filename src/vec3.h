@@ -21,5 +21,7 @@ struct vec3 {
 	vec3 operator-=(vec3 other);
 
 	float SumSquares();
+
+	float L2Distance();
 };
 #endif
