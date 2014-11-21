@@ -26,7 +26,7 @@ void Solver::UpdateAll()
 	grid->setNeighbors(currentParticles);
 
 	//Update densities
-	updatedParticles = pdSolver->UpdateDensities(currentParticles, cutoff);
+	updatedParticles = pdSolver->UpdateDensities(&currentParticles, cutoff);
 
 	//Update pressures
 	updatedParticles = pdSolver->UpdatePressures(updatedParticles);
