@@ -62,6 +62,7 @@ void Grid::setNeighbors(Particle *p){
                             dVec->x = particles[a]->pos.x - p->pos.x;
                             dVec->y = particles[a]->pos.y - p->pos.y;
                             dVec->z = particles[a]->pos.z - p->pos.z;
+                            &dVec = p->pos-particles[a]->pos;
                             p->neighborDirections->push_back(dVec);
                         }
                     }
