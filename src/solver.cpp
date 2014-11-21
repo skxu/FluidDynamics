@@ -7,6 +7,8 @@ Solver::Solver(
 	pVec particleList)
 {
 	currentParticles = particleList;
+    grid = new Grid(420,420,420,4); //What are our parameters?!
+    grid->setParticles(currentParticles);
 }
 
 /* Calculate density and pressure of a particle based on neighbors
@@ -71,7 +73,8 @@ pVec* Solver::CalcNeighbors(
 
 	pVec * neighbors = new pVec();
 	//TODO SOMEHOW GET NEIGHBORS YEAH
-
+    grid->setNeighbors(p);
+    neighbors = grid->getNeighbors(p);
 	return neighbors;
 }
 

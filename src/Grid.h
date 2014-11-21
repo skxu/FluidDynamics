@@ -11,6 +11,7 @@ public:
     void cleanGrid();
     pVec getParticles(int index);
     void setParticle(Particle* p);
+    void setParticles(pVec particles);
     //void updateParticle(Particle* p);
     void setNeighbors(Particle* p);
     void setNeighbors(pVec pVector);

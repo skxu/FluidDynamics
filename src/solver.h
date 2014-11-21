@@ -12,7 +12,7 @@ class Solver
 {
 private:
 	pVec currentParticles;
-
+	Grid* grid;
 
 
 

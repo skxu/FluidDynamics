@@ -30,6 +30,12 @@ void Grid::setParticle(Particle* p){
     grid[index].push_back(p);
 }
 
+void Grid::setParticles(pVec particles){
+    for(int i = 0; i < particles.size(); i++){
+        setParticle(particles[i]);
+    }
+}
+
 /*
 void Grid::updateParticle(Particle* p){
     int index = calcIndex(p->gridPos);
