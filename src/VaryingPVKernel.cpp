@@ -7,9 +7,10 @@
  **/
 
 /** 
- * Returns the value W(r,h).  *
- * Assumes that norm(r) <= h. *
- * Return type: float         *
+ * Returns the value W(r,h).        *
+ * Assumes that norm(r) <= h.       *
+ * This computes term for PRESSURE. *
+ * Return type: float               *
  **/
 float VaryingPVKernel::Value(vec3 r, float h)
 {
@@ -17,9 +18,10 @@ float VaryingPVKernel::Value(vec3 r, float h)
 }
 
 /**
- * Returns the value grad(W(r,h)). *
- * Assumes that norm(r) <= h.      *
- * Return type: vec3               *
+ * Returns the value grad(W(r,h)).  *
+ * Assumes that norm(r) <= h.       *
+ * This computes term for PRESSURE. *
+ * Return type: vec3                *
  **/
 vec3 VaryingPVKernel::Gradient(vec3 r, float h)
 {
@@ -30,6 +32,7 @@ vec3 VaryingPVKernel::Gradient(vec3 r, float h)
 /**
  * Returns the value grad^2(W(r,h)). *
  * Assumes that norm(r) <= h.        *
+ * This computes term for VISCOSITY. *
  * Return type: float                *
  **/
 float VaryingPVKernel::Lagragian(vec3 r, float h)
