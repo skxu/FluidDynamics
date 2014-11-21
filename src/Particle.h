@@ -12,7 +12,7 @@ struct Particle {
     
 	float density, pressure, mass;
 	std::vector<Particle*>* neighbors;
-    Grid *grid;
+    std::vector<vec3*>* neighborDirections;
 	Particle();
 
 	Particle(const Particle &other);

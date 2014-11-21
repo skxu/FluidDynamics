@@ -1,5 +1,5 @@
 #include "Grid.h"
-#include <math.h>
+
 Grid::Grid(int x, int y, int z, int h){
     cutoff = h;
     xDim = x/h;
@@ -10,7 +10,13 @@ Grid::Grid(int x, int y, int z, int h){
     }
 }
 
-std::vector<Particle*> Grid::getParticles(int index){
+void Grid::cleanGrid(){
+    for(int i = 0; i < xDim*yDim*zDim; i++){
+        grid[i].clear();
+    }
+}
+
+pVec Grid::getParticles(int index){
     return grid[index];
 }
 
@@ -24,6 +30,7 @@ void Grid::setParticle(Particle* p){
     grid[index].push_back(p);
 }
 
+/*
 void Grid::updateParticle(Particle* p){
     int index = calcIndex(p->gridPos);
     vec3 updatedGridPos = calcGridPos(p);
@@ -33,10 +40,12 @@ void Grid::updateParticle(Particle* p){
     }
     p->gridPos = updatedGridPos;
 }
+*/
 
 void Grid::setNeighbors(Particle *p){
     vec3 v;
-    std::vector<Particle*> particles;
+    vec3* dVec; //the displacement vetor
+    pVec particles;
     float distance;
     for (int i = p->gridPos.x-1; i < p->gridPos.x+2; i++){
         for (int j = p->gridPos.y-1; j < p->gridPos.y+2; j++){
@@ -50,6 +59,10 @@ void Grid::setNeighbors(Particle *p){
                         //printf("The distance is %f\n",distance);
                         if (distance <= (float) cutoff){
                             p->neighbors->push_back(particles[a]); //need to find out how to update neighbors, most likely clear neighbors list in particle
+                            dVec->x = particles[a]->pos.x - p->pos.x;
+                            dVec->y = particles[a]->pos.y - p->pos.y;
+                            dVec->z = particles[a]->pos.z - p->pos.z;
+                            p->neighborDirections->push_back(dVec);
                         }
                     }
                 }
@@ -58,9 +71,16 @@ void Grid::setNeighbors(Particle *p){
     }
 }
 
-std::vector<Particle*>* Grid::getNeighbors(Particle *p){
+void Grid::setNeighbors(pVec pVector){
+    for(int i = 0; i < pVector.size(); i++){
+        setNeighbors(pVector[i]);
+    }
+}
+
+pVec* Grid::getNeighbors(Particle *p){
     return p->neighbors;
 }
+
 
 float Grid::getDistance(Particle* p1, Particle* p2){
     return sqrt(pow(p2->pos.x - p1->pos.x, 2)+pow(p2->pos.y - p1->pos.y,2)+pow(p2->pos.z - p1->pos.z,2));

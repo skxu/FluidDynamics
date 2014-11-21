@@ -1,16 +1,20 @@
 #ifndef GRID_H
 #define GRID_H
 
-#include "Particle.h"
+#include "Constants.h"
 #include <vector>
+#include <math.h>
+
 class Grid{
 public:
     Grid(int x, int y, int z, int h);
-    std::vector<Particle*> getParticles(int index);
+    void cleanGrid();
+    pVec getParticles(int index);
     void setParticle(Particle* p);
-    void updateParticle(Particle* p);
+    //void updateParticle(Particle* p);
     void setNeighbors(Particle* p);
-    std::vector<Particle*>* getNeighbors(Particle* p);
+    void setNeighbors(pVec pVector);
+    pVec* getNeighbors(Particle* p);
     //TODO: figure out how to update neighbors after they move
     float getDistance(Particle* p1, Particle* p2);
     bool isValidPos(vec3 v);
@@ -18,7 +22,7 @@ public:
     int calcIndex(vec3 v);
     int getCutoff();
 private:
-    std::vector< std::vector<Particle*> > grid;
+    std::vector< pVec > grid;
     int cutoff;
     int xDim;
     int yDim;
