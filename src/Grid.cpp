@@ -65,9 +65,6 @@ void Grid::setNeighbors(Particle *p){
                         //printf("The distance is %f\n",distance);
                         if (distance <= (float) cutoff){
                             p->neighbors->push_back(particles[a]); //need to find out how to update neighbors, most likely clear neighbors list in particle
-                            dVec->x = particles[a]->pos.x - p->pos.x;
-                            dVec->y = particles[a]->pos.y - p->pos.y;
-                            dVec->z = particles[a]->pos.z - p->pos.z;
                             &dVec = p->pos-particles[a]->pos;
                             p->neighborDirections->push_back(dVec);
                         }
