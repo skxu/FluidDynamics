@@ -42,9 +42,6 @@
     <ClCompile Include="..\..\src\NSSolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\GridTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\PolynomialKernel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

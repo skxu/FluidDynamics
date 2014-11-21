@@ -98,7 +98,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Grid.cpp" />
-    <ClCompile Include="..\..\src\GridTest.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\NSSolver.cpp" />
     <ClCompile Include="..\..\src\Particle.cpp" />

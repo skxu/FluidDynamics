@@ -8,8 +8,9 @@ NSSolver::NSSolver()
 
 pVec* NSSolver::solve(pVec* particles, float h)
 {
-	for (Particle* p: *particles)
+	for (int a = 0; a < particles->size(); a++)
 	{
+		Particle* p = (*particles)[a];
 		p->acc = vec3();
 		
 		// Neighbor accelerations pressure and viscosity

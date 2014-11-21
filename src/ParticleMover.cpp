@@ -2,24 +2,21 @@
 
 pVec* ParticleMover::updateVelocities(pVec* particles, float ts)
 {
-	pVec* newParticles = new pVec();
-	for (Particle* p: *particles)
+	for (int i = 0; i < particles->size(); i++)
 	{
-		Particle* newP = new Particle(*p);
-		newP->vel += newP->acc * ts;
-		newParticles->push_back(newP);
+		Particle* p = (*particles)[i];
+		p->vel += p->acc * ts;
 	}
-	return newParticles;
+	return particles;
 }
 
 pVec* ParticleMover::updatePositions(pVec* particles, float ts)
 {
-	pVec* newParticles = new pVec();
-	for (Particle* p: *particles)
+
+	for (int i = 0; i < particles->size(); i++)
 	{
-		Particle* newP = new Particle(*p);
-		newP->pos += newP->vel * ts;
-		newParticles->push_back(newP);
+		Particle* p = (*particles)[i];
+		p->pos += p->vel * ts;
 	}
-	return newParticles;
+	return particles;
 }
