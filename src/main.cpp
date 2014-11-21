@@ -89,6 +89,7 @@ int main(int argc, char* argv[])
 			output <<"\n";
 		}
 		output << "time\n";
+		solver.UpdateAll();
 	}
 
 	return 0;
