@@ -7,7 +7,7 @@ Solver::Solver(
 {
 	cutoff = hValue;
 	currentParticles = particleList;
-    grid = new Grid(420,420,420,4); //What are our parameters?!
+    grid = new Grid(10,10,10,1); //What are our parameters?!
     grid->setParticles(currentParticles);
 
     //initialize solvers
@@ -18,9 +18,6 @@ Solver::Solver(
 
 void Solver::UpdateAll()
 {
-	
-
-	pVec* updatedParticles;	
 
 	//Calculate neighbors
 	grid->setNeighbors(currentParticles);
@@ -32,9 +29,11 @@ void Solver::UpdateAll()
 	pdSolver->UpdatePressures(&currentParticles);
 
 	//Solve navier-stokes
-	updatedParticles = nsSolver->solve(&currentParticles, cutoff);
+	currentParticles = * nsSolver->solve(&currentParticles, cutoff);
 
-	currentParticles = *updatedParticles;
+	ParticleMover::updateVelocities(&currentParticles, 0.001);
+
+	ParticleMover::updatePositions(&currentParticles, 0.001);
 
 	grid->cleanGrid();
 

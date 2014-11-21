@@ -8,6 +8,7 @@
 #include "Grid.h"
 #include "PressureDensitySolver.h"
 #include "NSSolver.h"
+#include "ParticleMover.h"
 
 class Solver
 {
