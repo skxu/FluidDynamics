@@ -1,6 +1,9 @@
-#include <string.h>
 #ifndef VEC3_INCLUDE
 #define VEC3_INCLUDE
+
+#include <string.h>
+#include <math.h>
+
 struct vec3 {
 	float x, y, z;
 
