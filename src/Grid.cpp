@@ -22,6 +22,7 @@ pVec Grid::getParticles(int index){
 
 void Grid::setParticle(Particle* p){
     p->neighbors = new std::vector<Particle*>();
+    p->neighborDirections = new std::vector<vec3*>();
     vec3 gridPosition = calcGridPos(p);
     //printf("our grid position is: (%f,%f,%f)\n",gridPosition.x,gridPosition.y,gridPosition.z);
     p->gridPos = gridPosition;
@@ -65,7 +66,7 @@ void Grid::setNeighbors(Particle *p){
                         //printf("The distance is %f\n",distance);
                         if (distance <= (float) cutoff){
                             p->neighbors->push_back(particles[a]); //need to find out how to update neighbors, most likely clear neighbors list in particle
-                            &dVec = p->pos-particles[a]->pos;
+                            *dVec = p->pos-particles[a]->pos;
                             p->neighborDirections->push_back(dVec);
                         }
                     }

@@ -2,6 +2,8 @@
 #define GRID_H
 
 #include "Constants.h"
+#include "Particle.h"
+#include "vec3.h"
 #include <vector>
 #include <math.h>
 
