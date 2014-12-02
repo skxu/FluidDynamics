@@ -1,1 +1,4 @@
 .DS_Store
+src/solveFluid
+render-simple/*.o
+render-simple/fluidsim
