@@ -1,6 +1,6 @@
 #define PI 3.14159265359
 
-struct sim_param_t {
+typedef struct sim_param_t {
 	char* fname = ""; /* File name */
 	int nframes = 0; /* Number of frames */
 	int npframe = 0; /* Steps per frame */

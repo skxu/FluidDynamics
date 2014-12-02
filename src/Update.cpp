@@ -181,9 +181,9 @@ void reflect_bc(sim_state_t* s)
   for (int i = 0; i < n; i++, x+=3, v+=3, vh+=3) {
     if (x[0] < XMIN) damp_reflect(0, XMIN, x, v, vh);
     if (x[0] > XMAX) damp_reflect(0, XMAX, x, v, vh);
-    if (y[0] < YMIN) damp_reflect(1, YMIN, x, v, vh);
-    if (y[0] > YMAX) damp_reflect(1, YMAX, x, v, vh);
-    if (z[0] < ZMIN) damp_reflect(2, ZMIN, x, v, vh);
+    if (x[1] < YMIN) damp_reflect(1, YMIN, x, v, vh);
+    if (x[1] > YMAX) damp_reflect(1, YMAX, x, v, vh);
+    if (x[2] < ZMIN) damp_reflect(2, ZMIN, x, v, vh);
   }
 }
 
