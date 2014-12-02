@@ -14,6 +14,7 @@ void compute_density(sim_state_t* s, sim_param_t* params)
   memset(rho, 0, n*sizeof(float));
   for (int i = 0; i < n; ++i) {
     rho[i] += 4 * s->mass / PI / h2;
+    // TODO: Calculate neighbors
     for (int j = i+1; j < n; ++j) {
       float dx = x[3*i+0] - x[3*j+0];
       float dy = x[3*i+1] - x[3*j+1];
