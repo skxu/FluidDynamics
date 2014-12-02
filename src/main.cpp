@@ -29,10 +29,10 @@ void write_frame_data(ofstream* fp, int n, float* x)
 void init_params(sim_param_t* params) {
   // Kevin you will need to fix this
   params->fname = "../outputs/run.txt"; /* File name */
-  params->nframes = 800; /* Number of frames */
-  params->npframe = 3; /* Steps per frame */
+  params->nframes = 10; /* Number of frames */
+  params->npframe = 1; /* Steps per frame */
   params->h = 5e-2; /* Particle size */
-  params->dt = 1e-3; /* Time step */
+  params->dt = 1e-2; /* Time step */
   params->rho0 = 1000; /* Reference density */
   params->k = 1e3; /* Bulk modulus */
   params->mu = 0.1; /* Viscosity */

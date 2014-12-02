@@ -92,7 +92,7 @@ void compute_accel(sim_state_t* state, sim_param_t* params)
   }
 }
 
-void leapfrog_step(sim_state_t* s, double dt)
+void leapfrog_step(sim_state_t* s, float dt)
 {
   const float* a = s->a;
   float* vh      = s->vh;
@@ -115,7 +115,7 @@ void leapfrog_step(sim_state_t* s, double dt)
 }
 
 // Special edge case for first timestep
-void leapfrog_start(sim_state_t* s, double dt)
+void leapfrog_start(sim_state_t* s, float dt)
 {
   const float* a = s->a;
   float* vh      = s->vh;
