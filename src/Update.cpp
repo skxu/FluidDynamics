@@ -1,4 +1,5 @@
 #include "Update.h"
+#include "Initializer.h"
 
 void compute_density(sim_state_t* s, sim_param_t* params) 
 {
@@ -199,4 +200,11 @@ void normalize_mass(sim_state_t* s, sim_param_t* param)
     rhos += s->rho[i];
   }
   s->mass *= ( rho0*rhos / rho2s );
+}
+
+sim_state_t* init_particles(sim_param_t* param)
+{
+	sim_state_t* s = place_particles(param, box_indicator);
+	normalize_mass(s, param);
+	return s;
 }

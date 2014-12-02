@@ -14,3 +14,4 @@ void damp_reflect(int which, float barrier,
 void reflect_bc(sim_state_t* s);
 
 void normalize_mass(sim_state_t* s, sim_param_t* param);
+sim_state_t* init_particles(sim_param_t* param);

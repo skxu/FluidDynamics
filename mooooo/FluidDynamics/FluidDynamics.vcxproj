@@ -97,28 +97,15 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\Grid.cpp" />
+    <ClCompile Include="..\..\src\Initializer.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
-    <ClCompile Include="..\..\src\NSSolver.cpp" />
-    <ClCompile Include="..\..\src\Particle.cpp" />
-    <ClCompile Include="..\..\src\ParticleMover.cpp" />
-    <ClCompile Include="..\..\src\PolynomialKernel.cpp" />
-    <ClCompile Include="..\..\src\PressureDensity.cpp" />
-    <ClCompile Include="..\..\src\solver.cpp" />
-    <ClCompile Include="..\..\src\VaryingPVKernel.cpp" />
-    <ClCompile Include="..\..\src\vec3.cpp" />
+    <ClCompile Include="..\..\src\Update.cpp" />
+    <ClCompile Include="..\..\src\Variables.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\Constants.h" />
-    <ClInclude Include="..\..\src\Grid.h" />
-    <ClInclude Include="..\..\src\NSSolver.h" />
-    <ClInclude Include="..\..\src\Particle.h" />
-    <ClInclude Include="..\..\src\ParticleMover.h" />
-    <ClInclude Include="..\..\src\PolynomialKernel.h" />
-    <ClInclude Include="..\..\src\PressureDensitySolver.h" />
-    <ClInclude Include="..\..\src\solver.h" />
-    <ClInclude Include="..\..\src\VaryingPVKernel.h" />
-    <ClInclude Include="..\..\src\vec3.h" />
+    <ClInclude Include="..\..\src\Initializer.h" />
+    <ClInclude Include="..\..\src\Update.h" />
+    <ClInclude Include="..\..\src\Variables.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
