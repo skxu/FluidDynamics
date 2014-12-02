@@ -174,7 +174,7 @@ void reflect_bc(sim_state_t* s) {
   float* vh = s->vh;
   float* v  = s->v;
   float* x  = s->x;
-  int n     = s->x;
+  int n     = s->n;
   for (int i = 0; i < n; i++, x+=3, v+=3, vh+=3) {
     if (x[0] < XMIN) damp_reflect(0, XMIN, x, v, vh);
     if (x[0] > XMAX) damp_reflect(0, XMAX, x, v, vh);
