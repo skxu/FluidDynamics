@@ -138,7 +138,8 @@ void leapfrog_start(sim_state_t* s, double dt)
 // Handles boundary collissions
 // dim = 0 (x), dim = 1 (y), dim = 2 (z)
 void damp_reflect(int dim, float barrier,
-                  float* x, float* v, float* vh) {
+                  float* x, float* v, float* vh)
+{
   const float DAMP = 0.75;
 
   // Particle doesn't move -- no update
@@ -164,7 +165,8 @@ void damp_reflect(int dim, float barrier,
   vh[2] *= DAMP;
 }
 
-void reflect_bc(sim_state_t* s) {
+void reflect_bc(sim_state_t* s)
+{
   const float XMIN = 0.0;
   const float XMAX = 1.0;
   const float YMIN = 0.0;
@@ -183,4 +185,18 @@ void reflect_bc(sim_state_t* s) {
     if (y[0] > YMAX) damp_reflect(1, YMAX, x, v, vh);
     if (z[0] < ZMIN) damp_reflect(2, ZMIN, x, v, vh);
   }
+}
+
+void normalize_mass(sim_state_t* s, sim_param_t* param)
+{
+  s->mass = 1;
+  compute_density(s, param);
+  float rho0 = param->rho0;
+  float rho2s = 0;
+  float rhos = 0;
+  for (int i = 0; i < s->n; ++i) {
+    rho2s += (s->rho[i])*(s->rho[i]);
+    rhos += s->rho[i];
+  }
+  s->mass *= ( rho0*rhos / rho2s );
 }
