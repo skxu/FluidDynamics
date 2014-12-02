@@ -13,7 +13,7 @@
 
 #define DEFAULT_DENSITY 10.0
 #define DEFAULT_PRESSURE 11.0
-#define DEFAULT_TIMESTEPS 300
+#define DEFAULT_TIMESTEPS 3
 #define DEFAULT_CUTOFF 1
 
 float particle_density = DEFAULT_DENSITY;
@@ -57,6 +57,10 @@ int main(int argc, char* argv[])
 
 		}
 	}
+#else
+	#include "WIN_ARGS.h"
+	input_file = INPUT_FILE;
+	output_file = OUTPUT_FILE;
 #endif
 
 	if (input_file == NULL || output_file == NULL)
