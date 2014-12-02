@@ -140,7 +140,7 @@ void initShaderVars() {
 
 // Initializes all global variables
 void initVars() {
-  eye = glm::vec3(0,-3,0);
+  eye = glm::vec3(0,-2,0);
   center = glm::vec3(0,0,0);
   up = glm::vec3(0,0,1);
   Transform::up(40, eye, up);

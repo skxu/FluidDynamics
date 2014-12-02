@@ -199,7 +199,7 @@ void normalize_mass(sim_state_t* s, sim_param_t* param)
     rho2s += (s->rho[i])*(s->rho[i]);
     rhos += s->rho[i];
   }
-  s->mass *= ( rho0*rhos / rho2s );
+  s->mass = ( rho0*rhos / rho2s );
 }
 
 sim_state_t* init_particles(sim_param_t* param)

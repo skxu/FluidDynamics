@@ -1,4 +1,4 @@
-rm ../outputs/$1
+rm ../outputs/run.txt
 cd ../src
 make clean
 make

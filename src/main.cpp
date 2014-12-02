@@ -21,7 +21,10 @@ void write_frame_data(ofstream* fp, int n, float* x)
 {
 	for (int i = 0; i < n; i ++)
 	{
-		*fp << "particle " << x[3 * i] << " " << x[3 * i + 1] << " " << x[3 * i + 2] << "\n";
+    // Shifted positions are for simple-render
+    float shiftx = x[3*i+0] - 0.5;
+    float shifty = x[3*i+1] - 0.5;
+		*fp << "particle " << shiftx << " " << shifty << " " << x[3*i+2] << "\n";
 	}
 	*fp << "time\n";
 }
@@ -29,10 +32,10 @@ void write_frame_data(ofstream* fp, int n, float* x)
 void init_params(sim_param_t* params) {
   // Kevin you will need to fix this
   params->fname = "../outputs/run.txt"; /* File name */
-  params->nframes = 10; /* Number of frames */
-  params->npframe = 1; /* Steps per frame */
+  params->nframes = 200; /* Number of frames */
+  params->npframe = 10; /* Steps per frame */
   params->h = 5e-2; /* Particle size */
-  params->dt = 1e-2; /* Time step */
+  params->dt = 1e-3; /* Time step */
   params->rho0 = 1000; /* Reference density */
   params->k = 1e3; /* Bulk modulus */
   params->mu = 0.1; /* Viscosity */
