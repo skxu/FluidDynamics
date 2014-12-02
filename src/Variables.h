@@ -4,15 +4,15 @@
 #define PI 3.14159265359
 
 typedef struct sim_param_t {
-	char* fname = "run.out"; /* File name */
-	int nframes = 5; /* Number of frames */
-	int npframe = 100; /* Steps per frame */
-	float h = 5e-2; /* Particle size */
-	float dt = 1e-4; /* Time step */
-	float rho0 = 1000; /* Reference density */
-	float k = 1e3; /* Bulk modulus */
-	float mu = 0.1; /* Viscosity */
-	float g = 9.8; /* Gravity strength */
+	char* fname; /* File name */
+	int nframes; /* Number of frames */
+	int npframe; /* Steps per frame */
+	float h; /* Particle size */
+	float dt; /* Time step */
+	float rho0; /* Reference density */
+	float k; /* Bulk modulus */
+	float mu; /* Viscosity */
+	float g; /* Gravity strength */
 } sim_param_t;
 
 typedef struct sim_state_t {

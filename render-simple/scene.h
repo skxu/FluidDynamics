@@ -27,7 +27,7 @@ class Scene {
     glm::mat4 scaleMtx(float x, float y, float z);
     glm::mat4 translateMtx(float x, float y, float z);
 
-    static const float PARTICLE_RADIUS = 0.01;
+    static const float PARTICLE_RADIUS = 0.015;
     static const int numLights = 10;
     GLfloat lightposn [4*numLights] ; // Light Positions
     GLfloat lightcolor[4*numLights] ; // Light Colors

@@ -142,7 +142,7 @@ void Scene::renderParticles(glm::mat4 &mv, int timeidx) {
     glUniform1i(shininesscol, shininess);
     glm::mat4 translate = translateMtx(*obj, *(obj+1), *(obj+2));
     glLoadMatrixf(&(mv * translate)[0][0]);
-    glutSolidSphere(PARTICLE_RADIUS, 20, 20);
+    glutSolidSphere(PARTICLE_RADIUS, 4, 4);
   }
 }
 
