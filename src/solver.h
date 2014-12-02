@@ -10,6 +10,8 @@
 #include "NSSolver.h"
 #include "ParticleMover.h"
 
+#include <iostream>
+
 class Solver
 {
 private:

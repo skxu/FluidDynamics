@@ -8,6 +8,9 @@
 //reference density of water as kg/m^3
 #define DENSITY_WATER 999.97f
 
+// mass of water in kg
+#define MASS_WATER 0.01f
+
 //gravity
 #define GRAVITY -9.8f
 
