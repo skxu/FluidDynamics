@@ -71,6 +71,8 @@ vector<int> Grid::getNeighbors(int i) {
 	}
 }
 
+/*  PRIVATE METHODS  */
+
 
 float Grid::getDistance(int p1_index, int p2_index){
 	float x_dist = posVec[3 * p1_index] - posVec[3 * p2_index];

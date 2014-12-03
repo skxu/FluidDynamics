@@ -20,12 +20,6 @@ public:
 
 	/* Get distance between particles at these indices */
 	float getDistance(int p1_index, int p2_index);
-
-	/* Check if this is within the grid */
-	bool isValidPos(float gridPos_x, float gridPos_y, float gridPos_z);
-
-	/* Locate index of cell for this position */
-	int calcIndex(float x, float y, float z);
 private:
 	vector<int>* grid;
 
@@ -44,6 +38,12 @@ private:
 
 	/* Remove everything from cells */
 	void cleanGrid();
+
+	/* Check if this is within the grid */
+	bool isValidPos(float gridPos_x, float gridPos_y, float gridPos_z);
+
+	/* Locate index of cell for this position */
+	int calcIndex(float x, float y, float z);
 
 	/* Go from 3d grid indices to vector index */
 	int flatten(float gridPos_x, float gridPos_y, float gridPos_z);
