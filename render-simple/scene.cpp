@@ -94,13 +94,13 @@ void Scene::readFromFile(const char * filename) {
         std:: stringstream s(str);
         s >> cmd;
         float values[3];
-        if (cmd == "particle") {
+        if (cmd == "p") {
           readvals(s, 3, values, linecount);
           particles->push_back(values[0]);
           particles->push_back(values[1]);
           particles->push_back(values[2]);
         }
-        else if (cmd == "time") {
+        else if (cmd == "t") {
           if (linecount != 1 || timestep != 0) {
             (*timetopartlist)[timestep] = particles;
             timestep++;
