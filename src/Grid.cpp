@@ -1,13 +1,14 @@
 #include "Grid.h"
 
-Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t s){
-	posVec = s.x;
-	n = s.n;
+Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
+	posVec = s->x;
+	n = s->n;
 	xDim = ceil(xBound / h);
 	yDim = ceil(yBound / h);
 	zDim = ceil(zBound / h);
 	totalCells = xDim * yDim * zDim;
 	grid = new vector<int>[totalCells];
+	cutoff = h;
 	for (int i = 0; i < totalCells; i++){
 		grid[i] = vector<int>();
 	}
@@ -32,7 +33,6 @@ void Grid::setParticles(){
 		float x = posVec[3 * i];
 		float y = posVec[3 * i + 1];
 		float z = posVec[3 * i + 2];
-
 		int index = calcIndex(x, y, z);
 		grid[index].push_back(i);
 	}
@@ -69,6 +69,7 @@ vector<int> Grid::getNeighbors(int i) {
 			}
 		}
 	}
+	return neighborInds;
 }
 
 /*  PRIVATE METHODS  */

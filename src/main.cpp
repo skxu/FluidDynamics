@@ -1,4 +1,7 @@
 #include "Update.h"
+#include "Grid.h"
+#include "Initializer.h"
+
 #include <iostream>
 #include <fstream>
 #include <assert.h>
@@ -32,7 +35,7 @@ void write_frame_data(ofstream* fp, int n, float* x)
 void init_params(sim_param_t* params) {
   // Kevin you will need to fix this
   params->fname = "../outputs/run.txt"; /* File name */
-  params->nframes = 400; /* Number of frames */
+  params->nframes = 50; /* Number of frames */
   params->npframe = 50; /* Steps per frame */
   params->h = 5e-2; /* Particle size */
   params->dt = 2e-4; /* Time step */
@@ -46,29 +49,34 @@ int main(int argc, char* argv[])
 {
 	sim_param_t params;
   init_params(&params);
-	/*if (get_params(argc, argv, &params) != 0)
-		exit(-1);*/
-	sim_state_t* state = init_particles(&params);
+  sim_state_t* state = place_particles(&params, sphere_indicator);
+  Grid* grid = new Grid(1.0, 1.0, 1.0, params.h, state);
+  grid->setParticles();
+  normalize_mass(state, &params, grid);
+
 	ofstream* fp = new ofstream();
 	fp->open(params.fname);
 	int nframes = params.nframes;
 	int npframe = params.npframe;
 	float dt = params.dt;
 	int n = state->n;
-  printf("%d\n", n);
+  printf("Number of Particles: %d\n", n);
 	write_frame_data(fp, n, state->x);
-	compute_accel(state, &params);
+	compute_accel(state, &params, grid);
 	leapfrog_start(state, dt);
+  grid->setParticles();
 	check_state(state);
 	for (int frame = 1; frame < nframes; ++frame) {
     printf("On iteration %d / %d\n", frame, nframes);
 		for (int i = 0; i < npframe; ++i) {
-			compute_accel(state, &params);
+			compute_accel(state, &params, grid);
 			leapfrog_step(state, dt);
 			check_state(state);
+      grid->setParticles();
 		}
 		write_frame_data(fp, n, state->x);
 	}
 	fp->close();
+  delete grid;
 	free_state(state);
 }

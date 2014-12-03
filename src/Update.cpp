@@ -1,7 +1,9 @@
 #include "Update.h"
 #include "Initializer.h"
 
-void compute_density(sim_state_t* s, sim_param_t* params) 
+using namespace std;
+
+void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid) 
 {
   int n = s->n;
   float* rho = s->rho;
@@ -15,8 +17,9 @@ void compute_density(sim_state_t* s, sim_param_t* params)
   memset(rho, 0, n*sizeof(float));
   for (int i = 0; i < n; i++) {
     rho[i] += 4 * s->mass / PI / h2;
-    // TODO: Calculate neighbors
-    for (int j = i+1; j < n; ++j) {
+    vector<int> neighbors = grid->getNeighbors(i);
+    for (int nidx = 0; nidx < neighbors.size(); nidx++) {
+      int j = neighbors[nidx];
       float dx = x[3*i+0] - x[3*j+0];
       float dy = x[3*i+1] - x[3*j+1];
       float dz = x[3*i+2] - x[3*j+2];
@@ -31,7 +34,7 @@ void compute_density(sim_state_t* s, sim_param_t* params)
   }
 }
 
-void compute_accel(sim_state_t* state, sim_param_t* params)
+void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
 {
   // Get parameters
   const float h    = params->h;
@@ -48,7 +51,7 @@ void compute_accel(sim_state_t* state, sim_param_t* params)
   int n            = state->n;
 
   // Compute Densities
-  compute_density(state, params);
+  compute_density(state, params, grid);
 
   // Gravity
   for (int i = 0; i < n; i++) {
@@ -65,8 +68,9 @@ void compute_accel(sim_state_t* state, sim_param_t* params)
   // Interaction force calculation
   for (int i = 0; i < n; i++) {
     const float rhoi = rho[i];
-    // To do - grid based to avoid the O(n^2) loop, add back Wesley's and Omer's code
-    for (int j = i+1; j < n; ++j) {
+    vector<int> neighbors = grid->getNeighbors(i);
+    for (int nidx = 0; nidx < neighbors.size(); nidx++) {
+      int j = neighbors[nidx];
       float dx = x[3*i+0] - x[3*j+0];
       float dy = x[3*i+1] - x[3*j+1];
       float dz = x[3*i+2] - x[3*j+2];
@@ -188,10 +192,10 @@ void reflect_bc(sim_state_t* s)
   }
 }
 
-void normalize_mass(sim_state_t* s, sim_param_t* param)
+void normalize_mass(sim_state_t* s, sim_param_t* param, Grid* grid)
 {
   s->mass = 1;
-  compute_density(s, param);
+  compute_density(s, param, grid);
   float rho0 = param->rho0;
   float rho2s = 0;
   float rhos = 0;
@@ -200,14 +204,4 @@ void normalize_mass(sim_state_t* s, sim_param_t* param)
     rhos += s->rho[i];
   }
   s->mass = ( rho0*rhos / rho2s );
-}
-
-sim_state_t* init_particles(sim_param_t* param)
-{
-	//sim_state_t* s = place_particles(param, box_indicator);
-  //sim_state_t* s = place_particles(param, box_indicator_long);
-  sim_state_t* s = place_particles(param, sphere_indicator);
-  //sim_state_t* s = rain_particles(param);
-	normalize_mass(s, param);
-	return s;
 }

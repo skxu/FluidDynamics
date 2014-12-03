@@ -2,6 +2,7 @@
 #define __GRID_H__
 
 #include <vector>
+#include <math.h>
 
 #include "Variables.h"
 
@@ -9,7 +10,7 @@ using namespace std;
 
 class Grid{
 public:
-	Grid(float xBound, float yBound, float zBound, float h, sim_state_t s);
+	Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s);
 	~Grid();
 
 	/* Call this to refresh the particles to the correct cells */
