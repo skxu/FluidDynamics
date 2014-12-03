@@ -13,7 +13,7 @@ void compute_density(sim_state_t* s, sim_param_t* params)
   float C  = 4 * s->mass / PI / h8;
 
   memset(rho, 0, n*sizeof(float));
-  for (int i = 0; i < n; ++i) {
+  for (int i = 0; i < n; i++) {
     rho[i] += 4 * s->mass / PI / h2;
     // TODO: Calculate neighbors
     for (int j = i+1; j < n; ++j) {
@@ -51,7 +51,7 @@ void compute_accel(sim_state_t* state, sim_param_t* params)
   compute_density(state, params);
 
   // Gravity
-  for (int i = 0; i < n; ++i) {
+  for (int i = 0; i < n; i++) {
     a[3*i+0] = 0;
     a[3*i+1] = 0;
     a[3*i+2] = -g;
@@ -63,7 +63,7 @@ void compute_accel(sim_state_t* state, sim_param_t* params)
   float Cv = -40*mu;
 
   // Interaction force calculation
-  for (int i = 0; i < n; ++i) {
+  for (int i = 0; i < n; i++) {
     const float rhoi = rho[i];
     // To do - grid based to avoid the O(n^2) loop, add back Wesley's and Omer's code
     for (int j = i+1; j < n; ++j) {
@@ -100,13 +100,13 @@ void leapfrog_step(sim_state_t* s, float dt)
   float* x       = s->x;
   int n          = s->n;
 
-  for (int i = 0; i < 3*n; ++i) {
+  for (int i = 0; i < 3*n; i++) {
     vh[i] += a[i] * dt;
   }
-  for (int i = 0; i < 3*n; ++i) {
+  for (int i = 0; i < 3*n; i++) {
     v[i] = vh[i] + a[i] * dt / 2;
   }
-  for (int i = 0; i < 3*n; ++i) {
+  for (int i = 0; i < 3*n; i++) {
     x[i] += vh[i] * dt;
   }
 
@@ -122,13 +122,13 @@ void leapfrog_start(sim_state_t* s, float dt)
   float* v       = s->v;
   float* x       = s->x;
   int n          = s->n;
-  for (int i = 0; i < 3*n; ++i) {
-    vh[i] += v[i] + a[i] * dt / 2;
+  for (int i = 0; i < 3*n; i++) {
+    vh[i] = v[i] + a[i] * dt / 2;
   }
-  for (int i = 0; i < 3*n; ++i) {
-    v[i] = a[i] * dt;
+  for (int i = 0; i < 3*n; i++) {
+    v[i] += a[i] * dt;
   }
-  for (int i = 0; i < 3*n; ++i) {
+  for (int i = 0; i < 3*n; i++) {
     x[i] += vh[i] * dt;
   }
 
@@ -136,7 +136,7 @@ void leapfrog_start(sim_state_t* s, float dt)
   reflect_bc(s);
 }
 
-// Handles boundary collissions
+// Handles boundary collisions
 // dim = 0 (x), dim = 1 (y), dim = 2 (z)
 void damp_reflect(int dim, float barrier,
                   float* x, float* v, float* vh)
@@ -195,7 +195,7 @@ void normalize_mass(sim_state_t* s, sim_param_t* param)
   float rho0 = param->rho0;
   float rho2s = 0;
   float rhos = 0;
-  for (int i = 0; i < s->n; ++i) {
+  for (int i = 0; i < s->n; i++) {
     rho2s += (s->rho[i])*(s->rho[i]);
     rhos += s->rho[i];
   }
@@ -204,7 +204,10 @@ void normalize_mass(sim_state_t* s, sim_param_t* param)
 
 sim_state_t* init_particles(sim_param_t* param)
 {
-	sim_state_t* s = place_particles(param, box_indicator);
+	//sim_state_t* s = place_particles(param, box_indicator);
+  //sim_state_t* s = place_particles(param, box_indicator_long);
+  sim_state_t* s = place_particles(param, sphere_indicator);
+  //sim_state_t* s = rain_particles(param);
 	normalize_mass(s, param);
 	return s;
 }

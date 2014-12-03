@@ -32,13 +32,13 @@ void write_frame_data(ofstream* fp, int n, float* x)
 void init_params(sim_param_t* params) {
   // Kevin you will need to fix this
   params->fname = "../outputs/run.txt"; /* File name */
-  params->nframes = 200; /* Number of frames */
-  params->npframe = 10; /* Steps per frame */
+  params->nframes = 400; /* Number of frames */
+  params->npframe = 50; /* Steps per frame */
   params->h = 5e-2; /* Particle size */
-  params->dt = 1e-3; /* Time step */
+  params->dt = 2e-4; /* Time step */
   params->rho0 = 1000; /* Reference density */
-  params->k = 1e3; /* Bulk modulus */
-  params->mu = 0.1; /* Viscosity */
+  params->k = 1e2; /* Bulk modulus */
+  params->mu = 0.01; /* Viscosity */
   params->g = 9.8; /* Gravity strength */
 }
 
@@ -55,11 +55,13 @@ int main(int argc, char* argv[])
 	int npframe = params.npframe;
 	float dt = params.dt;
 	int n = state->n;
+  printf("%d\n", n);
 	write_frame_data(fp, n, state->x);
 	compute_accel(state, &params);
 	leapfrog_start(state, dt);
 	check_state(state);
 	for (int frame = 1; frame < nframes; ++frame) {
+    printf("On iteration %d / %d\n", frame, nframes);
 		for (int i = 0; i < npframe; ++i) {
 			compute_accel(state, &params);
 			leapfrog_step(state, dt);

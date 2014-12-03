@@ -24,6 +24,7 @@ typedef struct sim_state_t {
 	float* v; /* Velocities (full step) */
 	float* a; /* Acceleration */
 } sim_state_t;
+
 sim_state_t* alloc_state(int n);
 void free_state(sim_state_t* s);
 

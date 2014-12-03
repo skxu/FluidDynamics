@@ -1,3 +1,6 @@
+#ifndef __UPDATE_H__
+#define __UPDATE_H__
+
 #include "Variables.h"
 #include <math.h>
 #include <string.h>
@@ -15,3 +18,5 @@ void reflect_bc(sim_state_t* s);
 
 void normalize_mass(sim_state_t* s, sim_param_t* param);
 sim_state_t* init_particles(sim_param_t* param);
+
+#endif
