@@ -7,15 +7,12 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	yDim = ceil(yBound / h);
 	zDim = ceil(zBound / h);
 	totalCells = xDim * yDim * zDim;
-	grid = new vector<int>[totalCells];
 	cutoff = h;
-	for (int i = 0; i < totalCells; i++){
-		grid[i] = vector<int>();
-	}
+	grid = vector<vector<int> >(totalCells, vector<int>());
 }
 
 Grid::~Grid(){
-	delete[] grid;
+
 }
 
 void Grid::cleanGrid(){
@@ -40,7 +37,7 @@ void Grid::setParticles(){
 
 
 /* Get neighbors for a particle */
-void Grid::getNeighbors(int i, vector<int>& neighbors) {
+void Grid::getNeighbors(int i, vector<int> &neighbors) {
 	float x = posVec[3 * i];
 	float y = posVec[3 * i + 1];
 	float z = posVec[3 * i + 2];

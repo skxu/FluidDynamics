@@ -22,7 +22,7 @@ public:
 	/* Get distance between particles at these indices */
 	float getDistance(int p1_index, int p2_index);
 private:
-	vector<int>* grid;
+	vector<vector<int> > grid;
 
 	/* h */
 	float cutoff;
