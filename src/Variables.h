@@ -4,7 +4,7 @@
 #define PI 3.14159265359
 
 typedef struct sim_param_t {
-	char* fname; /* File name */
+	const char* fname; /* File name */
 	int nframes; /* Number of frames */
 	int npframe; /* Steps per frame */
 	float h; /* Particle size */
@@ -13,6 +13,7 @@ typedef struct sim_param_t {
 	float k; /* Bulk modulus */
 	float mu; /* Viscosity */
 	float g; /* Gravity strength */
+	float damp; /* Dampening on collisions */
 } sim_param_t;
 
 typedef struct sim_state_t {

@@ -17,7 +17,7 @@ public:
 	void setParticles();
 
 	/* Get the neighbors of particle i that have index higher than this particle */
-	vector<int> getNeighbors(int i);
+	void getNeighbors(int i, vector<int>& neighbors);
 
 	/* Get distance between particles at these indices */
 	float getDistance(int p1_index, int p2_index);

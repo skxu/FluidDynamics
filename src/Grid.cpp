@@ -40,7 +40,7 @@ void Grid::setParticles(){
 
 
 /* Get neighbors for a particle */
-vector<int> Grid::getNeighbors(int i) {
+void Grid::getNeighbors(int i, vector<int>& neighbors) {
 	float x = posVec[3 * i];
 	float y = posVec[3 * i + 1];
 	float z = posVec[3 * i + 2];
@@ -48,8 +48,6 @@ vector<int> Grid::getNeighbors(int i) {
 	int gridPos_x = floor(x / cutoff);
 	int gridPos_y = floor(y / cutoff);
 	int gridPos_z = floor(z / cutoff);
-
-	vector<int> neighborInds = vector<int>();
 
 	for (int a = gridPos_x - 1; a <= gridPos_x + 1; a++){
 		for (int b = gridPos_y - 1; b <= gridPos_y + 1; b++){
@@ -62,14 +60,13 @@ vector<int> Grid::getNeighbors(int i) {
 						int other_particle_index = grid[grid_index][d];
 						float distance = getDistance(i, other_particle_index);
 						if (distance < cutoff && other_particle_index > i){ // dont need duplicate neighbors
-							neighborInds.push_back(other_particle_index);
+							neighbors.push_back(other_particle_index);
 						}
 					}
 				}
 			}
 		}
 	}
-	return neighborInds;
 }
 
 /*  PRIVATE METHODS  */

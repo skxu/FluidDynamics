@@ -35,14 +35,15 @@ void write_frame_data(ofstream* fp, int n, float* x)
 void init_params(sim_param_t* params) {
   // Kevin you will need to fix this
   params->fname = "../outputs/run.txt"; /* File name */
-  params->nframes = 50; /* Number of frames */
-  params->npframe = 50; /* Steps per frame */
+  params->nframes = 500; /* Number of frames */
+  params->npframe = 100; /* Steps per frame */
   params->h = 5e-2; /* Particle size */
-  params->dt = 2e-4; /* Time step */
+  params->dt = 1e-4; /* Time step */
   params->rho0 = 1000; /* Reference density */
   params->k = 1e3; /* Bulk modulus */
   params->mu = 0.005; /* Viscosity */
   params->g = 9.8; /* Gravity strength */
+  params->damp = 0.75; /* Damp */
 }
 
 int main(int argc, char* argv[])
@@ -63,14 +64,14 @@ int main(int argc, char* argv[])
   printf("Number of Particles: %d\n", n);
 	write_frame_data(fp, n, state->x);
 	compute_accel(state, &params, grid);
-	leapfrog_start(state, dt);
+	leapfrog_start(state, &params, dt);
   grid->setParticles();
 	check_state(state);
 	for (int frame = 1; frame < nframes; ++frame) {
     printf("On iteration %d / %d\n", frame, nframes);
 		for (int i = 0; i < npframe; ++i) {
 			compute_accel(state, &params, grid);
-			leapfrog_step(state, dt);
+			leapfrog_step(state, &params, dt);
 			check_state(state);
       grid->setParticles();
 		}

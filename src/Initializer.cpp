@@ -24,7 +24,7 @@ int sphere_indicator(float x, float y, float z)
 sim_state_t* place_particles(sim_param_t* param, domain_fun_t indicatef)
 {
 	float h = param->h;
-	float hh = h / 1.3;
+	float hh = h / 1.2;
 	// Count mesh points that fall in indicated region.
 	int count = 0;
 	for (float x = 0; x < 1; x += hh)

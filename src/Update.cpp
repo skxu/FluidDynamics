@@ -17,7 +17,8 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
   memset(rho, 0, n*sizeof(float));
   for (int i = 0; i < n; i++) {
     rho[i] += 4 * s->mass / PI / h2;
-    vector<int> neighbors = grid->getNeighbors(i);
+    vector<int> neighbors;
+    grid->getNeighbors(i, neighbors);
     for (int nidx = 0; nidx < neighbors.size(); nidx++) {
       int j = neighbors[nidx];
       float dx = x[3*i+0] - x[3*j+0];
@@ -68,7 +69,8 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
   // Interaction force calculation
   for (int i = 0; i < n; i++) {
     const float rhoi = rho[i];
-    vector<int> neighbors = grid->getNeighbors(i);
+    vector<int> neighbors;
+    grid->getNeighbors(i, neighbors);
     for (int nidx = 0; nidx < neighbors.size(); nidx++) {
       int j = neighbors[nidx];
       float dx = x[3*i+0] - x[3*j+0];
@@ -96,7 +98,7 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
   }
 }
 
-void leapfrog_step(sim_state_t* s, float dt)
+void leapfrog_step(sim_state_t* s, sim_param_t* p, float dt)
 {
   const float* a = s->a;
   float* vh      = s->vh;
@@ -115,11 +117,11 @@ void leapfrog_step(sim_state_t* s, float dt)
   }
 
   // Handle reflection across edge and bottom
-  reflect_bc(s);
+  reflect_bc(s, p);
 }
 
 // Special edge case for first timestep
-void leapfrog_start(sim_state_t* s, float dt)
+void leapfrog_start(sim_state_t* s, sim_param_t* p, float dt)
 {
   const float* a = s->a;
   float* vh      = s->vh;
@@ -137,24 +139,24 @@ void leapfrog_start(sim_state_t* s, float dt)
   }
 
   // Handle reflection across edge and bottom
-  reflect_bc(s);
+  reflect_bc(s, p);
 }
 
 // Handles boundary collisions
 // dim = 0 (x), dim = 1 (y), dim = 2 (z)
 void damp_reflect(int dim, float barrier,
-                  float* x, float* v, float* vh)
+                  float* x, float* v, float* vh, sim_param_t* p)
 {
-  const float DAMP = 0.75;
+  float damp = p->damp;
 
   // Particle doesn't move -- no update
   if (v[dim] == 0) return;
 
   // Scale back distance traveled based on time of collision
   float tbounce = (x[dim] - barrier)  / v[dim];
-  x[0] -= v[0]*(1-DAMP)*tbounce;
-  x[1] -= v[1]*(1-DAMP)*tbounce;
-  x[2] -= v[2]*(1-DAMP)*tbounce;
+  x[0] -= v[0]*(1-damp)*tbounce;
+  x[1] -= v[1]*(1-damp)*tbounce;
+  x[2] -= v[2]*(1-damp)*tbounce;
 
   // Reflect position and velocity
   x[dim]  = 2*barrier - x[dim];
@@ -162,21 +164,22 @@ void damp_reflect(int dim, float barrier,
   vh[dim] = -vh[dim];
 
   // Damp the velocities
-  v[0]  *= DAMP;
-  vh[0] *= DAMP;
-  v[1]  *= DAMP;
-  vh[1] *= DAMP;
-  v[2]  *= DAMP;
-  vh[2] *= DAMP;
+  v[0]  *= damp;
+  vh[0] *= damp;
+  v[1]  *= damp;
+  vh[1] *= damp;
+  v[2]  *= damp;
+  vh[2] *= damp;
 }
 
-void reflect_bc(sim_state_t* s)
+void reflect_bc(sim_state_t* s, sim_param_t* p)
 {
   const float XMIN = 0.0;
   const float XMAX = 1.0;
   const float YMIN = 0.0;
   const float YMAX = 1.0;
   const float ZMIN = 0.0;
+  const float ZMAX = 1.0;
   // No ZMAX for open top container
 
   float* vh = s->vh;
@@ -184,11 +187,12 @@ void reflect_bc(sim_state_t* s)
   float* x  = s->x;
   int n     = s->n;
   for (int i = 0; i < n; i++, x+=3, v+=3, vh+=3) {
-    if (x[0] < XMIN) damp_reflect(0, XMIN, x, v, vh);
-    if (x[0] > XMAX) damp_reflect(0, XMAX, x, v, vh);
-    if (x[1] < YMIN) damp_reflect(1, YMIN, x, v, vh);
-    if (x[1] > YMAX) damp_reflect(1, YMAX, x, v, vh);
-    if (x[2] < ZMIN) damp_reflect(2, ZMIN, x, v, vh);
+    if (x[0] < XMIN) damp_reflect(0, XMIN, x, v, vh, p);
+    if (x[0] > XMAX) damp_reflect(0, XMAX, x, v, vh, p);
+    if (x[1] < YMIN) damp_reflect(1, YMIN, x, v, vh, p);
+    if (x[1] > YMAX) damp_reflect(1, YMAX, x, v, vh, p);
+    if (x[2] < ZMIN) damp_reflect(2, ZMIN, x, v, vh, p);
+    if (x[2] > ZMAX) damp_reflect(2, ZMAX, x, v, vh, p);
   }
 }
 
