@@ -4,26 +4,26 @@
 #define PI 3.14159265359
 
 typedef struct sim_param_t {
-	const char* fname; /* File name */
-	int nframes; /* Number of frames */
-	int npframe; /* Steps per frame */
-	float h; /* Particle size */
-	float dt; /* Time step */
-	float rho0; /* Reference density */
-	float k; /* Bulk modulus */
-	float mu; /* Viscosity */
-	float g; /* Gravity strength */
-	float damp; /* Dampening on collisions */
+  const char* fname; /* File name */
+  int nframes;       /* Number of frames   */
+  int npframe;       /* Steps per frame    */
+  float h;           /* Particle size      */
+  float dt;          /* Time step          */
+  float rho0;        /* Reference density  */
+  float k;           /* Bulk modulus       */
+  float mu;          /* Viscosity          */
+  float g;           /* Gravity strength   */
+  float damp;        /* Damp on collisions */
 } sim_param_t;
 
 typedef struct sim_state_t {
-	int n; /* Number of particles */
-	float mass; /* Particle mass */
-	float* rho; /* Densities */
-	float* x; /* Positions */
-	float* vh; /* Velocities (half step) */
-	float* v; /* Velocities (full step) */
-	float* a; /* Acceleration */
+  int n;         /* Number of particles    */
+  float mass;    /* Particle mass          */
+  float* rho;    /* Densities              */
+  float* x;      /* Positions              */
+  float* vh;     /* Velocities (half step) */
+  float* v;      /* Velocities (full step) */
+  float* a;      /* Acceleration           */
 } sim_state_t;
 
 sim_state_t* alloc_state(int n);

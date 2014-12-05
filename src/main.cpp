@@ -1,3 +1,6 @@
+/** Smoothed Particle Hydrodynamics 3D implementation                         **/
+/** Based on: http://www.cs.cornell.edu/~bindel/class/cs5220-f11/code/sph.pdf **/
+
 #include "Update.h"
 #include "Grid.h"
 #include "Initializer.h"
@@ -35,13 +38,13 @@ void write_frame_data(ofstream* fp, int n, float* x)
 void init_params(sim_param_t* params) {
   // Kevin you will need to fix this
   params->fname = "../outputs/run.txt"; /* File name */
-  params->nframes = 500; /* Number of frames */
+  params->nframes = 100; /* Number of frames */
   params->npframe = 100; /* Steps per frame */
-  params->h = 5e-2; /* Particle size */
-  params->dt = 1e-4; /* Time step */
+  params->h = 4e-2; /* Particle size */
+  params->dt = 2e-4; /* Time step */
   params->rho0 = 1000; /* Reference density */
-  params->k = 1e3; /* Bulk modulus */
-  params->mu = 0.005; /* Viscosity */
+  params->k = 100; /* Bulk modulus */
+  params->mu = 0.1; /* Viscosity */
   params->g = 9.8; /* Gravity strength */
   params->damp = 0.75; /* Damp */
 }
@@ -50,7 +53,8 @@ int main(int argc, char* argv[])
 {
 	sim_param_t params;
   init_params(&params);
-  sim_state_t* state = place_particles(&params, sphere_indicator);
+  sim_state_t* state = place_particles(&params, box_indicator);
+  //sim_state_t* state = place_particles(&params, sphere_indicator_with_water_plane);
   Grid* grid = new Grid(1.0, 1.0, 1.0, params.h, state);
   grid->setParticles();
   normalize_mass(state, &params, grid);
