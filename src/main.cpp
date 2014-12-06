@@ -14,24 +14,22 @@
 
 using namespace std;
 
-void check_state(sim_state_t* s)
-{
+void check_state(sim_state_t* s) {
 	for (int i = 0; i < s->n; ++i) {
 		float xi = s->x[3 * i + 0];
 		float yi = s->x[3 * i + 1];
-    float zi = s->x[3 * i + 2];
+		float zi = s->x[3 * i + 2];
 		assert(xi >= 0 || xi <= 1);
 		assert(yi >= 0 || yi <= 1);
-    assert(zi >= 0);
+    	assert(zi >= 0);
 	}
 }
-void write_frame_data(ofstream* fp, int n, float* x)
-{
-	for (int i = 0; i < n; i ++)
-	{
-    // Shifted positions are for simple-render
-    float shiftx = x[3*i+0] - 0.5;
-    float shifty = x[3*i+1] - 0.5;
+
+void write_frame_data(ofstream* fp, int n, float* x) {
+	for (int i = 0; i < n; i ++) {
+	    // Shifted positions are for simple-render
+	    float shiftx = x[3*i+0] - 0.5;
+	    float shifty = x[3*i+1] - 0.5;
 		*fp << "p " << shiftx << " " << shifty << " " << x[3*i+2] << "\n";
 	}
 	*fp << "t\n";
@@ -51,47 +49,111 @@ void init_params(sim_param_t* params) {
   params->damp = 0.75; /* Damp */
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
   
-  double start = omp_get_wtime(); //benchmarking starts here
 
-  sim_param_t params;
-  init_params(&params);
-  sim_state_t* state = place_particles(&params, box_indicator);
-  //sim_state_t* state = place_particles(&params, sphere_indicator_with_water_plane);
-  Grid* grid = new Grid(1.0, 1.0, 1.0, params.h, state);
-  grid->setParticles();
-  normalize_mass(state, &params, grid);
+	double start = omp_get_wtime(); //benchmarking starts here
+	double write_time = 0.0; //time spent on write_frame_data & fp init
+	double accel_time = 0.0; //time for compute_accel
+	double set_time = 0.0; //time for setParticles
+	double frog_time = 0.0; //uh
+	double check_time = 0.0; //time for checking state
+	double init_time = 0.0;
+
+	double time_start = omp_get_wtime();
+
+	sim_param_t params;
+	init_params(&params);
+	sim_state_t* state = place_particles(&params, box_indicator);
+	//sim_state_t* state = place_particles(&params, sphere_indicator_with_water_plane);
+	Grid* grid = new Grid(1.0, 1.0, 1.0, params.h, state);
+	grid->setParticles();
+	normalize_mass(state, &params, grid);
+
+	init_time += omp_get_wtime() - time_start;
+	time_start = omp_get_wtime();
 
 	ofstream* fp = new ofstream();
 	fp->open(params.fname);
+
+	write_time += omp_get_wtime() - time_start;
+
+
 	int nframes = params.nframes;
 	int npframe = params.npframe;
 	float dt = params.dt;
 	int n = state->n;
-  printf("Number of Particles: %d\n", n);
+	printf("Number of Particles: %d\n", n);
+
+	time_start = omp_get_wtime();
 	write_frame_data(fp, n, state->x);
+	write_time += omp_get_wtime() - time_start;
+	time_start = omp_get_wtime();
+
 	compute_accel(state, &params, grid);
+
+	accel_time += omp_get_wtime() - time_start;
+	time_start = omp_get_wtime();
+
 	leapfrog_start(state, &params, dt);
-  grid->setParticles();
+
+	frog_time += omp_get_wtime() - time_start;
+	time_start = omp_get_wtime();
+
+	grid->setParticles();
+
+	set_time += omp_get_wtime() - time_start;
+	time_start = omp_get_wtime();
+
 	check_state(state);
+	
+	check_time += omp_get_wtime() - time_start;
+
+
 	for (int frame = 1; frame < nframes; ++frame) {
-    printf("On iteration %d / %d\n", frame, nframes);
+    	printf("On iteration %d / %d\n", frame, nframes);
 		for (int i = 0; i < npframe; ++i) {
+
+			time_start = omp_get_wtime();
+			
 			compute_accel(state, &params, grid);
+
+			accel_time += omp_get_wtime() - time_start;
+			time_start = omp_get_wtime();
+
 			leapfrog_step(state, &params, dt);
+
+			frog_time += omp_get_wtime() - time_start;
+			time_start = omp_get_wtime();
+
 			check_state(state);
-      grid->setParticles();
+			
+			check_time += omp_get_wtime() - time_start;
+			time_start = omp_get_wtime();
+
+			grid->setParticles();
+
+			set_time = omp_get_wtime() - time_start;
 		}
+
+		time_start = omp_get_wtime();
+
 		write_frame_data(fp, n, state->x);
+
+		write_time += omp_get_wtime() - time_start;
 	}
 
-	double end = omp_get_wtime();
+	double total_time = omp_get_wtime() - start;
 
-	printf("Total time to run: %f\n",end-start);
+	printf("Total time to run: %f\n",total_time);
+	printf("Total time spent writing to disk: %f\n", write_time);
+	printf("Total time spent computing accel: %f\n", accel_time);
+	printf("Total time spent on init: %f\n", init_time);
+	printf("Total time spent checking state: %f\n", check_time);
+	printf("Total time spent setting particles: %f\n", set_time);
+	printf("Total time spent on leapfrog step: %f\n", frog_time);
 
 	fp->close();
-  delete grid;
+	delete grid;
 	free_state(state);
 }

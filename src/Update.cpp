@@ -1,6 +1,9 @@
 #include "Update.h"
 #include "Initializer.h"
 
+#include <iostream>
+#include <omp.h>
+
 using namespace std;
 
 void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid) 
@@ -52,7 +55,12 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
   int n            = state->n;
 
   // Compute Densities
+  double time_start = omp_get_wtime();
   compute_density(state, params, grid);
+  double time_taken = omp_get_wtime() - time_start;
+  //printf("Compute density took: %f\n", time_taken);
+
+  time_start = omp_get_wtime();
 
   // Gravity
   for (int i = 0; i < n; i++) {
@@ -96,6 +104,11 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
       }
     }
   }
+
+  time_taken = omp_get_wtime() - time_start;
+  //printf("Rest took: %f\n", time_taken);
+
+
 }
 
 void leapfrog_step(sim_state_t* s, sim_param_t* p, float dt)
