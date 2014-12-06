@@ -10,6 +10,8 @@
 #include <assert.h>
 #include <ctime>
 
+#include <omp.h>
+
 using namespace std;
 
 void check_state(sim_state_t* s)
@@ -51,7 +53,10 @@ void init_params(sim_param_t* params) {
 
 int main(int argc, char* argv[])
 {
-	sim_param_t params;
+  
+  double start = omp_get_wtime(); //benchmarking starts here
+
+  sim_param_t params;
   init_params(&params);
   sim_state_t* state = place_particles(&params, box_indicator);
   //sim_state_t* state = place_particles(&params, sphere_indicator_with_water_plane);
@@ -81,6 +86,11 @@ int main(int argc, char* argv[])
 		}
 		write_frame_data(fp, n, state->x);
 	}
+
+	double end = omp_get_wtime();
+
+	printf("Total time to run: %f\n",end-start);
+
 	fp->close();
   delete grid;
 	free_state(state);
