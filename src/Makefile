@@ -1,4 +1,4 @@
-CC = g++
+CC = g++ -fopenmp
 TARGET = solveFluid
 
 default: solveFluid

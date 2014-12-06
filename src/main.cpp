@@ -4,6 +4,7 @@
 #include "Update.h"
 #include "Grid.h"
 #include "Initializer.h"
+#include "omp.h"
 
 #include <iostream>
 #include <fstream>
@@ -18,9 +19,9 @@ void check_state(sim_state_t* s)
 		float xi = s->x[3 * i + 0];
 		float yi = s->x[3 * i + 1];
     float zi = s->x[3 * i + 2];
-		assert(xi >= 0 || xi <= 1);
-		assert(yi >= 0 || yi <= 1);
-    assert(zi >= 0);
+		assert(xi >= -0.001 && xi <= 1.001);
+		assert(yi >= -0.001 && yi <= 1.001);
+    assert(zi >= -0.001 && zi <= 1.001);
 	}
 }
 void write_frame_data(ofstream* fp, int n, float* x)
@@ -38,12 +39,12 @@ void write_frame_data(ofstream* fp, int n, float* x)
 void init_params(sim_param_t* params) {
   // Kevin you will need to fix this
   params->fname = "../outputs/run.txt"; /* File name */
-  params->nframes = 100; /* Number of frames */
+  params->nframes = 200; /* Number of frames */
   params->npframe = 100; /* Steps per frame */
-  params->h = 4e-2; /* Particle size */
-  params->dt = 2e-4; /* Time step */
+  params->h = 5e-2; /* Particle size */
+  params->dt = 1e-4; /* Time step */
   params->rho0 = 1000; /* Reference density */
-  params->k = 100; /* Bulk modulus */
+  params->k = 500; /* Bulk modulus */
   params->mu = 0.1; /* Viscosity */
   params->g = 9.8; /* Gravity strength */
   params->damp = 0.75; /* Damp */
@@ -51,6 +52,7 @@ void init_params(sim_param_t* params) {
 
 int main(int argc, char* argv[])
 {
+  omp_set_num_threads(16);
 	sim_param_t params;
   init_params(&params);
   sim_state_t* state = place_particles(&params, box_indicator);

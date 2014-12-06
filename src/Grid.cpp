@@ -56,7 +56,7 @@ void Grid::getNeighbors(int i, vector<int> &neighbors) {
 					{
 						int other_particle_index = grid[grid_index][d];
 						float distance = getDistance(i, other_particle_index);
-						if (distance < cutoff && other_particle_index > i){ // dont need duplicate neighbors
+						if (distance < cutoff) { //&& other_particle_index > i){ // dont need duplicate neighbors
 							neighbors.push_back(other_particle_index);
 						}
 					}
