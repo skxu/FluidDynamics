@@ -23,13 +23,14 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
   #pragma omp parallel for
   for (int i = 0; i < n; i++) {
     float rhoi = 0;
-    vector<int> neighbors;
     
     if (DEBUG == 3) {
       start_neighbor = omp_get_wtime();
     }
     
-    grid->getNeighbors(i, neighbors);
+    //vector<int> neighbors;
+    //grid->getNeighbors(i, neighbors);
+    vector<int>* neighbors = grid->getNeighbors(i);
     
     if (DEBUG == 3) {
       neighbor_sum += omp_get_wtime() - start_neighbor;
@@ -38,8 +39,8 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
     __m128 x1 = _mm_loadu_ps(x + 3*i);
 
     int nidx = 0;
-    for (nidx; nidx < neighbors.size(); nidx++) {
-      int j = neighbors[nidx];
+    for (nidx; nidx < neighbors->size(); nidx++) {
+      int j = (*neighbors)[nidx];
       
       __m128 x2 = _mm_loadu_ps(x + 3*j);
       __m128 r = _mm_sub_ps(x1, x2); 
@@ -96,16 +97,17 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
   #pragma omp parallel for
   for (int i = 0; i < n; i++) {
     const float rhoi = rho[i];
-    vector<int> neighbors;
-    grid->getNeighbors(i, neighbors);
+    //vector<int> neighbors;
+    //grid->getNeighbors(i, neighbors);
+    vector<int>* neighbors = grid->getNeighbors(i);
     
     __m128 x1 = _mm_loadu_ps(x + 3*i);
     __m128 v2 = _mm_loadu_ps(v + 3*i);
 
     __m128 sum = _mm_setzero_ps();
 
-    for (int nidx = 0; nidx < neighbors.size(); nidx++) {
-      int j = neighbors[nidx];
+    for (int nidx = 0; nidx < neighbors->size(); nidx++) {
+      int j = (*neighbors)[nidx];
       if (i != j) {
         //float dx = x[3*i+0] - x[3*j+0];
         //float dy = x[3*i+1] - x[3*j+1];

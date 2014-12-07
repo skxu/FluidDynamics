@@ -49,6 +49,10 @@ void Grid::getNeighbors(int i, vector<int> &outNeighbors) {
 	for (int i = 0; i < nVec->size(); i++) outNeighbors.push_back((*nVec)[i]);
 }
 
+vector<int>* Grid::getNeighbors(int i) {
+	return neighbors[i];
+}
+
 /*  PRIVATE METHODS  */
 
 
