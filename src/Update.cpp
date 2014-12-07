@@ -10,14 +10,14 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
   const float* x = s->x;
 
   float h  = params->h;
-  float h2 = h*h;
-  float h8 = (h2*h2)*(h2*h2);
-  float C  = 4 * s->mass / PI / h8;
+  float h2 = h * h;
+  float h4 = h2 * h2;
+  float h9 = h4 * h4 * h;
+  float C  = 315.0 * s->mass / 64.0 / PI / h9;
 
   memset(rho, 0, n*sizeof(float));
   #pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < n; i++) {
-    //rho[i] += 4 * s->mass / PI / h2; // add itself
     vector<int> neighbors;
     grid->getNeighbors(i, neighbors);
     for (int nidx = 0; nidx < neighbors.size(); nidx++) {
@@ -30,11 +30,9 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
       if (z > 0) {
         float rho_ij = C*z*z*z;
         rho[i] += rho_ij;
-        //rho[j] += rho_ij;
       }
     }
   }
-  #pragma omp barrier
 }
 
 void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
@@ -64,9 +62,7 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
   }
 
   // Interaction term constants
-  float C0 = mass / PI / (h2*h2);
-  float Cp = 15*k;
-  float Cv = -40*mu;
+  float C0 = 45.0 * mass / PI / (h2*h2*h2);
 
   // Interaction force calculation
   #pragma omp parallel for schedule(dynamic)
@@ -76,32 +72,26 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
     grid->getNeighbors(i, neighbors);
     for (int nidx = 0; nidx < neighbors.size(); nidx++) {
       int j = neighbors[nidx];
-      if (j != i) {
+      if (i != j) {
         float dx = x[3*i+0] - x[3*j+0];
         float dy = x[3*i+1] - x[3*j+1];
         float dz = x[3*i+2] - x[3*j+2];
-        float r2 = dx*dx + dy*dy + dz*dz;
-        if (r2 < h2) {
-          const float rhoj = rho[j];
-          float q = sqrt(r2)/h;
-          float u = 1-q;
-          float w0 = C0 * u/rhoi/rhoj;
-          float wp = w0 * Cp * (rhoi + rhoj - 2*rho0) * u/q;
-          float wv = w0 * Cv;
-          float dvx = v[3*i+0] - v[3*j+0];
-          float dvy = v[3*i+1] - v[3*j+1];
-          float dvz = v[3*i+2] - v[3*j+2];
-          a[3*i+0] += (wp*dx + wv*dvx);
-          a[3*i+1] += (wp*dy + wv*dvy);
-          a[3*i+2] += (wp*dz + wv*dvz);
-          //a[3*j+0] -= (wp*dx + wv*dvx);
-          //a[3*j+1] -= (wp*dy + wv*dvy);
-          //a[3*j+2] -= (wp*dz + wv*dvz);
-        }
+        float r = sqrt(dx*dx + dy*dy + dz*dz);
+        assert(r > 0); // this shouldn't be 0 do to floating point precision
+        float z = h-r;
+        const float rhoj = rho[j];
+        float w0 = C0/rhoi/rhoj;
+        float wp = w0 * k * (rhoi + rhoj - 2*rho0) * z * z / r / 2.0;
+        float wv = w0 * mu * z;
+        float dvx = v[3*j+0] - v[3*i+0];
+        float dvy = v[3*j+1] - v[3*i+1];
+        float dvz = v[3*j+2] - v[3*i+2];
+        a[3*i+0] += (wp*dx + wv*dvx);
+        a[3*i+1] += (wp*dy + wv*dvy);
+        a[3*i+2] += (wp*dz + wv*dvz);
       }
     }
   }
-  #pragma omp barrier
 }
 
 void leapfrog_step(sim_state_t* s, sim_param_t* p, float dt)
@@ -118,8 +108,6 @@ void leapfrog_step(sim_state_t* s, sim_param_t* p, float dt)
     v[i] = vh[i] + a[i] * dt / 2;
     x[i] += vh[i] * dt;
   }
-
-  #pragma omp barrier
 
   // Handle reflection across edge and bottom
   reflect_bc(s, p);
@@ -140,8 +128,6 @@ void leapfrog_start(sim_state_t* s, sim_param_t* p, float dt)
     v[i] += a[i] * dt;
     x[i] += vh[i] * dt;
   }
-
-  #pragma omp barrier
 
   // Handle reflection across edge and bottom
   reflect_bc(s, p);
@@ -194,14 +180,13 @@ void reflect_bc(sim_state_t* s, sim_param_t* p)
   float* v  = s->v;
   float* x  = s->x;
   int n     = s->n;
-  #pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < n; i++) {
     if (x[3*i+0] < XMIN) damp_reflect(0, i, XMIN, s, p);
-    if (x[3*i+0] > XMAX) damp_reflect(0, i, XMAX, s, p);
+    if (x[3*i+0] >= XMAX) damp_reflect(0, i, XMAX, s, p); // fix this
     if (x[3*i+1] < YMIN) damp_reflect(1, i, YMIN, s, p);
-    if (x[3*i+1] > YMAX) damp_reflect(1, i, YMAX, s, p);
+    if (x[3*i+1] >= YMAX) damp_reflect(1, i, YMAX, s, p);
     if (x[3*i+2] < ZMIN) damp_reflect(2, i, ZMIN, s, p);
-    if (x[3*i+2] > ZMAX) damp_reflect(2, i, ZMAX, s, p);
+    if (x[3*i+2] >= ZMAX) damp_reflect(2, i, ZMAX, s, p);
   }
 }
 
@@ -212,7 +197,6 @@ void normalize_mass(sim_state_t* s, sim_param_t* param, Grid* grid)
   float rho0 = param->rho0;
   float rho2s = 0;
   float rhos = 0;
-  #pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < s->n; i++) {
     rho2s += (s->rho[i])*(s->rho[i]);
     rhos += s->rho[i];

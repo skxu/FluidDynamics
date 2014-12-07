@@ -4,7 +4,7 @@ using namespace std;
 
 int box_indicator(float x, float y, float z)
 {
-	return (x < 0.4) && (y < 0.4) && (z < 0.8);
+	return (x < 0.25) && (y < 0.25) && (z < 0.9);
 }
 
 int box_indicator_long(float x, float y, float z)
@@ -27,8 +27,8 @@ int sphere_indicator_with_water_plane(float x, float y, float z)
 	float dy = (y - 0.5);
 	float dz = (z - 0.75);
 	float r2 = dx*dx + dy*dy + dz*dz;
-	//return (r2 < 0.1*0.1) || z < 0.1;
-	return z < 0.05;
+	return (r2 < 0.1*0.1) || z < 0.2;
+	//return z < 0.05;
 }
 
 sim_state_t* place_particles(sim_param_t* param, domain_fun_t indicatef)

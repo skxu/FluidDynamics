@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <math.h>
+#include <assert.h>
+#include "omp.h"
 
 #include "Variables.h"
 
@@ -20,7 +22,7 @@ public:
 	void getNeighbors(int i, vector<int>& neighbors);
 
 	/* Get distance between particles at these indices */
-	float getDistance(int p1_index, int p2_index);
+	float getDistance2(int p1_index, int p2_index);
 private:
 	vector<vector<int> > grid;
 

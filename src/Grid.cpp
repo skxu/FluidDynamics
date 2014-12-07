@@ -27,9 +27,9 @@ void Grid::cleanGrid(){
 void Grid::setParticles(){
 	cleanGrid();
 	for (int i = 0; i < n; i++){
-		float x = posVec[3 * i];
-		float y = posVec[3 * i + 1];
-		float z = posVec[3 * i + 2];
+		float x = posVec[3*i];
+		float y = posVec[3*i+1];
+		float z = posVec[3*i+2];
 		int index = calcIndex(x, y, z);
 		grid[index].push_back(i);
 	}
@@ -38,9 +38,9 @@ void Grid::setParticles(){
 
 /* Get neighbors for a particle */
 void Grid::getNeighbors(int i, vector<int> &neighbors) {
-	float x = posVec[3 * i];
-	float y = posVec[3 * i + 1];
-	float z = posVec[3 * i + 2];
+	float x = posVec[3*i];
+	float y = posVec[3*i+1];
+	float z = posVec[3*i+2];
 
 	int gridPos_x = floor(x / cutoff);
 	int gridPos_y = floor(y / cutoff);
@@ -55,8 +55,8 @@ void Grid::getNeighbors(int i, vector<int> &neighbors) {
 					for (int d = 0; d < grid[grid_index].size(); d++)
 					{
 						int other_particle_index = grid[grid_index][d];
-						float distance = getDistance(i, other_particle_index);
-						if (distance < cutoff) { //&& other_particle_index > i){ // dont need duplicate neighbors
+						float distance2 = getDistance2(i, other_particle_index);
+						if (distance2 < cutoff*cutoff) {
 							neighbors.push_back(other_particle_index);
 						}
 					}
@@ -69,11 +69,11 @@ void Grid::getNeighbors(int i, vector<int> &neighbors) {
 /*  PRIVATE METHODS  */
 
 
-float Grid::getDistance(int p1_index, int p2_index){
-	float x_dist = posVec[3 * p1_index] - posVec[3 * p2_index];
-	float y_dist = posVec[3 * p1_index + 1] - posVec[3 * p2_index + 1];
-	float z_dist = posVec[3 * p1_index + 2] - posVec[3 * p2_index + 2];
-	return sqrt(pow(x_dist, 2) + pow(y_dist, 2) + pow(z_dist, 2));
+float Grid::getDistance2(int p1_index, int p2_index){
+	float x = posVec[3 * p1_index] - posVec[3 * p2_index];
+	float y = posVec[3 * p1_index + 1] - posVec[3 * p2_index + 1];
+	float z = posVec[3 * p1_index + 2] - posVec[3 * p2_index + 2];
+	return x*x + y*y + z*z;
 }
 
 bool Grid::isValidPos(float gridPos_x, float gridPos_y, float gridPos_z){
@@ -87,7 +87,9 @@ int Grid::calcIndex(float x, float y, float z){
 	int gridPos_x = floor(x / cutoff);
 	int gridPos_y = floor(y / cutoff);
 	int gridPos_z = floor(z / cutoff);
-
+	assert (x < xDim);
+	assert (y < yDim);
+	assert (z < zDim);
 	return flatten(gridPos_x, gridPos_y, gridPos_z);
 }
 

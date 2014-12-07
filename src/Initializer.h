@@ -4,6 +4,7 @@
 #include "Variables.h"
 #include <cstdlib>
 #include <ctime>
+#include <stdio.h>
 
 typedef int(*domain_fun_t)(float, float, float);
 int box_indicator(float x, float y, float z);

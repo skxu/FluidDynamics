@@ -39,15 +39,15 @@ void write_frame_data(ofstream* fp, int n, float* x)
 void init_params(sim_param_t* params) {
   // Kevin you will need to fix this
   params->fname = "../outputs/run.txt"; /* File name */
-  params->nframes = 200; /* Number of frames */
-  params->npframe = 100; /* Steps per frame */
-  params->h = 5e-2; /* Particle size */
+  params->nframes = 150; /* Number of frames */
+  params->npframe = 120; /* Steps per frame */
+  params->h = 3e-2; /* Particle size */
   params->dt = 1e-4; /* Time step */
   params->rho0 = 1000; /* Reference density */
-  params->k = 500; /* Bulk modulus */
+  params->k = 100; /* Bulk modulus */
   params->mu = 0.1; /* Viscosity */
   params->g = 9.8; /* Gravity strength */
-  params->damp = 0.75; /* Damp */
+  params->damp = 0.3; /* Damp */
 }
 
 int main(int argc, char* argv[])
@@ -60,6 +60,7 @@ int main(int argc, char* argv[])
   Grid* grid = new Grid(1.0, 1.0, 1.0, params.h, state);
   grid->setParticles();
   normalize_mass(state, &params, grid);
+  printf("%f\n", state->mass);
 
 	ofstream* fp = new ofstream();
 	fp->open(params.fname);

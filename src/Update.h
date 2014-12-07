@@ -8,6 +8,7 @@
 #include <string.h>
 #include <vector>
 #include <stdio.h>
+#include <assert.h>
 
 void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid);
 void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid);
