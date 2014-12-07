@@ -38,8 +38,8 @@ sim_state_t* place_particles(sim_param_t* param, domain_fun_t indicatef)
 	// Count mesh points that fall in indicated region.
 	int count = 0;
 	for (float z = 0; z < 1; z += hh) {
-		int range = (ceil(1.0 / hh) - 1) * hh;
-		int start = (1.0 - range) / 2;
+		float range = (ceil(1.0 / hh) - 1) * hh;
+		float start = (1.0 - range) / 2;
 		for (float x = start; x < 1; x += hh) {
 			for (float y = start; y < 1; y += hh) {
 				count += indicatef(x, y, z);
@@ -50,8 +50,8 @@ sim_state_t* place_particles(sim_param_t* param, domain_fun_t indicatef)
 	sim_state_t* s = alloc_state(count);
 	int p = 0;
 	for (float z = 0; z < 1; z += hh) {
-		int range = (ceil(1.0 / hh) - 1) * hh;
-		int start = (1.0 - range) / 2;
+		float range = (ceil(1.0 / hh) - 1) * hh;
+		float start = (1.0 - range) / 2;
 		for (float x = start; x < 1; x += hh) {
 			for (float y = start; y < 1; y += hh) {
 				if (indicatef(x, y, z)) {
