@@ -16,46 +16,24 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
   float h4 = h2 * h2;
   float h9 = h4 * h4 * h;
   float C  = 315.0 * s->mass / 64.0 / PI / h9;
-  double neighbor_sum = 0;
-  double start_neighbor;
-  
-  #pragma omp parallel for
+
+  memset(rho, 0, n*sizeof(float));
+  #pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < n; i++) {
-    float rhoi = 0;
-    
-    if (DEBUG == 3) {
-      start_neighbor = omp_get_wtime();
-    }
-    
     vector<int>* neighbors = grid->getNeighbors(i);
-    
-    if (DEBUG == 3) {
-      neighbor_sum += omp_get_wtime() - start_neighbor;
-    }
-    
-    __m128 x1 = _mm_loadu_ps(x + 3*i);
-
-    int nidx = 0;
-    for (nidx; nidx < neighbors->size(); nidx++) {
+    for (int nidx = 0; nidx < neighbors->size(); nidx++) {
       int j = (*neighbors)[nidx];
-      
-      __m128 x2 = _mm_loadu_ps(x + 3*j);
-      __m128 r = _mm_sub_ps(x1, x2); 
-      __m128 r2 = _mm_mul_ps(r, r);
-      float result[4];
-      _mm_storeu_ps(result, r2);
-      float r2_sum = result[0] + result[1] + result[2];
-      float z = h2 - r2_sum;
-      
-      rhoi += C*z*z*z;
+      float dx = x[3*i+0] - x[3*j+0];
+      float dy = x[3*i+1] - x[3*j+1];
+      float dz = x[3*i+2] - x[3*j+2];
+      float r2 = dx*dx + dy*dy + dz*dz;
+      float z = h2-r2;
+      if (z > 0) {
+        float rho_ij = C*z*z*z;
+        rho[i] += rho_ij;
+      }
     }
-    rho[i] = rhoi;
   }
-
-  if (DEBUG == 3) {
-    printf("neighbor: %f\n",neighbor_sum);
-  }
-
 }
 
 void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
@@ -78,76 +56,59 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
   double start_time;
 
   // Compute Densities
-  start_time = omp_get_wtime();
+  if (DEBUG >= 3) {
+    start_time = omp_get_wtime();
+  }
   compute_density(state, params, grid);
 
-  if (DEBUG >= 3) { //Will output ~100 times per iteration
-    printf("compute_density took %f\n", omp_get_wtime() - start_time);
+  if (DEBUG >= 3) {
+    //~100 outputs per iteration
+    printf("compute_density took: %fs\n",omp_get_wtime() - start_time);
+  }
+  // Gravity
+  for (int i = 0; i < n; i++) {
+    a[3*i+0] = 0;
+    a[3*i+1] = 0;
+    a[3*i+2] = -g;
   }
 
   // Interaction term constants
   float C0 = 45.0 * mass / PI / (h2*h2*h2);
 
   // Interaction force calculation
-  start_time = omp_get_wtime();
-
-  #pragma omp parallel for
+  if (DEBUG >= 3) {
+    start_time = omp_get_wtime();
+  }
+  #pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < n; i++) {
     const float rhoi = rho[i];
     vector<int>* neighbors = grid->getNeighbors(i);
-    
-    __m128 x1 = _mm_loadu_ps(x + 3*i);
-    __m128 v2 = _mm_loadu_ps(v + 3*i);
-
-    __m128 sum = _mm_setzero_ps();
-
     for (int nidx = 0; nidx < neighbors->size(); nidx++) {
       int j = (*neighbors)[nidx];
       if (i != j) {
-        //float dx = x[3*i+0] - x[3*j+0];
-        //float dy = x[3*i+1] - x[3*j+1];
-        //float dz = x[3*i+2] - x[3*j+2];
-        //float r = sqrt(dx*dx + dy*dy + dz*dz);
-
-        
-        __m128 x2 = _mm_loadu_ps(x + 3*j);
-        __m128 dx = _mm_sub_ps(x1, x2); 
-        __m128 r2 = _mm_mul_ps(dx, dx);
-        float result[4];
-        _mm_storeu_ps(result, r2);
-        float r = sqrt(result[0] + result[1] + result[2]);
-
+        float dx = x[3*i+0] - x[3*j+0];
+        float dy = x[3*i+1] - x[3*j+1];
+        float dz = x[3*i+2] - x[3*j+2];
+        float r = sqrt(dx*dx + dy*dy + dz*dz);
         assert(r > 0); // this shouldn't be 0 do to floating point precision
         float z = h-r;
         const float rhoj = rho[j];
         float w0 = C0/rhoi/rhoj;
-        //float wp = w0 * k * (rhoi + rhoj - 2*rho0) * z * z / r / 2.0;
-        //float wv = w0 * mu * z;
-        //float dvx = v[3*j+0] - v[3*i+0];
-        //float dvy = v[3*j+1] - v[3*i+1];
-        //float dvz = v[3*j+2] - v[3*i+2];
-        
-        __m128 wp = _mm_set1_ps(w0 * k * (rhoi + rhoj - 2*rho0) * z * z / r / 2.0);
-        __m128 wv = _mm_set1_ps(w0 * mu * z);
-        __m128 v1 = _mm_loadu_ps(v + 3*j);
-        
-        __m128 dv = _mm_sub_ps(v2, v1);
-
-        __m128 wvdv = _mm_mul_ps(dv, wv);
-        __m128 wpdx = _mm_mul_ps(dx, wp);
-        sum = _mm_add_ps(sum, _mm_add_ps(wvdv, wpdx));
+        float wp = w0 * k * (rhoi + rhoj - 2*rho0) * z * z / r / 2.0;
+        float wv = w0 * mu * z;
+        float dvx = v[3*j+0] - v[3*i+0];
+        float dvy = v[3*j+1] - v[3*i+1];
+        float dvz = v[3*j+2] - v[3*i+2];
+        a[3*i+0] += (wp*dx + wv*dvx);
+        a[3*i+1] += (wp*dy + wv*dvy);
+        a[3*i+2] += (wp*dz + wv*dvz);
       }
     }
-    float final[4]; //the last element is garbage
-    _mm_storeu_ps(final, sum);
-
-    a[3*i+0] = final[0]; //(wp*dx + wv*dvx);
-    a[3*i+1] = final[1]; //(wp*dy + wv*dvy);
-    a[3*i+2] = final[2] - g; //(wp*dz + wv*dvz);
   }
 
-  if (DEBUG >= 3) { //Will output ~100 times per iteration
-    printf("interaction force calculation took: %f\n", omp_get_wtime() - start_time);
+  
+  if (DEBUG >= 3) {
+    printf("interaction force calculation took: %fs\n", omp_get_wtime() - start_time);
   }
 }
 
