@@ -1,6 +1,10 @@
 #include "Update.h"
 #include "Initializer.h"
 
+#include <xmmintrin.h>
+#include <assert.h>
+#include <iostream>
+
 using namespace std;
 
 void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid) 
@@ -20,19 +24,48 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
     //rho[i] += 4 * s->mass / PI / h2; // add itself
     vector<int> neighbors;
     grid->getNeighbors(i, neighbors);
-    for (int nidx = 0; nidx < neighbors.size(); nidx++) {
+    
+    //float x1 = x[3*i+0];
+    //float y1 = x[3*i+1];
+    //float z1 = x[3*i+2];
+    int nidx = 0;
+    for (nidx; nidx < neighbors.size() - 1; nidx++) {
       int j = neighbors[nidx];
-      float dx = x[3*i+0] - x[3*j+0];
-      float dy = x[3*i+1] - x[3*j+1];
-      float dz = x[3*i+2] - x[3*j+2];
-      float r2 = dx*dx + dy*dy + dz*dz;
-      float z = h2-r2;
+      __m128 x1 = _mm_loadu_ps(x + 3*i);
+      __m128 x2 = _mm_loadu_ps(x + 3*j);
+      __m128 r = _mm_sub_ps(x1, x2); 
+      __m128 r2 = _mm_mul_ps(r, r);
+      float result[4];
+      _mm_storeu_ps(result, r2);
+      //float dx = x1 - x[3*j+0];
+      //float dy = y1 - x[3*j+1];
+      //float dz = z1 - x[3*j+2];
+      //float r2 = dx*dx + dy*dy + dz*dz;
+      //float z = h2-r2;
+
+      float z = h2 - result[0] - result[1] - result[2];
       if (z > 0) {
         float rho_ij = C*z*z*z;
         rho[i] += rho_ij;
         //rho[j] += rho_ij;
       }
     }
+
+    //do last one manually
+    int j = neighbors[nidx];
+    float dx = x[3*i+0] - x[3*j+0];
+    float dy = x[3*i+1] - x[3*j+1];
+    float dz = x[3*i+2] - x[3*j+2];
+    float r2 = dx*dx + dy*dy + dz*dz;
+    float z = h2-r2;
+
+  
+    if (z > 0) {
+      float rho_ij = C*z*z*z;
+      rho[i] += rho_ij;
+      //rho[j] += rho_ij;
+    }
+
   }
   #pragma omp barrier
 }
