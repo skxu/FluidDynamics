@@ -2,11 +2,15 @@
 #include "Initializer.h"
 
 #include <xmmintrin.h>
+#include <iostream>
 
 using namespace std;
 
 void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid) 
 {
+  if (DEBUG >= 4) {
+    std::cout << "Entering compute_density" << std::endl << std::flush;
+  }
   int n = s->n;
   float* rho = s->rho;
   const float* x = s->x;
@@ -37,10 +41,18 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
     }
     rho[i] = rhoi;
   }
+
+  if (DEBUG >= 4) {
+    std::cout << "Exiting compute_density" << std::endl << std::flush;
+  }
 }
 
 void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
 {
+  if (DEBUG >= 4) {
+    std::cout << "Entering compute_accel" << std::endl << std::flush;
+  }
+
   // Get parameters
   const float h    = params->h;
   const float rho0 = params->rho0;
@@ -119,10 +131,17 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
   if (DEBUG >= 3) {
     printf("interaction force calculation took: %fs\n", omp_get_wtime() - start_time);
   }
+  if (DEBUG >= 4) {
+    std::cout << "Exiting compute_accel" << std::endl << std::flush;
+  }
 }
 
 void leapfrog_step(sim_state_t* s, sim_param_t* p, float dt)
 {
+  if (DEBUG >= 4) {
+    std::cout << "Entering leapfrog_step" << std::endl << std::flush;
+  }
+
   const float* a = s->a;
   float* vh      = s->vh;
   float* v       = s->v;
@@ -137,11 +156,19 @@ void leapfrog_step(sim_state_t* s, sim_param_t* p, float dt)
 
   // Handle reflection across edge and bottom
   reflect_bc(s, p);
+
+  if (DEBUG >= 4) {
+    std::cout << "Exiting leapfrog_step" << std::endl << std::flush;
+  }
 }
 
 // Special edge case for first timestep
 void leapfrog_start(sim_state_t* s, sim_param_t* p, float dt)
 {
+  if (DEBUG >= 4) {
+    std::cout << "Entering leapfrog_start" << std::endl << std::flush;
+  }
+
   const float* a = s->a;
   float* vh      = s->vh;
   float* v       = s->v;
@@ -156,6 +183,10 @@ void leapfrog_start(sim_state_t* s, sim_param_t* p, float dt)
 
   // Handle reflection across edge and bottom
   reflect_bc(s, p);
+
+  if (DEBUG >= 4) {
+    std::cout << "Exiting leapfrog_start" << std::endl << std::flush;
+  }
 }
 
 // Handles boundary collisions
@@ -163,6 +194,7 @@ void leapfrog_start(sim_state_t* s, sim_param_t* p, float dt)
 void damp_reflect(int dim, int i, float barrier,
                   sim_state_t* s, sim_param_t* p)
 {
+
   float* vh  = s->vh;
   float* v   = s->v;
   float* x   = s->x;
@@ -190,10 +222,15 @@ void damp_reflect(int dim, int i, float barrier,
   vh[4*i+1] *= damp;
   v[4*i+2]  *= damp;
   vh[4*i+2] *= damp;
+
 }
 
 void reflect_bc(sim_state_t* s, sim_param_t* p)
 {
+  if (DEBUG >= 4) {
+    std::cout << "Entering reflect_bc" << std::endl << std::flush;
+  }
+
   const float XMIN = 0.0;
   const float XMAX = 1.0;
   const float YMIN = 0.0;
@@ -213,10 +250,18 @@ void reflect_bc(sim_state_t* s, sim_param_t* p)
     if (x[4*i+2] < ZMIN) damp_reflect(2, i, ZMIN, s, p);
     if (x[4*i+2] >= ZMAX) damp_reflect(2, i, ZMAX, s, p);
   }
+
+  if (DEBUG >= 4) {
+    std::cout << "Exiting reflect_bc" << std::endl << std::flush;
+  }
 }
 
 void normalize_mass(sim_state_t* s, sim_param_t* param, Grid* grid)
 {
+  //if (DEBUG >= 4) {
+  //  std::cout << "Entering normalize_mass" << std::endl << std::flush;
+  //}
+
   s->mass = 1;
   compute_density(s, param, grid);
   float rho0 = param->rho0;
@@ -227,4 +272,8 @@ void normalize_mass(sim_state_t* s, sim_param_t* param, Grid* grid)
     rhos += s->rho[i];
   }
   s->mass = ( rho0*rhos / rho2s );
+
+  if (DEBUG >= 4) {
+    std::cout << "Exiting normalize_mass" << std::endl << std::flush;
+  }
 }
