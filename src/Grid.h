@@ -26,6 +26,7 @@ public:
 	float getDistance2(int p1_index, int p2_index);
 private:
 	vector<vector<int> > grid;
+	vector<vector<int> > speedOctopus;
 
 	vector<vector<int>*> neighbors;
 
@@ -43,6 +44,9 @@ private:
 	int totalCells;
 
 	void setNeighbors(int i);
+
+	/* Precalculate all the neighbors to a grid cell */
+	void fitOctopus(int i);
 
 	/* Remove everything from cells */
 	void cleanGrid();

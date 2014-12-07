@@ -11,6 +11,8 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	grid = vector<vector<int> >(totalCells, vector<int>());
 	neighbors = vector<vector<int>*>();
 	for (int i = 0; i < n; i++) neighbors.push_back(new vector<int>());
+	speedOctopus = vector<vector<int>>(totalCells, vector<int>());
+	for (int i = 0; i < n; i++) fitOctopus(i);
 }
 
 Grid::~Grid(){
@@ -29,13 +31,13 @@ void Grid::cleanGrid(){
 void Grid::setParticles(){
 	cleanGrid();
 	for (int i = 0; i < n; i++){
-		float x = posVec[3*i];
-		float y = posVec[3*i+1];
-		float z = posVec[3*i+2];
+		float x = posVec[3 * i];
+		float y = posVec[3 * i + 1];
+		float z = posVec[3 * i + 2];
 		int index = calcIndex(x, y, z);
 		grid[index].push_back(i);
 	}
-	#pragma omp parallel for
+#pragma omp parallel for
 	for (int i = 0; i < n; i++){
 		setNeighbors(i);
 	}
@@ -49,6 +51,23 @@ vector<int>* Grid::getNeighbors(int i) {
 
 /*  PRIVATE METHODS  */
 
+/* For cell index i, calculate grid inds for 3x3x3 area around it */
+void Grid::fitOctopus(int i) {
+	int gridPos_x = i % xDim;
+	int gridPos_y = (i - gridPos_x) % yDim;
+	int gridPos_z = (i - gridPos_y * xDim - gridPos_x) % zDim;
+
+	for (int a = gridPos_x - 1; a <= gridPos_x + 1; a++){
+		for (int b = gridPos_y - 1; b <= gridPos_y + 1; b++){
+			for (int c = gridPos_z - 1; c <= gridPos_z + 1; c++){
+				if (isValidPos(a, b, c))
+				{
+					speedOctopus[i].push_back(flatten(a, b, c));
+				}
+			}
+		}
+	}
+}
 
 /* Set neighbors for a particle */
 void Grid::setNeighbors(int i) {
@@ -63,23 +82,18 @@ void Grid::setNeighbors(int i) {
 	int gridPos_y = floor(y / cutoff);
 	int gridPos_z = floor(z / cutoff);
 
-	int k = 0;
-	for (int a = gridPos_x - 1; a <= gridPos_x + 1; a++){
-		for (int b = gridPos_y - 1; b <= gridPos_y + 1; b++){
-			for (int c = gridPos_z - 1; c <= gridPos_z + 1; c++){
-				k++;
-				if (isValidPos(a, b, c))
-				{
-					int grid_index = flatten(a, b, c);
-					for (int d = 0; d < grid[grid_index].size(); d++)
-					{
-						int other_particle_index = grid[grid_index][d];
-						float distance2 = getDistance2(i, other_particle_index);
-						if (distance2 < cutoff*cutoff) {
-							nVec->push_back(other_particle_index);
-						}
-					}
-				}
+	int gridCell = flatten(gridPos_x, gridPos_y, gridPos_z);
+
+	for (int a = 0; a < speedOctopus[gridCell].size(); a++)
+	{
+		int neighbor_grid_index = speedOctopus[gridCell][a];
+
+		for (int b = 0; b < grid[neighbor_grid_index].size(); b++)
+		{
+			int other_particle_index = grid[neighbor_grid_index][b];
+			float distance2 = getDistance2(i, other_particle_index);
+			if (distance2 < cutoff*cutoff) {
+				nVec->push_back(other_particle_index);
 			}
 		}
 	}
@@ -94,8 +108,8 @@ float Grid::getDistance2(int p1_index, int p2_index){
 }
 
 bool Grid::isValidPos(float gridPos_x, float gridPos_y, float gridPos_z){
-	return gridPos_x >= 0 && gridPos_x < xDim && 
-		gridPos_y >= 0 && gridPos_y < yDim && 
+	return gridPos_x >= 0 && gridPos_x < xDim &&
+		gridPos_y >= 0 && gridPos_y < yDim &&
 		gridPos_z >= 0 && gridPos_z < zDim;
 }
 
