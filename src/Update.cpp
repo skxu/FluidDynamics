@@ -2,7 +2,6 @@
 #include "Initializer.h"
 
 #include <xmmintrin.h>
-#include <assert.h>
 
 using namespace std;
 
@@ -60,8 +59,16 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
   float* a         = state->a;
   int n            = state->n;
 
+  //for benchmarking
+  double start_time;
+
   // Compute Densities
+  start_time = omp_get_wtime();
   compute_density(state, params, grid);
+
+  if (DEBUG >= 3) { //Will output ~100 times per iteration
+    printf("compute_density took %f\n", omp_get_wtime() - start_time);
+  }
 
   // Gravity
   for (int i = 0; i < n; i++) {
@@ -74,6 +81,7 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
   float C0 = 45.0 * mass / PI / (h2*h2*h2);
 
   // Interaction force calculation
+  start_time = omp_get_wtime();
   #pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < n; i++) {
     const float rhoi = rho[i];
@@ -123,6 +131,11 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
         a[3*i+2] += final[2]; //(wp*dz + wv*dvz);
       }
     }
+  }
+
+  #pragma omp barrier
+  if (DEBUG >= 3) { //Will output ~100 times per iteration
+    printf("interaction force calculation took: %f\n", omp_get_wtime() - start_time);
   }
 }
 
