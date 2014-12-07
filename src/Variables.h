@@ -3,6 +3,7 @@
 
 #define PI 3.14159265359
 #define DEBUG 1 //debug output level (0:None 1:Minimal 2:Detailed)
+#define MAX_INIT_VEL 0.01
 
 typedef struct sim_param_t {
   const char* fname; /* File name */

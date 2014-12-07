@@ -75,9 +75,9 @@ sim_state_t* place_particles(sim_param_t* param, domain_fun_t indicatef)
 					s->x[3 * p + 0] = x;
 					s->x[3 * p + 1] = y;
 					s->x[3 * p + 2] = z;
-					s->v[3 * p + 0] = 0;
-					s->v[3 * p + 1] = 0;
-					s->v[3 * p + 2] = 0;
+					s->v[3 * p + 0] = MAX_INIT_VEL * static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+					s->v[3 * p + 1] = MAX_INIT_VEL * static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+					s->v[3 * p + 2] = MAX_INIT_VEL * static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 					++p;
 				}
 			}
