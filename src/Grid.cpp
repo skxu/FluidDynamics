@@ -11,7 +11,7 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	grid = vector<vector<int> >(totalCells, vector<int>());
 	neighbors = vector<vector<int>*>();
 	for (int i = 0; i < n; i++) neighbors.push_back(new vector<int>());
-	speedOctopus = vector<vector<int>>(totalCells, vector<int>());
+	speedOctopus = vector<vector<int> >(totalCells, vector<int>());
 	for (int i = 0; i < n; i++) fitOctopus(i);
 }
 
