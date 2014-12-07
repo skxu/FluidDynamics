@@ -69,26 +69,17 @@ void Grid::fitOctopus(int i) {
 /* Set neighbors for all particles */
 void Grid::setNeighbors() {
 #pragma omp parallel for
-	for (int gridCell = 0; gridCell < grid.size(); gridCell++) {
+	for (int gridCell = 0; gridCell < grid.size(); gridCell++)
+	{
+		for (int a = 0; a < speedOctopus[gridCell].size(); a++)
+		{
+			int neighbor_grid_index = speedOctopus[gridCell][a];
 
-		for (int particleInd = 0; particleInd < grid[gridCell].size(); particleInd++) {
-			int i = grid[gridCell][particleInd];
-			vector<int>* nVec = neighbors[i];
-			nVec->clear();
-
-			float x = posVec[4 * i];
-			float y = posVec[4 * i + 1];
-			float z = posVec[4 * i + 2];
-
-			int gridPos_x = floor(x / cutoff);
-			int gridPos_y = floor(y / cutoff);
-			int gridPos_z = floor(z / cutoff);
-
-			int gridCell = flatten(gridPos_x, gridPos_y, gridPos_z);
-
-			for (int a = 0; a < speedOctopus[gridCell].size(); a++)
+			for (int particleInd = 0; particleInd < grid[gridCell].size(); particleInd++)
 			{
-				int neighbor_grid_index = speedOctopus[gridCell][a];
+				int i = grid[gridCell][particleInd];
+				vector<int>* nVec = neighbors[i];
+				nVec->clear();
 
 				for (int b = 0; b < grid[neighbor_grid_index].size(); b++)
 				{
