@@ -16,12 +16,27 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
   float h4 = h2 * h2;
   float h9 = h4 * h4 * h;
   float C  = 315.0 * s->mass / 64.0 / PI / h9;
-
-  memset(rho, 0, n*sizeof(float));
-  #pragma omp parallel for schedule(dynamic)
+  double neighbor_sum = 0;
+  double start_neighbor;
+  
+  //memset(rho, 0, n*sizeof(float));
+  #pragma omp parallel for reduction(+:neighbor_sum)
   for (int i = 0; i < n; i++) {
+    float rhoi = 0;
     vector<int> neighbors;
+    
+    
+    
+    if (DEBUG == 3) {
+      start_neighbor = omp_get_wtime();
+    }
+    
     grid->getNeighbors(i, neighbors);
+    
+    if (DEBUG == 3) {
+      neighbor_sum += omp_get_wtime() - start_neighbor;
+    }
+    
     __m128 x1 = _mm_loadu_ps(x + 3*i);
 
     int nidx = 0;
@@ -35,13 +50,16 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
       _mm_storeu_ps(result, r2);
       float r2_sum = result[0] + result[1] + result[2];
       float z = h2 - r2_sum;
-      if (z > 0) {
-        float rho_ij = C*z*z*z;
-        rho[i] += rho_ij;
-      }
+      
+      rhoi += C*z*z*z;
     }
-
+    rho[i] = rhoi;
   }
+
+  if (DEBUG == 3) {
+    printf("neighbor: %f\n",neighbor_sum);
+  }
+
 }
 
 void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
@@ -71,20 +89,17 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
     printf("compute_density took %f\n", omp_get_wtime() - start_time);
   }
 
-  // Gravity
-  for (int i = 0; i < n; i++) {
-    a[3*i+0] = 0;
-    a[3*i+1] = 0;
-    a[3*i+2] = -g;
-  }
-
   // Interaction term constants
   float C0 = 45.0 * mass / PI / (h2*h2*h2);
 
   // Interaction force calculation
   start_time = omp_get_wtime();
-  #pragma omp parallel for schedule(dynamic)
+  #pragma omp parallel for
   for (int i = 0; i < n; i++) {
+    float ax = 0;
+    float ay = 0;
+    float az = -g;
+
     const float rhoi = rho[i];
     vector<int> neighbors;
     grid->getNeighbors(i, neighbors);
@@ -131,11 +146,14 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
         float final[4]; //the last element is garbage
         _mm_storeu_ps(final, sum);
 
-        a[3*i+0] += final[0]; //(wp*dx + wv*dvx);
-        a[3*i+1] += final[1]; //(wp*dy + wv*dvy);
-        a[3*i+2] += final[2]; //(wp*dz + wv*dvz);
+        ax += final[0]; //(wp*dx + wv*dvx);
+        ay += final[1]; //(wp*dy + wv*dvy);
+        az += final[2]; //(wp*dz + wv*dvz);
       }
     }
+    a[3*i+0] = ax;
+    a[3*i+1] = ay;
+    a[3*i+2] = az;
   }
 
   if (DEBUG >= 3) { //Will output ~100 times per iteration
@@ -151,11 +169,11 @@ void leapfrog_step(sim_state_t* s, sim_param_t* p, float dt)
   float* x       = s->x;
   int n          = s->n;
 
-  #pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < 3*n; i++) {
-    vh[i] += a[i] * dt;
-    v[i] = vh[i] + a[i] * dt / 2;
-    x[i] += vh[i] * dt;
+    float vhi = vh[i] + a[i] * dt;
+    vh[i] = vhi;
+    v[i] = vhi + a[i] * dt / 2;
+    x[i] += vhi * dt;
   }
 
   // Handle reflection across edge and bottom
@@ -171,7 +189,7 @@ void leapfrog_start(sim_state_t* s, sim_param_t* p, float dt)
   float* x       = s->x;
   int n          = s->n;
 
-  #pragma omp parallel for schedule(dynamic)
+
   for (int i = 0; i < 3*n; i++) {
     vh[i] = v[i] + a[i] * dt / 2;
     v[i] += a[i] * dt;
