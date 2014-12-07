@@ -20,7 +20,6 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
   double start_neighbor;
   
   //memset(rho, 0, n*sizeof(float));
-  //#pragma omp parallel for reduction(+:neighbor_sum)
   #pragma omp parallel for
   for (int i = 0; i < n; i++) {
     float rhoi = 0;
@@ -96,16 +95,14 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
 
   #pragma omp parallel for
   for (int i = 0; i < n; i++) {
-    float ax = 0;
-    float ay = 0;
-    float az = -g;
-
     const float rhoi = rho[i];
     vector<int> neighbors;
     grid->getNeighbors(i, neighbors);
     
     __m128 x1 = _mm_loadu_ps(x + 3*i);
     __m128 v2 = _mm_loadu_ps(v + 3*i);
+
+    __m128 sum = _mm_setzero_ps();
 
     for (int nidx = 0; nidx < neighbors.size(); nidx++) {
       int j = neighbors[nidx];
@@ -141,19 +138,15 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
 
         __m128 wvdv = _mm_mul_ps(dv, wv);
         __m128 wpdx = _mm_mul_ps(dx, wp);
-        __m128 sum = _mm_add_ps(wvdv, wpdx);
-
-        float final[4]; //the last element is garbage
-        _mm_storeu_ps(final, sum);
-
-        ax += final[0]; //(wp*dx + wv*dvx);
-        ay += final[1]; //(wp*dy + wv*dvy);
-        az += final[2]; //(wp*dz + wv*dvz);
+        sum = _mm_add_ps(sum, _mm_add_ps(wvdv, wpdx));
       }
     }
-    a[3*i+0] = ax;
-    a[3*i+1] = ay;
-    a[3*i+2] = az;
+    float final[4]; //the last element is garbage
+    _mm_storeu_ps(final, sum);
+
+    a[3*i+0] = final[0]; //(wp*dx + wv*dvx);
+    a[3*i+1] = final[1]; //(wp*dy + wv*dvy);
+    a[3*i+2] = final[2] - g; //(wp*dz + wv*dvz);
   }
 
   if (DEBUG >= 3) { //Will output ~100 times per iteration
