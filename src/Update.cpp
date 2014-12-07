@@ -19,7 +19,6 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
   double neighbor_sum = 0;
   double start_neighbor;
   
-  //memset(rho, 0, n*sizeof(float));
   #pragma omp parallel for
   for (int i = 0; i < n; i++) {
     float rhoi = 0;
@@ -28,8 +27,6 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
       start_neighbor = omp_get_wtime();
     }
     
-    //vector<int> neighbors;
-    //grid->getNeighbors(i, neighbors);
     vector<int>* neighbors = grid->getNeighbors(i);
     
     if (DEBUG == 3) {
@@ -97,8 +94,6 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
   #pragma omp parallel for
   for (int i = 0; i < n; i++) {
     const float rhoi = rho[i];
-    //vector<int> neighbors;
-    //grid->getNeighbors(i, neighbors);
     vector<int>* neighbors = grid->getNeighbors(i);
     
     __m128 x1 = _mm_loadu_ps(x + 3*i);

@@ -20,7 +20,6 @@ public:
 	void setParticles();
 
 	/* Get the neighbors of particle i that have index higher than this particle */
-	void getNeighbors(int i, vector<int>& outNeighbors);
 	vector<int>* getNeighbors(int i);
 
 	/* Get distance between particles at these indices */
