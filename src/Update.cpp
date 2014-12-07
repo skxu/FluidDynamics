@@ -22,11 +22,12 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
   for (int i = 0; i < n; i++) {
     vector<int> neighbors;
     grid->getNeighbors(i, neighbors);
+    __m128 x1 = _mm_loadu_ps(x + 3*i);
 
     int nidx = 0;
     for (nidx; nidx < neighbors.size(); nidx++) {
       int j = neighbors[nidx];
-      __m128 x1 = _mm_loadu_ps(x + 3*i);
+      
       __m128 x2 = _mm_loadu_ps(x + 3*j);
       __m128 r = _mm_sub_ps(x1, x2); 
       __m128 r2 = _mm_mul_ps(r, r);
@@ -87,6 +88,10 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
     const float rhoi = rho[i];
     vector<int> neighbors;
     grid->getNeighbors(i, neighbors);
+    
+    __m128 x1 = _mm_loadu_ps(x + 3*i);
+    __m128 v2 = _mm_loadu_ps(v + 3*i);
+
     for (int nidx = 0; nidx < neighbors.size(); nidx++) {
       int j = neighbors[nidx];
       if (i != j) {
@@ -95,7 +100,7 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
         //float dz = x[3*i+2] - x[3*j+2];
         //float r = sqrt(dx*dx + dy*dy + dz*dz);
 
-        __m128 x1 = _mm_loadu_ps(x + 3*i);
+        
         __m128 x2 = _mm_loadu_ps(x + 3*j);
         __m128 dx = _mm_sub_ps(x1, x2); 
         __m128 r2 = _mm_mul_ps(dx, dx);
@@ -116,7 +121,7 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
         __m128 wp = _mm_set1_ps(w0 * k * (rhoi + rhoj - 2*rho0) * z * z / r / 2.0);
         __m128 wv = _mm_set1_ps(w0 * mu * z);
         __m128 v1 = _mm_loadu_ps(v + 3*j);
-        __m128 v2 = _mm_loadu_ps(v + 3*i);
+        
         __m128 dv = _mm_sub_ps(v1, v2);
 
         __m128 wvdv = _mm_mul_ps(dv, wv);
@@ -133,7 +138,6 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
     }
   }
 
-  #pragma omp barrier
   if (DEBUG >= 3) { //Will output ~100 times per iteration
     printf("interaction force calculation took: %f\n", omp_get_wtime() - start_time);
   }
