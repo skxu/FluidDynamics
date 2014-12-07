@@ -44,8 +44,7 @@ void Grid::setParticles(){
 /* Get neighbors for a particle */
 void Grid::getNeighbors(int i, vector<int> &outNeighbors) {
 	vector<int>* nVec = neighbors[i];
-	nVec->clear();
-
+	
 	for (int i = 0; i < nVec->size(); i++) outNeighbors.push_back((*nVec)[i]);
 }
 
