@@ -2,6 +2,7 @@
 #include "Initializer.h"
 
 #include <xmmintrin.h>
+#include <assert.h>
 
 using namespace std;
 
@@ -32,13 +33,14 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
       __m128 r2 = _mm_mul_ps(r, r);
       float result[4];
       _mm_storeu_ps(result, r2);
-
-      float z = h2 - result[0] - result[1] - result[2];
+      float r2_sum = result[0] + result[1] + result[2];
+      float z = h2 - r2_sum;
       if (z > 0) {
         float rho_ij = C*z*z*z;
         rho[i] += rho_ij;
       }
     }
+
   }
 }
 
