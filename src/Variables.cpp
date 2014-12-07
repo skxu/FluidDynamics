@@ -6,10 +6,10 @@ sim_state_t* alloc_state(int n)
 	state->n = n;
 	state->mass = 0;
 	state->rho = new float[n]();
-	state->x = new float[n * 3]();
-	state->vh = new float[n * 3]();
-	state->v = new float[n * 3]();
-	state->a = new float[n * 3]();
+	state->x = new float[n * 4]();
+	state->vh = new float[n * 4]();
+	state->v = new float[n * 4]();
+	state->a = new float[n * 4]();
 	return state;
 }
 

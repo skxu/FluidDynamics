@@ -20,16 +20,16 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
   memset(rho, 0, n*sizeof(float));
   #pragma omp parallel for
   for (int i = 0; i < n; i++) {
-    float xi = x[3*i+0];
-    float yi = x[3*i+1];
-    float zi = x[3*i+2];
+    float xi = x[4*i+0];
+    float yi = x[4*i+1];
+    float zi = x[4*i+2];
     float rhoi = 0.0;
     vector<int>* neighbors = grid->getNeighbors(i);
     for (int nidx = 0; nidx < neighbors->size(); nidx++) {
       int j = (*neighbors)[nidx];
-      float dx = xi - x[3*j+0];
-      float dy = yi - x[3*j+1];
-      float dz = zi - x[3*j+2];
+      float dx = xi - x[4*j+0];
+      float dy = yi - x[4*j+1];
+      float dz = zi - x[4*j+2];
       float r2 = dx*dx + dy*dy + dz*dz;
       float z = h2-r2;
       float rho_ij = C*z*z*z;
@@ -78,12 +78,12 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
   }
   #pragma omp parallel for
   for (int i = 0; i < n; i++) {
-    float xi = x[3*i+0];
-    float yi = x[3*i+1];
-    float zi = x[3*i+2];
-    float vxi = v[3*i+0];
-    float vyi = v[3*i+1];
-    float vzi = v[3*i+2];
+    float xi = x[4*i+0];
+    float yi = x[4*i+1];
+    float zi = x[4*i+2];
+    float vxi = v[4*i+0];
+    float vyi = v[4*i+1];
+    float vzi = v[4*i+2];
     float ax = 0;
     float ay = 0;
     float az = -g;
@@ -92,9 +92,9 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
     for (int nidx = 0; nidx < neighbors->size(); nidx++) {
       int j = (*neighbors)[nidx];
       if (i != j) {
-        float dx = xi - x[3*j+0];
-        float dy = yi - x[3*j+1];
-        float dz = zi - x[3*j+2];
+        float dx = xi - x[4*j+0];
+        float dy = yi - x[4*j+1];
+        float dz = zi - x[4*j+2];
         float r = sqrt(dx*dx + dy*dy + dz*dz);
         assert(r > 0); // this shouldn't be 0 do to floating point precision
         float z = h-r;
@@ -102,17 +102,17 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
         float w0 = C0/rhoi/rhoj;
         float wp = w0 * k * (rhoi + rhoj - 2*rho0) * z * z / r / 2.0;
         float wv = w0 * mu * z;
-        float dvx = v[3*j+0] - vxi;
-        float dvy = v[3*j+1] - vyi;
-        float dvz = v[3*j+2] - vzi;
+        float dvx = v[4*j+0] - vxi;
+        float dvy = v[4*j+1] - vyi;
+        float dvz = v[4*j+2] - vzi;
         ax += (wp*dx + wv*dvx);
         ay += (wp*dy + wv*dvy);
         az += (wp*dz + wv*dvz);
       }
     }
-    a[3*i+0] = ax;
-    a[3*i+1] = ay;
-    a[3*i+2] = az;
+    a[4*i+0] = ax;
+    a[4*i+1] = ay;
+    a[4*i+2] = az;
   }
 
   
@@ -129,7 +129,7 @@ void leapfrog_step(sim_state_t* s, sim_param_t* p, float dt)
   float* x       = s->x;
   int n          = s->n;
 
-  for (int i = 0; i < 3*n; i++) {
+  for (int i = 0; i < 4*n; i++) {
     vh[i] += a[i] * dt;
     v[i] = vh[i] + a[i] * dt / 2;
     x[i] += vh[i] * dt;
@@ -148,7 +148,7 @@ void leapfrog_start(sim_state_t* s, sim_param_t* p, float dt)
   float* x       = s->x;
   int n          = s->n;
 
-  for (int i = 0; i < 3*n; i++) {
+  for (int i = 0; i < 4*n; i++) {
     vh[i] = v[i] + a[i] * dt / 2;
     v[i] += a[i] * dt;
     x[i] += vh[i] * dt;
@@ -169,27 +169,27 @@ void damp_reflect(int dim, int i, float barrier,
   float damp = p->damp;
 
   // Particle doesn't move -- no update
-  if (v[3*i+dim] == 0) return;
+  if (v[4*i+dim] == 0) return;
 
   // Scale back distance traveled based on time of collision
   // Alvin thinks it should be vh instead of v...
-  float tbounce = (x[3*i+dim] - barrier) / vh[3*i+dim];
-  x[3*i+0] -= vh[3*i+0]*(1-damp)*tbounce;
-  x[3*i+1] -= vh[3*i+1]*(1-damp)*tbounce;
-  x[3*i+2] -= vh[3*i+2]*(1-damp)*tbounce;
+  float tbounce = (x[4*i+dim] - barrier) / vh[4*i+dim];
+  x[4*i+0] -= vh[4*i+0]*(1-damp)*tbounce;
+  x[4*i+1] -= vh[4*i+1]*(1-damp)*tbounce;
+  x[4*i+2] -= vh[4*i+2]*(1-damp)*tbounce;
 
   // Reflect position and velocity
-  x[3*i+dim]  = 2*barrier - x[3*i+dim];
-  v[3*i+dim]  = -v[3*i+dim];
-  vh[3*i+dim] = -vh[3*i+dim];
+  x[4*i+dim]  = 2*barrier - x[4*i+dim];
+  v[4*i+dim]  = -v[4*i+dim];
+  vh[4*i+dim] = -vh[4*i+dim];
 
   // Damp the velocities
-  v[3*i+0]  *= damp;
-  vh[3*i+0] *= damp;
-  v[3*i+1]  *= damp;
-  vh[3*i+1] *= damp;
-  v[3*i+2]  *= damp;
-  vh[3*i+2] *= damp;
+  v[4*i+0]  *= damp;
+  vh[4*i+0] *= damp;
+  v[4*i+1]  *= damp;
+  vh[4*i+1] *= damp;
+  v[4*i+2]  *= damp;
+  vh[4*i+2] *= damp;
 }
 
 void reflect_bc(sim_state_t* s, sim_param_t* p)
@@ -206,12 +206,12 @@ void reflect_bc(sim_state_t* s, sim_param_t* p)
   float* x  = s->x;
   int n     = s->n;
   for (int i = 0; i < n; i++) {
-    if (x[3*i+0] < XMIN) damp_reflect(0, i, XMIN, s, p);
-    if (x[3*i+0] >= XMAX) damp_reflect(0, i, XMAX, s, p); // fix this
-    if (x[3*i+1] < YMIN) damp_reflect(1, i, YMIN, s, p);
-    if (x[3*i+1] >= YMAX) damp_reflect(1, i, YMAX, s, p);
-    if (x[3*i+2] < ZMIN) damp_reflect(2, i, ZMIN, s, p);
-    if (x[3*i+2] >= ZMAX) damp_reflect(2, i, ZMAX, s, p);
+    if (x[4*i+0] < XMIN) damp_reflect(0, i, XMIN, s, p);
+    if (x[4*i+0] >= XMAX) damp_reflect(0, i, XMAX, s, p); // fix this
+    if (x[4*i+1] < YMIN) damp_reflect(1, i, YMIN, s, p);
+    if (x[4*i+1] >= YMAX) damp_reflect(1, i, YMAX, s, p);
+    if (x[4*i+2] < ZMIN) damp_reflect(2, i, ZMIN, s, p);
+    if (x[4*i+2] >= ZMAX) damp_reflect(2, i, ZMAX, s, p);
   }
 }
 

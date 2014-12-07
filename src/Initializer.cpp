@@ -72,12 +72,12 @@ sim_state_t* place_particles(sim_param_t* param, domain_fun_t indicatef)
 			for (float y = start; y < 1; y += hh) {
 				count += indicatef(x, y, z);
 				if (indicatef(x, y, z)) {
-					s->x[3 * p + 0] = x;
-					s->x[3 * p + 1] = y;
-					s->x[3 * p + 2] = z;
-					s->v[3 * p + 0] = MAX_INIT_VEL * static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-					s->v[3 * p + 1] = MAX_INIT_VEL * static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-					s->v[3 * p + 2] = MAX_INIT_VEL * static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+					s->x[4 * p + 0] = x;
+					s->x[4 * p + 1] = y;
+					s->x[4 * p + 2] = z;
+					s->v[4 * p + 0] = MAX_INIT_VEL * static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+					s->v[4 * p + 1] = MAX_INIT_VEL * static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+					s->v[4 * p + 2] = MAX_INIT_VEL * static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 					++p;
 				}
 			}

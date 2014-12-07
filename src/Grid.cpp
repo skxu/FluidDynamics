@@ -31,9 +31,9 @@ void Grid::cleanGrid(){
 void Grid::setParticles(){
 	cleanGrid();
 	for (int i = 0; i < n; i++){
-		float x = posVec[3 * i];
-		float y = posVec[3 * i + 1];
-		float z = posVec[3 * i + 2];
+		float x = posVec[4 * i];
+		float y = posVec[4 * i + 1];
+		float z = posVec[4 * i + 2];
 		int index = calcIndex(x, y, z);
 		grid[index].push_back(i);
 	}
@@ -74,9 +74,9 @@ void Grid::setNeighbors(int i) {
 	vector<int>* nVec = neighbors[i];
 	nVec->clear();
 
-	float x = posVec[3 * i];
-	float y = posVec[3 * i + 1];
-	float z = posVec[3 * i + 2];
+	float x = posVec[4 * i];
+	float y = posVec[4 * i + 1];
+	float z = posVec[4 * i + 2];
 
 	int gridPos_x = floor(x / cutoff);
 	int gridPos_y = floor(y / cutoff);
@@ -101,9 +101,9 @@ void Grid::setNeighbors(int i) {
 
 
 float Grid::getDistance2(int p1_index, int p2_index){
-	float x = posVec[3 * p1_index] - posVec[3 * p2_index];
-	float y = posVec[3 * p1_index + 1] - posVec[3 * p2_index + 1];
-	float z = posVec[3 * p1_index + 2] - posVec[3 * p2_index + 2];
+	float x = posVec[4 * p1_index] - posVec[4 * p2_index];
+	float y = posVec[4 * p1_index + 1] - posVec[4 * p2_index + 1];
+	float z = posVec[4 * p1_index + 2] - posVec[4 * p2_index + 2];
 	return x*x + y*y + z*z;
 }
 

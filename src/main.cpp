@@ -16,9 +16,9 @@ using namespace std;
 
 void check_state(sim_state_t* s) {
 	for (int i = 0; i < s->n; ++i) {
-		float xi = s->x[3 * i + 0];
-		float yi = s->x[3 * i + 1];
-		float zi = s->x[3 * i + 2];
+		float xi = s->x[4 * i + 0];
+		float yi = s->x[4 * i + 1];
+		float zi = s->x[4 * i + 2];
 		assert(xi >= -0.001 && xi <= 1.001);
 		assert(yi >= -0.001 && yi <= 1.001);
     assert(zi >= -0.001 && zi <= 1.001);
@@ -28,9 +28,9 @@ void check_state(sim_state_t* s) {
 void write_frame_data(ofstream* fp, int n, float* x) {
 	for (int i = 0; i < n; i ++) {
 	    // Shifted positions are for simple-render
-	    float shiftx = x[3*i+0] - 0.5;
-	    float shifty = x[3*i+1] - 0.5;
-		*fp << "p " << shiftx << " " << shifty << " " << x[3*i+2] << "\n";
+	    float shiftx = x[4*i+0] - 0.5;
+	    float shifty = x[4*i+1] - 0.5;
+		*fp << "p " << shiftx << " " << shifty << " " << x[4*i+2] << "\n";
 	}
 	*fp << "t\n";
 }
