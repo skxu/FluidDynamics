@@ -86,6 +86,7 @@ void Grid::setNeighbors() {
 			{
 				int particleInd = grid[gridCell][b];
 				vector<int>* nVec = neighbors[particleInd];
+				__m128 pPos = _mm_load_ps(posVec + 4 * particleInd);
 
 				for (int c = 0; c < grid[neighbor_grid_index].size(); c++)
 				{
@@ -93,13 +94,20 @@ void Grid::setNeighbors() {
 
 					/* DISTANCE CALCULATION */
 					static float CUTOFFVAL = cutoff * cutoff;
-					float distance2 = getDistance2(particleInd, other_particle_index);
 
-					
+					__m128 oPos = _mm_load_ps(posVec + 4 * other_particle_index);
 
+					__m128 dif = _mm_sub_ps(pPos, oPos);
 
+					__m128 dist = _mm_mul_ps(dif, dif);
 
-					if (distance2 < CUTOFFVAL) {
+					float vals[4];
+
+					_mm_store_ps(vals, dist);
+
+					/* END DISTANCE CALCULATION*/
+
+					if (vals[0] + vals[1] + vals[2] < CUTOFFVAL) {
 						nVec->push_back(other_particle_index);
 					}
 				}
@@ -108,13 +116,6 @@ void Grid::setNeighbors() {
 	}
 }
 
-
-float Grid::getDistance2(int p1_index, int p2_index){
-	float x = posVec[4 * p1_index] - posVec[4 * p2_index];
-	float y = posVec[4 * p1_index + 1] - posVec[4 * p2_index + 1];
-	float z = posVec[4 * p1_index + 2] - posVec[4 * p2_index + 2];
-	return x*x + y*y + z*z;
-}
 
 bool Grid::isValidPos(float gridPos_x, float gridPos_y, float gridPos_z){
 	return gridPos_x >= 0 && gridPos_x < xDim &&

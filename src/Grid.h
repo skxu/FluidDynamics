@@ -22,8 +22,6 @@ public:
 	/* Get the neighbors of particle i that have index higher than this particle */
 	vector<int>* getNeighbors(int i);
 
-	/* Get distance between particles at these indices */
-	float getDistance2(int p1_index, int p2_index);
 private:
 	vector<vector<int> > grid;
 	vector<vector<int> > speedOctopus;
