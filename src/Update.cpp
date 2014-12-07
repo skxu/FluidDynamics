@@ -51,9 +51,19 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
   float* a         = state->a;
   int n            = state->n;
 
+  //for benchmarking
+  double start_time;
+
   // Compute Densities
+  if (DEBUG >= 3) {
+    start_time = omp_get_wtime();
+  }
   compute_density(state, params, grid);
 
+  if (DEBUG >= 3) {
+    //~100 outputs per iteration
+    printf("compute_density took: %fs\n",omp_get_wtime() - start_time);
+  }
   // Gravity
   for (int i = 0; i < n; i++) {
     a[3*i+0] = 0;
@@ -65,6 +75,9 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
   float C0 = 45.0 * mass / PI / (h2*h2*h2);
 
   // Interaction force calculation
+  if (DEBUG >= 3) {
+    start_time = omp_get_wtime();
+  }
   #pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < n; i++) {
     const float rhoi = rho[i];
@@ -91,6 +104,11 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
         a[3*i+2] += (wp*dz + wv*dvz);
       }
     }
+  }
+
+  
+  if (DEBUG >= 3) {
+    printf("interaction force calculation took: %fs\n", omp_get_wtime() - start_time);
   }
 }
 

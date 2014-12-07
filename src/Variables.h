@@ -2,6 +2,9 @@
 #define __VARIABLES_H__
 
 #define PI 3.14159265359
+#define DEBUG 1
+//debug output level 
+//(0:none, 1:minimal, 2:detailed, 3:verbose)
 
 typedef struct sim_param_t {
   const char* fname; /* File name */
