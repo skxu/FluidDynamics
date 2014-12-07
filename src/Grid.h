@@ -43,7 +43,7 @@ private:
 	int zDim;
 	int totalCells;
 
-	void setNeighbors(int i);
+	void setNeighbors();
 
 	/* Precalculate all the neighbors to a grid cell */
 	void fitOctopus(int i);

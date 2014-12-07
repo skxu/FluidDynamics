@@ -37,10 +37,7 @@ void Grid::setParticles(){
 		int index = calcIndex(x, y, z);
 		grid[index].push_back(i);
 	}
-#pragma omp parallel for
-	for (int i = 0; i < n; i++){
-		setNeighbors(i);
-	}
+	setNeighbors();
 }
 
 
@@ -69,31 +66,38 @@ void Grid::fitOctopus(int i) {
 	}
 }
 
-/* Set neighbors for a particle */
-void Grid::setNeighbors(int i) {
-	vector<int>* nVec = neighbors[i];
-	nVec->clear();
+/* Set neighbors for all particles */
+void Grid::setNeighbors() {
+#pragma omp parallel for
+	for (int gridCell = 0; gridCell < grid.size(); gridCell++) {
 
-	float x = posVec[4 * i];
-	float y = posVec[4 * i + 1];
-	float z = posVec[4 * i + 2];
+		for (int particleInd = 0; particleInd < grid[gridCell].size(); particleInd++) {
+			int i = grid[gridCell][particleInd];
+			vector<int>* nVec = neighbors[i];
+			nVec->clear();
 
-	int gridPos_x = floor(x / cutoff);
-	int gridPos_y = floor(y / cutoff);
-	int gridPos_z = floor(z / cutoff);
+			float x = posVec[4 * i];
+			float y = posVec[4 * i + 1];
+			float z = posVec[4 * i + 2];
 
-	int gridCell = flatten(gridPos_x, gridPos_y, gridPos_z);
+			int gridPos_x = floor(x / cutoff);
+			int gridPos_y = floor(y / cutoff);
+			int gridPos_z = floor(z / cutoff);
 
-	for (int a = 0; a < speedOctopus[gridCell].size(); a++)
-	{
-		int neighbor_grid_index = speedOctopus[gridCell][a];
+			int gridCell = flatten(gridPos_x, gridPos_y, gridPos_z);
 
-		for (int b = 0; b < grid[neighbor_grid_index].size(); b++)
-		{
-			int other_particle_index = grid[neighbor_grid_index][b];
-			float distance2 = getDistance2(i, other_particle_index);
-			if (distance2 < cutoff*cutoff) {
-				nVec->push_back(other_particle_index);
+			for (int a = 0; a < speedOctopus[gridCell].size(); a++)
+			{
+				int neighbor_grid_index = speedOctopus[gridCell][a];
+
+				for (int b = 0; b < grid[neighbor_grid_index].size(); b++)
+				{
+					int other_particle_index = grid[neighbor_grid_index][b];
+					float distance2 = getDistance2(i, other_particle_index);
+					if (distance2 < cutoff*cutoff) {
+						nVec->push_back(other_particle_index);
+					}
+				}
 			}
 		}
 	}
