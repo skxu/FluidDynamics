@@ -20,8 +20,15 @@ Grid::~Grid(){
 }
 
 void Grid::cleanGrid(){
+#pragma omp parallel for
 	for (int i = 0; i < totalCells; i++){
 		grid[i].clear();
+	}
+
+#pragma omp parallel for
+	for (int i = 0; i < n; i++)
+	{
+		neighbors[i]->clear();
 	}
 }
 
@@ -68,24 +75,31 @@ void Grid::fitOctopus(int i) {
 
 /* Set neighbors for all particles */
 void Grid::setNeighbors() {
-#pragma omp parallel for
+#pragma omp parallel for schedule(dynamic)
 	for (int gridCell = 0; gridCell < grid.size(); gridCell++)
 	{
 		for (int a = 0; a < speedOctopus[gridCell].size(); a++)
 		{
 			int neighbor_grid_index = speedOctopus[gridCell][a];
 
-			for (int particleInd = 0; particleInd < grid[gridCell].size(); particleInd++)
+			for (int b = 0; b < grid[gridCell].size(); b++)
 			{
-				int i = grid[gridCell][particleInd];
-				vector<int>* nVec = neighbors[i];
-				nVec->clear();
+				int particleInd = grid[gridCell][b];
+				vector<int>* nVec = neighbors[particleInd];
 
-				for (int b = 0; b < grid[neighbor_grid_index].size(); b++)
+				for (int c = 0; c < grid[neighbor_grid_index].size(); c++)
 				{
-					int other_particle_index = grid[neighbor_grid_index][b];
-					float distance2 = getDistance2(i, other_particle_index);
-					if (distance2 < cutoff*cutoff) {
+					int other_particle_index = grid[neighbor_grid_index][c];
+
+					/* DISTANCE CALCULATION */
+					static float CUTOFFVAL = cutoff * cutoff;
+					float distance2 = getDistance2(particleInd, other_particle_index);
+
+					
+
+
+
+					if (distance2 < CUTOFFVAL) {
 						nVec->push_back(other_particle_index);
 					}
 				}
