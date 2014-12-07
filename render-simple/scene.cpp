@@ -11,6 +11,13 @@ Scene::Scene(const char * filename) {
   readFromFile(filename);
 }
 
+Scene::~Scene() {
+  for (int i = 0; i < timetopartlist->size(); i++) {
+    delete (*timetopartlist)[i];
+  }
+  delete timetopartlist;
+}
+
 void Scene::initializeScene() {
   addLight(0.0, 0.0, 1.0, 0.0, 0.9, 0.9, 0.9, 1.0);
 }
@@ -131,18 +138,18 @@ void Scene::draw(glm::mat4& mv, int timeidx) {
 
 void Scene::renderParticles(glm::mat4 &mv, int timeidx) {
   GLfloat ambient [4] = {0.1, 0.1, 0.1, 1};
-  GLfloat diffuse [4] = {0.1, 0.1, 0.4, 1};
-  GLfloat specular[4] = {0.1, 0.1, 0.5, 1};
   GLfloat shininess = 4;
   std::vector<float>* partlist = (*(timetopartlist))[timeidx];
   for (std::vector<float>::iterator obj = partlist->begin(); obj != partlist->end(); obj+=3) {
+    GLfloat diffuse [4] = {0.1, 0.6 * *(obj+2), 0.4, 1};
+    GLfloat specular[4] = {0.1, 0.7 * *(obj+2), 0.5, 1};
     glUniform4fv(ambientcol, 1, ambient);
     glUniform4fv(diffusecol, 1, diffuse);
     glUniform4fv(specularcol, 1, specular);
     glUniform1i(shininesscol, shininess);
     glm::mat4 translate = translateMtx(*obj, *(obj+1), *(obj+2));
     glLoadMatrixf(&(mv * translate)[0][0]);
-    glutSolidSphere(PARTICLE_RADIUS, 4, 4);
+    glutSolidSphere(PARTICLE_RADIUS, 3, 3);
   }
 }
 
@@ -160,13 +167,6 @@ void Scene::renderTable(glm::mat4 &mv) {
   glm::mat4 scale = scaleMtx(scalevals[0], scalevals[1], scalevals[2]);
   glLoadMatrixf(&(mv * translate * scale)[0][0]);
   glutSolidCube(2); // (Cube with (1,1,1), (1,1,-1), (-1,1,1), (1,-1,1), etc...)
-}
-
-void Scene::destroy() {
-  for (std::map<int, std::vector<float>*>::iterator iter = timetopartlist->begin(); iter != timetopartlist->end(); iter++) {
-    delete iter->second;
-  }
-  delete timetopartlist;
 }
 
 int Scene::numTimeSteps() {

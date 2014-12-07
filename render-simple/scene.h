@@ -13,7 +13,7 @@
 class Scene {
   public:
     Scene(const char * filename);
-    void destroy();
+    ~Scene();
     void draw(glm::mat4 &mv, int timeidx);
     void initializeScene();
     int numTimeSteps();

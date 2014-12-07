@@ -88,7 +88,7 @@ void keyboard(unsigned char key, int x, int y) {
     timeidx = std::min(timeidx+1, scene->numTimeSteps()-1);
     break;
   case 'q':
-    scene->destroy();
+    delete scene;
     exit(0);
   }
 }
