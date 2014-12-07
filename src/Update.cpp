@@ -82,22 +82,45 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
     for (int nidx = 0; nidx < neighbors.size(); nidx++) {
       int j = neighbors[nidx];
       if (i != j) {
-        float dx = x[3*i+0] - x[3*j+0];
-        float dy = x[3*i+1] - x[3*j+1];
-        float dz = x[3*i+2] - x[3*j+2];
-        float r = sqrt(dx*dx + dy*dy + dz*dz);
+        //float dx = x[3*i+0] - x[3*j+0];
+        //float dy = x[3*i+1] - x[3*j+1];
+        //float dz = x[3*i+2] - x[3*j+2];
+        //float r = sqrt(dx*dx + dy*dy + dz*dz);
+
+        __m128 x1 = _mm_loadu_ps(x + 3*i);
+        __m128 x2 = _mm_loadu_ps(x + 3*j);
+        __m128 dx = _mm_sub_ps(x1, x2); 
+        __m128 r2 = _mm_mul_ps(dx, dx);
+        float result[4];
+        _mm_storeu_ps(result, r2);
+        float r = sqrt(result[0] + result[1] + result[2]);
+
         assert(r > 0); // this shouldn't be 0 do to floating point precision
         float z = h-r;
         const float rhoj = rho[j];
         float w0 = C0/rhoi/rhoj;
-        float wp = w0 * k * (rhoi + rhoj - 2*rho0) * z * z / r / 2.0;
-        float wv = w0 * mu * z;
-        float dvx = v[3*j+0] - v[3*i+0];
-        float dvy = v[3*j+1] - v[3*i+1];
-        float dvz = v[3*j+2] - v[3*i+2];
-        a[3*i+0] += (wp*dx + wv*dvx);
-        a[3*i+1] += (wp*dy + wv*dvy);
-        a[3*i+2] += (wp*dz + wv*dvz);
+        //float wp = w0 * k * (rhoi + rhoj - 2*rho0) * z * z / r / 2.0;
+        //float wv = w0 * mu * z;
+        //float dvx = v[3*j+0] - v[3*i+0];
+        //float dvy = v[3*j+1] - v[3*i+1];
+        //float dvz = v[3*j+2] - v[3*i+2];
+        
+        __m128 wp = _mm_set1_ps(w0 * k * (rhoi + rhoj - 2*rho0) * z * z / r / 2.0);
+        __m128 wv = _mm_set1_ps(w0 * mu * z);
+        __m128 v1 = _mm_loadu_ps(v + 3*j);
+        __m128 v2 = _mm_loadu_ps(v + 3*i);
+        __m128 dv = _mm_sub_ps(v1, v2);
+
+        __m128 wvdv = _mm_mul_ps(dv, wv);
+        __m128 wpdx = _mm_mul_ps(dx, wp);
+        __m128 sum = _mm_add_ps(wvdv, wpdx);
+
+        float final[4]; //the last element is garbage
+        _mm_storeu_ps(final, sum);
+
+        a[3*i+0] += final[0]; //(wp*dx + wv*dvx);
+        a[3*i+1] += final[1]; //(wp*dy + wv*dvy);
+        a[3*i+2] += final[2]; //(wp*dz + wv*dvz);
       }
     }
   }
