@@ -9,10 +9,12 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	totalCells = xDim * yDim * zDim;
 	cutoff = h;
 	grid = vector<vector<int> >(totalCells, vector<int>());
+	neighbors = vector<vector<int>*>();
+	for (int i = 0; i < n; i++) neighbors.push_back(new vector<int>());
 }
 
 Grid::~Grid(){
-
+	for (int i = 0; i < n; i++) delete neighbors[i];
 }
 
 void Grid::cleanGrid(){
@@ -33,14 +35,31 @@ void Grid::setParticles(){
 		int index = calcIndex(x, y, z);
 		grid[index].push_back(i);
 	}
+	for (int i = 0; i < n; i++){
+		setNeighbors(i);
+	}
 }
 
 
 /* Get neighbors for a particle */
-void Grid::getNeighbors(int i, vector<int> &neighbors) {
-	float x = posVec[3*i];
-	float y = posVec[3*i+1];
-	float z = posVec[3*i+2];
+void Grid::getNeighbors(int i, vector<int> &outNeighbors) {
+	vector<int>* nVec = neighbors[i];
+	nVec->clear();
+
+	for (int i = 0; i < nVec->size(); i++) outNeighbors.push_back((*nVec)[i]);
+}
+
+/*  PRIVATE METHODS  */
+
+
+/* Set neighbors for a particle */
+void Grid::setNeighbors(int i) {
+	vector<int>* nVec = neighbors[i];
+	nVec->clear();
+
+	float x = posVec[3 * i];
+	float y = posVec[3 * i + 1];
+	float z = posVec[3 * i + 2];
 
 	int gridPos_x = floor(x / cutoff);
 	int gridPos_y = floor(y / cutoff);
@@ -57,7 +76,7 @@ void Grid::getNeighbors(int i, vector<int> &neighbors) {
 						int other_particle_index = grid[grid_index][d];
 						float distance2 = getDistance2(i, other_particle_index);
 						if (distance2 < cutoff*cutoff) {
-							neighbors.push_back(other_particle_index);
+							nVec->push_back(other_particle_index);
 						}
 					}
 				}
@@ -65,8 +84,6 @@ void Grid::getNeighbors(int i, vector<int> &neighbors) {
 		}
 	}
 }
-
-/*  PRIVATE METHODS  */
 
 
 float Grid::getDistance2(int p1_index, int p2_index){

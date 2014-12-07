@@ -97,12 +97,14 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\Grid.cpp" />
     <ClCompile Include="..\..\src\Initializer.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\Update.cpp" />
     <ClCompile Include="..\..\src\Variables.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\Grid.h" />
     <ClInclude Include="..\..\src\Initializer.h" />
     <ClInclude Include="..\..\src\Update.h" />
     <ClInclude Include="..\..\src\Variables.h" />

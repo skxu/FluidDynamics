@@ -19,12 +19,14 @@ public:
 	void setParticles();
 
 	/* Get the neighbors of particle i that have index higher than this particle */
-	void getNeighbors(int i, vector<int>& neighbors);
+	void getNeighbors(int i, vector<int>& outNeighbors);
 
 	/* Get distance between particles at these indices */
 	float getDistance2(int p1_index, int p2_index);
 private:
 	vector<vector<int> > grid;
+
+	vector<vector<int>*> neighbors;
 
 	/* h */
 	float cutoff;
@@ -38,6 +40,8 @@ private:
 	int yDim;
 	int zDim;
 	int totalCells;
+
+	void setNeighbors(int i);
 
 	/* Remove everything from cells */
 	void cleanGrid();
