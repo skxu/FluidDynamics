@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <stdio.h>
+#include <math.h>
 
 typedef int(*domain_fun_t)(float, float, float);
 int box_indicator(float x, float y, float z);

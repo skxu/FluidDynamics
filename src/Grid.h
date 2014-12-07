@@ -4,6 +4,7 @@
 #include <vector>
 #include <math.h>
 #include <assert.h>
+#include <stdio.h>
 #include "omp.h"
 
 #include "Variables.h"

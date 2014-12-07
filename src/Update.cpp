@@ -20,12 +20,11 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
   double start_neighbor;
   
   //memset(rho, 0, n*sizeof(float));
-  #pragma omp parallel for reduction(+:neighbor_sum)
+  //#pragma omp parallel for reduction(+:neighbor_sum)
+  #pragma omp parallel for
   for (int i = 0; i < n; i++) {
     float rhoi = 0;
     vector<int> neighbors;
-    
-    
     
     if (DEBUG == 3) {
       start_neighbor = omp_get_wtime();
@@ -94,6 +93,7 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
 
   // Interaction force calculation
   start_time = omp_get_wtime();
+
   #pragma omp parallel for
   for (int i = 0; i < n; i++) {
     float ax = 0;
@@ -137,7 +137,7 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
         __m128 wv = _mm_set1_ps(w0 * mu * z);
         __m128 v1 = _mm_loadu_ps(v + 3*j);
         
-        __m128 dv = _mm_sub_ps(v1, v2);
+        __m128 dv = _mm_sub_ps(v2, v1);
 
         __m128 wvdv = _mm_mul_ps(dv, wv);
         __m128 wpdx = _mm_mul_ps(dx, wp);
@@ -170,10 +170,9 @@ void leapfrog_step(sim_state_t* s, sim_param_t* p, float dt)
   int n          = s->n;
 
   for (int i = 0; i < 3*n; i++) {
-    float vhi = vh[i] + a[i] * dt;
-    vh[i] = vhi;
-    v[i] = vhi + a[i] * dt / 2;
-    x[i] += vhi * dt;
+    vh[i] += a[i] * dt;
+    v[i] = vh[i] + a[i] * dt / 2;
+    x[i] += vh[i] * dt;
   }
 
   // Handle reflection across edge and bottom
@@ -188,7 +187,6 @@ void leapfrog_start(sim_state_t* s, sim_param_t* p, float dt)
   float* v       = s->v;
   float* x       = s->x;
   int n          = s->n;
-
 
   for (int i = 0; i < 3*n; i++) {
     vh[i] = v[i] + a[i] * dt / 2;

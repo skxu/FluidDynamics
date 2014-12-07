@@ -35,6 +35,7 @@ void Grid::setParticles(){
 		int index = calcIndex(x, y, z);
 		grid[index].push_back(i);
 	}
+	#pragma omp parallel for
 	for (int i = 0; i < n; i++){
 		setNeighbors(i);
 	}
@@ -64,9 +65,11 @@ void Grid::setNeighbors(int i) {
 	int gridPos_y = floor(y / cutoff);
 	int gridPos_z = floor(z / cutoff);
 
+	int k = 0;
 	for (int a = gridPos_x - 1; a <= gridPos_x + 1; a++){
 		for (int b = gridPos_y - 1; b <= gridPos_y + 1; b++){
 			for (int c = gridPos_z - 1; c <= gridPos_z + 1; c++){
+				k++;
 				if (isValidPos(a, b, c))
 				{
 					int grid_index = flatten(a, b, c);
@@ -103,9 +106,6 @@ int Grid::calcIndex(float x, float y, float z){
 	int gridPos_x = floor(x / cutoff);
 	int gridPos_y = floor(y / cutoff);
 	int gridPos_z = floor(z / cutoff);
-	assert (x < xDim);
-	assert (y < yDim);
-	assert (z < zDim);
 	return flatten(gridPos_x, gridPos_y, gridPos_z);
 }
 
