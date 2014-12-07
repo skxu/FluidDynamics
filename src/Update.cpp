@@ -120,7 +120,7 @@ void leapfrog_step(sim_state_t* s, sim_param_t* p, float dt)
   float* x       = s->x;
   int n          = s->n;
 
-  #pragma omp parallel for schedule(dynamic)
+  
   for (int i = 0; i < 3*n; i++) {
     vh[i] += a[i] * dt;
     v[i] = vh[i] + a[i] * dt / 2;
@@ -140,7 +140,6 @@ void leapfrog_start(sim_state_t* s, sim_param_t* p, float dt)
   float* x       = s->x;
   int n          = s->n;
 
-  #pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < 3*n; i++) {
     vh[i] = v[i] + a[i] * dt / 2;
     v[i] += a[i] * dt;
