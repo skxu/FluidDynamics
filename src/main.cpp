@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
 	printf("Number of Particles: %d\n", n);
 
 	time_start = omp_get_wtime();
-	//write_frame_data(fp, n, state->x);
+	write_frame_data(fp, n, state->x);
 	write_time += omp_get_wtime() - time_start;
 	time_start = omp_get_wtime();
 
@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
 
 		time_start = omp_get_wtime();
 
-		//write_frame_data(fp, n, state->x);
+		write_frame_data(fp, n, state->x);
 
 		write_time += omp_get_wtime() - time_start;
 	}
