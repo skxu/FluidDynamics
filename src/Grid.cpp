@@ -92,6 +92,13 @@ void Grid::fitOctopus(int i) {
 
 	if (isValidPos(a, b, c))
 		speedOctopus[i + totalCells].push_back(flatten(a, b, c));
+
+	a = gridPos_x;
+
+	if (isValidPos(a,b,c))
+		speedOctopus[i + totalCells].push_back(flatten(a, b, c));
+
+
 }
 
 void Grid::fitSegments()
