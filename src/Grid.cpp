@@ -90,7 +90,8 @@ void Grid::fitOctopus(int i) {
 	int b = gridPos_y;
 	int c = gridPos_z;
 
-	speedOctopus[i + totalCells].push_back(flatten(a, b, c));
+	if (isValidPos(a, b, c))
+	    speedOctopus[i + totalCells].push_back(flatten(a, b, c));
 }
 
 void Grid::fitSegments()
