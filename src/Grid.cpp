@@ -120,7 +120,7 @@ void Grid::setNeighbors() {
 
 					if (d < CUTOFFVAL) {
 						nVec->push_back(other_particle_index);
-						dVec->push_back(d);
+						//dVec->push_back(d);
 					}
 				}
 			}
