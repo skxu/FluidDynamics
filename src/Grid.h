@@ -5,7 +5,7 @@
 #include <math.h>
 #include <assert.h>
 #include <stdio.h>
-#include <emmintrin.h>
+#include <pmmintrin.h>
 #include "omp.h"
 
 #include "Variables.h"
@@ -23,15 +23,11 @@ public:
 	/* Get the neighbors of particle i */
 	vector<int>* getNeighbors(int i);
 
-	/* Get the distances from the neighbors of particle i */
-	vector<float>* getDistances(int i);
-
 private:
 	vector<vector<int> > grid;
 	vector<vector<int> > speedOctopus;
 
 	vector<vector<int>*> neighbors;
-	vector<vector<float>*> distances;
 
 
 	/* h */
