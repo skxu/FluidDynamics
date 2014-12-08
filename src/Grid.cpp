@@ -85,7 +85,8 @@ void Grid::fitSegments()
 			for (int c = 0; c < zDim; c++)
 			{
 				int segment = (c * 4 + b * 2 + a) % 8;
-				segments[segment]->push_back(segment);
+				int cellIndex = flatten(a, b, c);
+				segments[segment]->push_back(cellIndex);
 			}
 		}
 	}
