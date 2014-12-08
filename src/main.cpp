@@ -38,16 +38,16 @@ void write_frame_data(ofstream* fp, int n, float* x) {
 void init_params(sim_param_t* params) {
   // Kevin you will need to fix this
   params->fname = "../outputs/run.txt"; /* File name */
-  params->nframes = 300; /* Number of frames */
+  params->nframes = 100; /* Number of frames */
   params->npframe = 20; /* Steps per frame */
-  params->h = 5e-2; /* Particle size */
+  params->h = 0.03; /* Particle size */
   params->dt = 1e-3; /* Time step */
   params->rho0 = 1000; /* Reference density */
-  params->k = 20; /* Bulk modulus */
-  params->mu = 1.0; /* Viscosity */
+  params->k = 100; /* Bulk modulus */
+  params->mu = 0.1; /* Viscosity */
   params->g = 9.8; /* Gravity strength */
   params->damp = 0.7; /* Damp */
-  params->spacing = 1.7; /* Spacing */
+  params->spacing = 1.2; /* Spacing */
 }
 
 int main(int argc, char* argv[]) {

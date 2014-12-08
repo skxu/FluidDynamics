@@ -32,7 +32,7 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
 
     __m128 xi = _mm_load_ps(x+4*i);
     float rhoi = 0.0;
-    int* neighbors = grid->getNeighbors(i);
+    vector<int>* neighbors = grid->getNeighbors(i);
     int nidx = 0;
 	/*
     for (nidx; nidx + 4 < neighbors->size(); nidx+= 4) {
@@ -93,8 +93,8 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
 
     }*/
 
-    for (nidx; nidx < grid->neighborSize && neighbors[nidx] != -1; nidx++) {
-      int j = (neighbors)[nidx];
+    for (nidx; nidx < neighbors->size(); nidx++) {
+      int j = (*neighbors)[nidx];
       float dx = xi_f - x[4*j+0];
       float dy = yi_f - x[4*j+1];
       float dz = zi_f - x[4*j+2];
@@ -164,9 +164,9 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
     float ay = 0;
     float az = -g;
     const float rhoi = rho[i];
-    int* neighbors = grid->getNeighbors(i);
-	for (int nidx = 0; nidx < grid->neighborSize && neighbors[nidx] != -1; nidx++) {
-      int j = (neighbors)[nidx];
+    vector<int>* neighbors = grid->getNeighbors(i);
+	for (int nidx = 0; nidx < neighbors->size(); nidx++) {
+      int j = (*neighbors)[nidx];
       if (i != j) {
         float dx = xi - x[4*j+0];
         float dy = yi - x[4*j+1];
