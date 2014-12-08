@@ -9,26 +9,19 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	totalCells = xDim * yDim * zDim;
 	cutoff = h;
 	grid = vector<vector<int> >(totalCells, vector<int>());
-	neighbors = vector<vector<int>*>();
-	for (int i = 0; i < n; i++) neighbors.push_back(new vector<int>());
+	neighborSize = 10; // +1 for -1 terminator
+	neighbors = new int[(neighborSize+1)*n];
 	speedOctopus = vector<vector<int> >(totalCells, vector<int>());
 	for (int i = 0; i < totalCells; i++) fitOctopus(i);
 }
 
 Grid::~Grid(){
-	for (int i = 0; i < n; i++) delete neighbors[i];
 }
 
 void Grid::cleanGrid(){
 #pragma omp parallel for
 	for (int i = 0; i < totalCells; i++){
 		grid[i].clear();
-	}
-
-#pragma omp parallel for
-	for (int i = 0; i < n; i++)
-	{
-		neighbors[i]->clear();
 	}
 }
 
@@ -49,8 +42,8 @@ void Grid::setParticles(){
 
 
 /* Get neighbors for a particle */
-vector<int>* Grid::getNeighbors(int i) {
-	return neighbors[i];
+int* Grid::getNeighbors(int i) {
+	return neighbors + (neighborSize+1)*i;
 }
 
 /*  PRIVATE METHODS  */
@@ -78,7 +71,8 @@ void Grid::setNeighbors() {
 	#pragma omp parallel for schedule(dynamic, 10)
 	for (int particleInd = 0; particleInd < n; particleInd++)
 	{
-		vector<int>* nVec = neighbors[particleInd];
+		int* nVec = neighbors + neighborSize*particleInd;
+		int curNeighborInd = 0;
 		__m128 pPos = _mm_load_ps(posVec + 4 * particleInd);
 		float* ppp = (float*)(&pPos);
 
@@ -122,8 +116,10 @@ void Grid::setNeighbors() {
 				for (int i = 0; i < 4; i++)
 				{
 					if (vals[i] < CUTOFFVAL) {
-						nVec->push_back(grid[neighbor_grid_index][c + i]);
-						//dVec->push_back(vals[i]);
+						if (curNeighborInd < neighborSize)
+							nVec[curNeighborInd] = (grid[neighbor_grid_index][c + i]);
+						else
+							printf("SERIOUS ERROR HERE\n");
 					}
 				}
 			}
@@ -147,11 +143,14 @@ void Grid::setNeighbors() {
 
 				/* END DISTANCE CALCULATION*/
 				if (d < CUTOFFVAL) {
-					nVec->push_back(other_particle_index);
-					//dVec->push_back(d);
+					if (curNeighborInd < neighborSize)
+						nVec[curNeighborInd] = (other_particle_index);
+					else
+						printf("SERIOUS ERROR HERE\n");
 				}
 			}
 		}
+		nVec[curNeighborInd] = -1;
 	}
 }
 

@@ -21,14 +21,15 @@ public:
 	void setParticles();
 
 	/* Get the neighbors of particle i */
-	vector<int>* getNeighbors(int i);
+	int* getNeighbors(int i);
+	int neighborSize;
+
 
 private:
 	vector<vector<int> > grid;
 	vector<vector<int> > speedOctopus;
 
-	vector<vector<int>*> neighbors;
-
+	int* neighbors;
 
 	/* h */
 	float cutoff;
