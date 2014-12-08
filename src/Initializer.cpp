@@ -27,8 +27,8 @@ int sphere_indicator_with_water_plane(float x, float y, float z)
 	float dy = (y - 0.5);
 	float dz = (z - 0.75);
 	float r2 = dx*dx + dy*dy + dz*dz;
-	//return (r2 < 0.2*0.2) || z < 0.25;
-	return z < 0.1;
+	return (r2 < 0.2*0.2) || z < 0.25;
+	//return z < 0.1;
 }
 
 sim_state_t* place_particles(sim_param_t* param, domain_fun_t indicatef)

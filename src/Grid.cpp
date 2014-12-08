@@ -83,7 +83,7 @@ void Grid::fitOctopus(int i) {
 
 /* Set neighbors for all particles */
 void Grid::setNeighbors() {
-#pragma omp parallel for schedule(dynamic)
+#pragma omp parallel for schedule(dynamic, 10)
 	for (int gridCell = 0; gridCell < grid.size(); gridCell++)
 	{
 		for (int a = 0; a < speedOctopus[gridCell].size(); a++)
