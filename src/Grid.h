@@ -31,7 +31,6 @@ private:
 	vector<vector<int> > speedOctopus;
 
 	vector<vector<int>*> neighbors;
-	vector<vector<float>*> distances;
 
 
 	/* h */
