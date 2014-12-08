@@ -31,6 +31,7 @@ void Grid::cleanGrid(){
 	for (int i = 0; i < n; i++)
 	{
 		neighbors[i]->clear();
+		distances[i]->clear();
 	}
 }
 
