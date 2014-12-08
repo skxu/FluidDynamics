@@ -292,12 +292,12 @@ void reflect_bc(sim_state_t* s, sim_param_t* p)
     std::cout << "Entering reflect_bc" << std::endl << std::flush;
   }
 
-  const float XMIN = 0.0;
-  const float XMAX = 1.0;
-  const float YMIN = 0.0;
-  const float YMAX = 1.0;
-  const float ZMIN = 0.0;
-  const float ZMAX = 1.0;
+  const float XMIN = 0.0001;
+  const float XMAX = 0.9999;
+  const float YMIN = 0.0001;
+  const float YMAX = 0.9999;
+  const float ZMIN = 0.0001;
+  const float ZMAX = 0.9999;
 
   float* vh = s->vh;
   float* v  = s->v;

@@ -2,3 +2,4 @@
 src/solveFluid
 render-simple/*.o
 render-simple/fluidsim
+src/sph-*/solveFluid
