@@ -36,7 +36,7 @@ void write_frame_data(ofstream* fp, int n, float* x) {
 }
 
 void init_params(sim_param_t* params) {
-  params->fname = "../outputs/run.txt"; /* File name */
+  params->fname = "../../outputs/sph-naive-grid.txt"; /* File name */
   params->nframes = 150; /* Number of frames */
   params->npframe = 50; /* Steps per frame */
   params->h = 3e-2; /* Particle size */
@@ -51,7 +51,7 @@ void init_params(sim_param_t* params) {
 
 int main(int argc, char* argv[]) {
   
-  omp_set_num_threads(16);
+  //omp_set_num_threads(16);
 
 	double start = omp_get_wtime(); //benchmarking starts here
 	double write_time = 0.0; //time spent on write_frame_data & fp init

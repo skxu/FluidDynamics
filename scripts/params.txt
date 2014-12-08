@@ -27,6 +27,7 @@ Water (Sphere into Plane):
   params->spacing = 1.2; /* Spacing */
 
 Notes:
+-----
 SPH naive no grid (Water above) :
 3 iterations
 Total time to run: 281.388451
@@ -36,3 +37,23 @@ Total time spent on init: 0.928379
 Total time spent checking state: 0.008036
 Total time spent on leapfrog step: 0.022425
 --> Interpolation : 150 iterations = ~3.9 hrs
+
+SPH grid (Water above) :
+150 iterations
+Total time to run: 153.838122
+Total time spent writing to disk: 4.489765
+Total time spent computing accel: 42.519999
+Total time spent on init: 0.055372
+Total time spent checking state: 0.620873
+Total time spent setting particles: 104.277899
+Total time spent on leapfrog step: 1.868815
+
+SPH openmp (src) (Water above) :
+150 iterations
+Total time to run: 104.650399
+Total time spent writing to disk: 7.994613
+Total time spent computing accel: 27.977833
+Total time spent on init: 0.049998
+Total time spent checking state: 1.132735
+Total time spent setting particles: 63.579969
+Total time spent on leapfrog step: 3.884202
