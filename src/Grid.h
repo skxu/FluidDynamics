@@ -27,7 +27,7 @@ public:
 	vector<float>* getDistances(int i);
 
 private:
-	vector<vector<float> > grid;
+	vector<vector<int> > grid;
 	vector<vector<int> > speedOctopus;
 
 	vector<vector<int>*> neighbors;
