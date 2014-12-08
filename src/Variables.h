@@ -16,6 +16,7 @@ typedef struct sim_param_t {
   float mu;          /* Viscosity          */
   float g;           /* Gravity strength   */
   float damp;        /* Damp on collisions */
+  float spacing;     /* Spacing on init    */
 } sim_param_t;
 
 typedef struct sim_state_t {

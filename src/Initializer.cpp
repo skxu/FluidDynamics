@@ -34,7 +34,7 @@ int sphere_indicator_with_water_plane(float x, float y, float z)
 sim_state_t* place_particles(sim_param_t* param, domain_fun_t indicatef)
 {
 	float h = param->h;
-	float hh = h / 1.2;
+	float hh = h / param->spacing;
 	// Count mesh points that fall in indicated region.
 	int count = 0;
 

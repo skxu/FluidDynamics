@@ -9,7 +9,7 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	totalCells = xDim * yDim * zDim;
 	cutoff = h;
 	grid = vector<vector<int> >(totalCells, vector<int>());
-	neighborSize = 10; // +1 for -1 terminator
+	neighborSize = 50; // +1 for -1 terminator
 	neighbors = new int[(neighborSize+1)*n];
 	speedOctopus = vector<vector<int> >(totalCells, vector<int>());
 	for (int i = 0; i < totalCells; i++) fitOctopus(i);
