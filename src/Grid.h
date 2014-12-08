@@ -19,14 +19,19 @@ public:
 	/* Call this to refresh the particles to the correct cells */
 	void setParticles();
 
-	/* Get the neighbors of particle i that have index higher than this particle */
+	/* Get the neighbors of particle i */
 	vector<int>* getNeighbors(int i);
+
+	/* Get the distances from the neighbors of particle i */
+	vector<float>* getDistances(int i);
 
 private:
 	vector<vector<int> > grid;
 	vector<vector<int> > speedOctopus;
 
 	vector<vector<int>*> neighbors;
+	vector<vector<float>*> distances;
+
 
 	/* h */
 	float cutoff;

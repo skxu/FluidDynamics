@@ -11,6 +11,8 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	grid = vector<vector<int> >(totalCells, vector<int>());
 	neighbors = vector<vector<int>*>();
 	for (int i = 0; i < n; i++) neighbors.push_back(new vector<int>());
+	distances = vector<vector<float>*>();
+	for (int i = 0; i < n; i++) distances.push_back(new vector<float>());
 	speedOctopus = vector<vector<int> >(totalCells, vector<int>());
 	for (int i = 0; i < totalCells; i++) fitOctopus(i);
 }
@@ -53,6 +55,11 @@ vector<int>* Grid::getNeighbors(int i) {
 	return neighbors[i];
 }
 
+/* Get distances from neighbors for a particle */
+vector<float>* Grid::getDistances(int i) {
+	return distances[i];
+}
+
 /*  PRIVATE METHODS  */
 
 /* For cell index i, calculate grid inds for 3x3x3 area around it */
@@ -86,6 +93,7 @@ void Grid::setNeighbors() {
 			{
 				int particleInd = grid[gridCell][b];
 				vector<int>* nVec = neighbors[particleInd];
+				vector<float>* dVec = distances[particleInd];
 				__m128 pPos = _mm_load_ps(posVec + 4 * particleInd);
 
 				for (int c = 0; c < grid[neighbor_grid_index].size(); c++)
@@ -107,8 +115,11 @@ void Grid::setNeighbors() {
 
 					/* END DISTANCE CALCULATION*/
 
-					if (vals[0] + vals[1] + vals[2] < CUTOFFVAL) {
+					float d = vals[0] + vals[1] + vals[2];
+
+					if (d < CUTOFFVAL) {
 						nVec->push_back(other_particle_index);
+						dVec->push_back(d);
 					}
 				}
 			}
