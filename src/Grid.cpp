@@ -87,8 +87,8 @@ void Grid::setNeighbors() {
 				int particleInd = grid[gridCell][b];
 				vector<int>* nVec = neighbors[particleInd];
 				__m128 pPos = _mm_load_ps(posVec + 4 * particleInd);
-
-				for (int c = 0; c+4 < grid[neighbor_grid_index].size(); c+=4)
+				int c = 0;
+				for (; c+4 <= grid[neighbor_grid_index].size(); c+=4)
 				{
 					//int other_particle_index = grid[neighbor_grid_index][c];
 
@@ -122,7 +122,7 @@ void Grid::setNeighbors() {
 					{
 						if (vals[i] < CUTOFFVAL) {
 							nVec->push_back(grid[neighbor_grid_index][c+i]);
-							dVec->push_back(vals[i]);
+							//dVec->push_back(vals[i]);
 						}
 					}
 				}
