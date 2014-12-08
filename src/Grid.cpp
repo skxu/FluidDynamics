@@ -71,7 +71,7 @@ void Grid::setNeighbors() {
 	#pragma omp parallel for schedule(dynamic, 10)
 	for (int particleInd = 0; particleInd < n; particleInd++)
 	{
-		int* nVec = neighbors + neighborSize*particleInd;
+		int* nVec = neighbors + (neighborSize+1)*particleInd;
 		int curNeighborInd = 0;
 		__m128 pPos = _mm_load_ps(posVec + 4 * particleInd);
 		float* ppp = (float*)(&pPos);
@@ -117,7 +117,10 @@ void Grid::setNeighbors() {
 				{
 					if (vals[i] < CUTOFFVAL) {
 						if (curNeighborInd < neighborSize)
+						{
 							nVec[curNeighborInd] = (grid[neighbor_grid_index][c + i]);
+							curNeighborInd++;
+						}
 						else
 							printf("SERIOUS ERROR HERE\n");
 					}
@@ -144,7 +147,10 @@ void Grid::setNeighbors() {
 				/* END DISTANCE CALCULATION*/
 				if (d < CUTOFFVAL) {
 					if (curNeighborInd < neighborSize)
+					{
 						nVec[curNeighborInd] = (other_particle_index);
+						curNeighborInd++;
+					}
 					else
 						printf("SERIOUS ERROR HERE\n");
 				}

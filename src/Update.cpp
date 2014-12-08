@@ -93,7 +93,7 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
 
     }*/
 
-    for (nidx; neighbors[nidx] != -1; nidx++) {
+    for (nidx; nidx < grid->neighborSize && neighbors[nidx] != -1; nidx++) {
       int j = (neighbors)[nidx];
       float dx = xi_f - x[4*j+0];
       float dy = yi_f - x[4*j+1];
@@ -165,7 +165,7 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
     float az = -g;
     const float rhoi = rho[i];
     int* neighbors = grid->getNeighbors(i);
-    for (int nidx = 0; neighbors[nidx] != -1; nidx++) {
+	for (int nidx = 0; nidx < grid->neighborSize && neighbors[nidx] != -1; nidx++) {
       int j = (neighbors)[nidx];
       if (i != j) {
         float dx = xi - x[4*j+0];
