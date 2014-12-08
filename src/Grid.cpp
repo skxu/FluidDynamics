@@ -15,6 +15,7 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	for (int i = 0; i < totalCells; i++) fitOctopus(i);
 	segments = vector<vector<int>*>();
 	for (int i = 0; i < 8; i++) segments.push_back(new vector<int>());
+	fitSegments();
 }
 
 Grid::~Grid(){
