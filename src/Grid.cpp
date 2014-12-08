@@ -11,7 +11,7 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	grid = vector<vector<int> >(totalCells, vector<int>());
 	neighbors = vector<vector<int>*>();
 	for (int i = 0; i < n; i++) neighbors.push_back(new vector<int>());
-	speedOctopus = vector<vector<int> >(totalCells*2, vector<int>());
+	speedOctopus = vector<vector<int> >(totalCells * 2, vector<int>());
 	for (int i = 0; i < totalCells; i++) fitOctopus(i);
 	segments = vector<vector<int>*>();
 	for (int i = 0; i < 8; i++) segments.push_back(new vector<int>());
@@ -80,7 +80,7 @@ void Grid::fitOctopus(int i) {
 			for (int c = gridPos_z - 0; c <= gridPos_z - 0; c++){
 				if (isValidPos(a, b, c))
 				{
-					speedOctopus[i+totalCells].push_back(flatten(a, b, c));
+					speedOctopus[i + totalCells].push_back(flatten(a, b, c));
 				}
 			}
 		}
@@ -91,7 +91,7 @@ void Grid::fitOctopus(int i) {
 	int c = gridPos_z;
 
 	if (isValidPos(a, b, c))
-	    speedOctopus[i + totalCells].push_back(flatten(a, b, c));
+		speedOctopus[i + totalCells].push_back(flatten(a, b, c));
 }
 
 void Grid::fitSegments()
@@ -102,7 +102,11 @@ void Grid::fitSegments()
 		{
 			for (int c = 0; c < zDim; c++)
 			{
-				int segment = (c * 4 + b * 2 + a) % 8;
+				int zpos = c % 2;
+				int ypos = b % 2;
+				int xpos = a % 2;
+
+				int segment = (zpos*4 + ypos*2 + xpos) % 8;
 				int cellIndex = flatten(a, b, c);
 				segments[segment]->push_back(cellIndex);
 			}
@@ -114,14 +118,14 @@ void Grid::fitSegments()
 void Grid::setNeighbors() {
 	for (int segment = 0; segment < segments.size(); segment++)
 	{
-#pragma omp parallel for schedule(dynamic, 10)
-		for (int segmentInd = 0; segmentInd < segments[segment]->size(); segmentInd++)
+		for (int iteration = 0; iteration < 2; iteration++)
 		{
-			int gridCell = (*segments[segment])[segmentInd];
-			for (int iteration = 0; iteration < 2; iteration++)
+#pragma omp parallel for schedule(dynamic, 10)
+			for (int segmentInd = 0; segmentInd < segments[segment]->size(); segmentInd++)
 			{
+				int gridCell = (*segments[segment])[segmentInd];
 
-				for (int a = 0; a < speedOctopus[gridCell+iteration*totalCells].size(); a++)
+				for (int a = 0; a < speedOctopus[gridCell + iteration*totalCells].size(); a++)
 				{
 					int neighbor_grid_index = speedOctopus[gridCell + iteration*totalCells][a];
 
