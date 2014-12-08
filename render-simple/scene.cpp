@@ -141,8 +141,8 @@ void Scene::renderParticles(glm::mat4 &mv, int timeidx) {
   GLfloat shininess = 4;
   std::vector<float>* partlist = (*(timetopartlist))[timeidx];
   for (std::vector<float>::iterator obj = partlist->begin(); obj != partlist->end(); obj+=3) {
-    GLfloat diffuse [4] = {0.1, 0.6 * *(obj+2), 0.4, 1};
-    GLfloat specular[4] = {0.1, 0.7 * *(obj+2), 0.5, 1};
+    GLfloat diffuse [4] = {0.1, 0.7 * *(obj+2), 0.7 * *(obj+2), 1};
+    GLfloat specular[4] = {0.1, 0.7 * *(obj+2), 0.7 * *(obj+2), 1};
     glUniform4fv(ambientcol, 1, ambient);
     glUniform4fv(diffusecol, 1, diffuse);
     glUniform4fv(specularcol, 1, specular);

@@ -19,9 +19,9 @@ void check_state(sim_state_t* s) {
 		float xi = s->x[4 * i + 0];
 		float yi = s->x[4 * i + 1];
 		float zi = s->x[4 * i + 2];
-		assert(xi >= -0.001 && xi <= 1.001);
-		assert(yi >= -0.001 && yi <= 1.001);
-    assert(zi >= -0.001 && zi <= 1.001);
+		assert(xi >= 0 && xi <= 1);
+		assert(yi >= 0 && yi <= 1);
+    assert(zi >= 0 && zi <= 1);
 	}
 }
 

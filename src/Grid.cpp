@@ -8,23 +8,31 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	zDim = ceil(zBound / h);
 	totalCells = xDim * yDim * zDim;
 	cutoff = h;
-	grid = vector<vector<int> >(totalCells, vector<int>());
+	grid = vector<vector<int>*>();
+	for (int i = 0; i < totalCells; i++) grid.push_back(new vector<int>());
 	neighbors = vector<vector<int>*>();
 	for (int i = 0; i < n; i++) neighbors.push_back(new vector<int>());
 	distances = vector<vector<float>*>();
 	for (int i = 0; i < n; i++) distances.push_back(new vector<float>());
-	speedOctopus = vector<vector<int> >(totalCells, vector<int>());
-	for (int i = 0; i < totalCells; i++) fitOctopus(i);
+	speedOctopus = vector<vector<int>*>();
+	for (int i = 0; i < totalCells; i++) {
+		speedOctopus.push_back(new vector<int>());
+		fitOctopus(i);
+	}
+	printf("HERE\n");
 }
 
 Grid::~Grid(){
 	for (int i = 0; i < n; i++) delete neighbors[i];
+	for (int i = 0; i < n; i++) delete distances[i];
+	for (int i = 0; i < totalCells; i++) delete grid[i];
+	for (int i = 0; i < totalCells; i++) delete speedOctopus[i];
 }
 
 void Grid::cleanGrid(){
 #pragma omp parallel for
 	for (int i = 0; i < totalCells; i++){
-		grid[i].clear();
+		grid[i]->clear();
 	}
 
 #pragma omp parallel for
@@ -45,7 +53,7 @@ void Grid::setParticles(){
 		float y = posVec[4 * i + 1];
 		float z = posVec[4 * i + 2];
 		int index = calcIndex(x, y, z);
-		grid[index].push_back(i);
+		grid[index]->push_back(i);
 	}
 	setNeighbors();
 }
@@ -74,7 +82,7 @@ void Grid::fitOctopus(int i) {
 			for (int c = gridPos_z - 1; c <= gridPos_z + 1; c++){
 				if (isValidPos(a, b, c))
 				{
-					speedOctopus[i].push_back(flatten(a, b, c));
+					speedOctopus[i]->push_back(flatten(a, b, c));
 				}
 			}
 		}
@@ -86,20 +94,20 @@ void Grid::setNeighbors() {
 #pragma omp parallel for schedule(dynamic)
 	for (int gridCell = 0; gridCell < grid.size(); gridCell++)
 	{
-		for (int a = 0; a < speedOctopus[gridCell].size(); a++)
+		for (int a = 0; a < speedOctopus[gridCell]->size(); a++)
 		{
-			int neighbor_grid_index = speedOctopus[gridCell][a];
+			int neighbor_grid_index = (*speedOctopus[gridCell])[a];
 
-			for (int b = 0; b < grid[gridCell].size(); b++)
+			for (int b = 0; b < grid[gridCell]->size(); b++)
 			{
-				int particleInd = grid[gridCell][b];
+				int particleInd = (*grid[gridCell])[b];
 				vector<int>* nVec = neighbors[particleInd];
 				vector<float>* dVec = distances[particleInd];
 				__m128 pPos = _mm_load_ps(posVec + 4 * particleInd);
 
-				for (int c = 0; c < grid[neighbor_grid_index].size(); c++)
+				for (int c = 0; c < grid[neighbor_grid_index]->size(); c++)
 				{
-					int other_particle_index = grid[neighbor_grid_index][c];
+					int other_particle_index = (*grid[neighbor_grid_index])[c];
 
 					/* DISTANCE CALCULATION */
 					static float CUTOFFVAL = cutoff * cutoff;
