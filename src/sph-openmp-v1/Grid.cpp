@@ -8,6 +8,7 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	zDim = ceil(zBound / h);
 	totalCells = xDim * yDim * zDim;
 	cutoff = h;
+	cutoffSq = h*h;
 	grid = vector<vector<int> >(totalCells, vector<int>());
 	neighbors = vector<vector<int>*>();
 	for (int i = 0; i < n; i++) neighbors.push_back(new vector<int>());
@@ -20,12 +21,12 @@ Grid::~Grid(){
 }
 
 void Grid::cleanGrid(){
-#pragma omp parallel for
+#pragma omp parallel for schedule(static, 32)
 	for (int i = 0; i < totalCells; i++){
 		grid[i].clear();
 	}
 
-#pragma omp parallel for
+#pragma omp parallel for schedule(static, 32)
 	for (int i = 0; i < n; i++)
 	{
 		neighbors[i]->clear();
@@ -75,7 +76,7 @@ void Grid::fitOctopus(int i) {
 
 /* Set neighbors for all particles */
 void Grid::setNeighbors() {
-  #pragma omp parallel for schedule(dynamic, 10)
+  #pragma omp parallel for schedule(static, 8)
 	for (int gridCell = 0; gridCell < grid.size(); gridCell++)
 	{
 		for (int a = 0; a < speedOctopus[gridCell].size(); a++)
@@ -85,6 +86,9 @@ void Grid::setNeighbors() {
 			for (int b = 0; b < grid[gridCell].size(); b++)
 			{
 				int particleInd = grid[gridCell][b];
+				float xi = posVec[4*particleInd+0];
+				float yi = posVec[4*particleInd+1];
+				float zi = posVec[4*particleInd+2];
 				vector<int>* nVec = neighbors[particleInd];
 				int c = 0;
 
@@ -93,15 +97,14 @@ void Grid::setNeighbors() {
 					int other_particle_index = grid[neighbor_grid_index][c];
 
 					/* DISTANCE CALCULATION */
-					static float CUTOFFVAL = cutoff * cutoff;
 
-					float dx = posVec[4*particleInd+0] - posVec[4*other_particle_index+0];
-					float dy = posVec[4*particleInd+1] - posVec[4*other_particle_index+1];
-					float dz = posVec[4*particleInd+2] - posVec[4*other_particle_index+2];					
+					float dx = xi - posVec[4*other_particle_index+0];
+					float dy = yi - posVec[4*other_particle_index+1];
+					float dz = zi - posVec[4*other_particle_index+2];					
 					float d = dx*dx + dy*dy + dz*dz;
 
 					/* END DISTANCE CALCULATION*/
-					if (d < CUTOFFVAL) {
+					if (d < cutoffSq) {
 						nVec->push_back(other_particle_index);
 					} 
 				}

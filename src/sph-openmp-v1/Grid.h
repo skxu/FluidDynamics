@@ -32,6 +32,7 @@ private:
 
 	/* h */
 	float cutoff;
+	float cutoffSq;
 
 	/* Vector of particle positions from sim_state_t*/
 	float* posVec;

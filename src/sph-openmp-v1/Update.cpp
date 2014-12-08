@@ -22,7 +22,7 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
   float h9 = h4 * h4 * h;
   float C  = 315.0 * s->mass / 64.0 / PI / h9;
 
-  #pragma omp parallel for
+  #pragma omp parallel for schedule(static, 32) 
   for (int i = 0; i < n; i++) {
     
     float xi_f = x[4*i+0];
@@ -144,7 +144,7 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
   if (DEBUG >= 3) {
     start_time = omp_get_wtime();
   }
-  #pragma omp parallel for
+  #pragma omp parallel for schedule(static, 32)
   for (int i = 0; i < n; i++) {
     float xi = x[4*i+0];
     float yi = x[4*i+1];
