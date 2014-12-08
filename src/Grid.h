@@ -5,7 +5,7 @@
 #include <math.h>
 #include <assert.h>
 #include <stdio.h>
-#include <emmintrin.h>
+#include <pmmintrin.h>
 #include "omp.h"
 
 #include "Variables.h"
