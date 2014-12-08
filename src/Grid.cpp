@@ -8,7 +8,7 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	zDim = ceil(zBound / h);
 	totalCells = xDim * yDim * zDim;
 	cutoff = h;
-	grid = vector<vector<int> >(totalCells, vector<int>());
+	grid = vector<vector<float> >(totalCells, vector<float>());
 	neighbors = vector<vector<int>*>();
 	for (int i = 0; i < n; i++) neighbors.push_back(new vector<int>());
 	distances = vector<vector<float>*>();
@@ -46,6 +46,9 @@ void Grid::setParticles(){
 		float z = posVec[4 * i + 2];
 		int index = calcIndex(x, y, z);
 		grid[index].push_back(i);
+		grid[index].push_back(x);
+		grid[index].push_back(y);
+		grid[index].push_back(z);
 	}
 	setNeighbors();
 }
@@ -90,34 +93,43 @@ void Grid::setNeighbors() {
 		{
 			int neighbor_grid_index = speedOctopus[gridCell][a];
 
-			for (int b = 0; b < grid[gridCell].size(); b++)
+			for (int b = 0; b < grid[gridCell].size(); b+=4)
 			{
 				int particleInd = grid[gridCell][b];
+				float x = grid[gridCell][b + 1];
+				float y = grid[gridCell][b + 2];
+				float z = grid[gridCell][b + 3];
 				vector<int>* nVec = neighbors[particleInd];
-				vector<float>* dVec = distances[particleInd];
-				__m128 pPos = _mm_load_ps(posVec + 4 * particleInd);
+				//vector<float>* dVec = distances[particleInd];
+				//__m128 pPos = _mm_load_ps(posVec + 4 * particleInd);
 
-				for (int c = 0; c < grid[neighbor_grid_index].size(); c++)
+				for (int c = 0; c < grid[neighbor_grid_index].size(); c+=4)
 				{
 					int other_particle_index = grid[neighbor_grid_index][c];
+					float ox = grid[neighbor_grid_index][c + 1];
+					float oy = grid[neighbor_grid_index][c + 2];
+					float oz = grid[neighbor_grid_index][c + 3];
 
 					/* DISTANCE CALCULATION */
 					static float CUTOFFVAL = cutoff * cutoff;
 
-					__m128 oPos = _mm_load_ps(posVec + 4 * other_particle_index);
+					//__m128 oPos = _mm_load_ps(posVec + 4 * other_particle_index);
 
-					__m128 dif = _mm_sub_ps(pPos, oPos);
+					//__m128 dif = _mm_sub_ps(pPos, oPos);
 
-					__m128 dist = _mm_mul_ps(dif, dif);
+					//__m128 dist = _mm_mul_ps(dif, dif);
 
-					float vals[4];
+					//float vals[4];
 
-					_mm_store_ps(vals, dist);
+					//_mm_store_ps(vals, dist);
 
 					/* END DISTANCE CALCULATION*/
 
-					float d = vals[0] + vals[1] + vals[2];
-
+					//float d = vals[0] + vals[1] + vals[2];
+					float dx = ox - x;
+					float dy = oy - y;
+					float dz = oz - z;
+					float d = dx * dx + dy * dy + dz * dz;
 					if (d < CUTOFFVAL) {
 						nVec->push_back(other_particle_index);
 						//dVec->push_back(d);
