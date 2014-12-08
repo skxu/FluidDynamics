@@ -38,7 +38,7 @@ void write_frame_data(ofstream* fp, int n, float* x) {
 void init_params(sim_param_t* params) {
   // Kevin you will need to fix this
   params->fname = "../outputs/run.txt"; /* File name */
-  params->nframes = 50; /* Number of frames */
+  params->nframes = 300; /* Number of frames */
   params->npframe = 20; /* Steps per frame */
   params->h = 3e-2; /* Particle size */
   params->dt = 1e-3; /* Time step */
@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
 	printf("Number of Particles: %d\n", n);
 
 	time_start = omp_get_wtime();
-	write_frame_data(fp, n, state->x);
+	//write_frame_data(fp, n, state->x);
 	write_time += omp_get_wtime() - time_start;
 	time_start = omp_get_wtime();
 
@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
 
 		time_start = omp_get_wtime();
 
-		write_frame_data(fp, n, state->x);
+		//write_frame_data(fp, n, state->x);
 
 		write_time += omp_get_wtime() - time_start;
 	}
