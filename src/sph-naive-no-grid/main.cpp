@@ -2,7 +2,6 @@
 /** Based on: http://www.cs.cornell.edu/~bindel/class/cs5220-f11/code/sph.pdf **/
 
 #include "Update.h"
-#include "Grid.h"
 #include "Initializer.h"
 
 #include <iostream>
@@ -36,7 +35,8 @@ void write_frame_data(ofstream* fp, int n, float* x) {
 }
 
 void init_params(sim_param_t* params) {
-  params->fname = "../outputs/run.txt"; /* File name */
+  // Kevin you will need to fix this
+  params->fname = "../../outputs/sph-naive-no-grid.txt"; /* File name */
   params->nframes = 3; /* Number of frames */
   params->npframe = 50; /* Steps per frame */
   params->h = 3e-2; /* Particle size */
@@ -50,8 +50,6 @@ void init_params(sim_param_t* params) {
 }
 
 int main(int argc, char* argv[]) {
-  
-  omp_set_num_threads(16);
 
 	double start = omp_get_wtime(); //benchmarking starts here
 	double write_time = 0.0; //time spent on write_frame_data & fp init
@@ -67,9 +65,7 @@ int main(int argc, char* argv[]) {
 	init_params(&params);
 	//sim_state_t* state = place_particles(&params, box_indicator);
 	sim_state_t* state = place_particles(&params, sphere_indicator_with_water_plane);
-	Grid* grid = new Grid(1.0, 1.0, 1.0, params.h, state);
-	grid->setParticles();
-	normalize_mass(state, &params, grid);
+	normalize_mass(state, &params);
 	printf("mass: %f\n", state->mass);
 
 	init_time += omp_get_wtime() - time_start;
@@ -92,7 +88,7 @@ int main(int argc, char* argv[]) {
 	write_time += omp_get_wtime() - time_start;
 	time_start = omp_get_wtime();
 
-	compute_accel(state, &params, grid);
+	compute_accel(state, &params);
 
 	accel_time += omp_get_wtime() - time_start;
 	time_start = omp_get_wtime();
@@ -101,8 +97,6 @@ int main(int argc, char* argv[]) {
 
 	frog_time += omp_get_wtime() - time_start;
 	time_start = omp_get_wtime();
-
-	grid->setParticles();
 
 	set_time += omp_get_wtime() - time_start;
 	time_start = omp_get_wtime();
@@ -118,7 +112,7 @@ int main(int argc, char* argv[]) {
 
 			time_start = omp_get_wtime();
 			
-			compute_accel(state, &params, grid);
+			compute_accel(state, &params);
 
 			accel_time += omp_get_wtime() - time_start;
 			time_start = omp_get_wtime();
@@ -132,8 +126,6 @@ int main(int argc, char* argv[]) {
 			
 			check_time += omp_get_wtime() - time_start;
 			time_start = omp_get_wtime();
-
-			grid->setParticles();
 
 			set_time += omp_get_wtime() - time_start;
 		}
@@ -152,10 +144,8 @@ int main(int argc, char* argv[]) {
 	printf("Total time spent computing accel: %f\n", accel_time);
 	printf("Total time spent on init: %f\n", init_time);
 	printf("Total time spent checking state: %f\n", check_time);
-	printf("Total time spent setting particles: %f\n", set_time);
 	printf("Total time spent on leapfrog step: %f\n", frog_time);
 
 	fp->close();
-	delete grid;
 	free_state(state);
 }

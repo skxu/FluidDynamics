@@ -2,24 +2,37 @@ Params for presentation video:
 
 Sticky Fluid (Sphere into Plane):
   params->fname = "../outputs/run.txt"; /* File name */
-  params->nframes = 300; /* Number of frames */
-  params->npframe = 10; /* Steps per frame */
+  params->nframes = 200; /* Number of frames */
+  params->npframe = 50; /* Steps per frame */
   params->h = 3e-2; /* Particle size */
-  params->dt = 1e-3; /* Time step */
+  params->dt = 4e-4; /* Time step */
   params->rho0 = 1000; /* Reference density */
   params->k = 1000; /* Bulk modulus */
   params->mu = 10.0; /* Viscosity */
   params->g = 9.8; /* Gravity strength */
   params->damp = 1.0; /* Damp */
+  params->spacing = 1.2 /* Spacing */
 
 Water (Sphere into Plane):
   params->fname = "../outputs/run.txt"; /* File name */
-  params->nframes = 300; /* Number of frames */
-  params->npframe = 10; /* Steps per frame */
+  params->nframes = 150; /* Number of frames */
+  params->npframe = 50; /* Steps per frame */
   params->h = 3e-2; /* Particle size */
-  params->dt = 1e-3; /* Time step */
+  params->dt = 4e-4; /* Time step */
   params->rho0 = 1000; /* Reference density */
-  params->k = 600; /* Bulk modulus */
-  params->mu = 0.2; /* Viscosity */
+  params->k = 700; /* Bulk modulus */
+  params->mu = 0.1; /* Viscosity */
   params->g = 9.8; /* Gravity strength */
-  params->damp = 1.0; /* Damp */
+  params->damp = 0.8; /* Damp */
+  params->spacing = 1.2; /* Spacing */
+
+Notes:
+SPH naive no grid (Water above) :
+3 iterations
+Total time to run: 281.388451
+Total time spent writing to disk: 0.099126
+Total time spent computing accel: 280.330400
+Total time spent on init: 0.928379
+Total time spent checking state: 0.008036
+Total time spent on leapfrog step: 0.022425
+--> Interpolation : 150 iterations = ~3.9 hrs
