@@ -83,7 +83,7 @@ void Grid::setNeighbors() {
 			int neighbor_grid_index = speedOctopus[gridCell][a];
 
 			int b = 0;
-			for (; b < grid[gridCell].size(); b += 2)
+			for (; b < grid[gridCell].size()/2*2; b += 2)
 			{
 				int particleInd = grid[gridCell][b];
 				vector<int>* nVec = neighbors[particleInd];
@@ -184,7 +184,7 @@ void Grid::setNeighbors() {
 					dist = _mm_mul_ps(dif, dif);
 
 					_mm_store_ps(vals, dist);
-					float d = vals[0] + vals[1] + vals[2];
+					d = vals[0] + vals[1] + vals[2];
 
 					/* END DISTANCE CALCULATION*/
 					if (d < CUTOFFVAL) {
