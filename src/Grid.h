@@ -23,9 +23,6 @@ public:
 	/* Get the neighbors of particle i */
 	vector<int>* getNeighbors(int i);
 
-	/* Get the distances from the neighbors of particle i */
-	vector<float>* getDistances(int i);
-
 private:
 	vector<vector<int> > grid;
 	vector<vector<int> > speedOctopus;

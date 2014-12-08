@@ -53,11 +53,6 @@ vector<int>* Grid::getNeighbors(int i) {
 	return neighbors[i];
 }
 
-/* Get distances from neighbors for a particle */
-vector<float>* Grid::getDistances(int i) {
-	return distances[i];
-}
-
 /*  PRIVATE METHODS  */
 
 /* For cell index i, calculate grid inds for 3x3x3 area around it */
@@ -91,7 +86,6 @@ void Grid::setNeighbors() {
 			{
 				int particleInd = grid[gridCell][b];
 				vector<int>* nVec = neighbors[particleInd];
-				vector<float>* dVec = distances[particleInd];
 				__m128 pPos = _mm_load_ps(posVec + 4 * particleInd);
 
 				for (int c = 0; c < grid[neighbor_grid_index].size(); c++)
