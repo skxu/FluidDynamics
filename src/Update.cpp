@@ -22,7 +22,7 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
   float h9 = h4 * h4 * h;
   float C  = 315.0 * s->mass / 64.0 / PI / h9;
 
-  #pragma omp parallel for
+  #pragma omp parallel for schedule(auto)
   for (int i = 0; i < n; i++) {
     
     float xi_f = x[4*i+0];
