@@ -112,7 +112,7 @@ void Grid::setNeighbors() {
 
 					__m128 dist = _mm_hadd_ps(_mm_hadd_ps(dist1, dist2),_mm_hadd_ps(dist3, dist4));
 
-					__declspec(align(16)) float vals[4];
+					float vals[4] __attribute__((aligned(0x10000)));
 
 					_mm_store_ps(vals, dist);
 
@@ -139,7 +139,7 @@ void Grid::setNeighbors() {
 
 					__m128 dist = _mm_mul_ps(dif, dif);
 
-					__declspec(align(16)) float vals[4];
+					float vals[4] __attribute__((aligned(0x10000)));
 
 					_mm_store_ps(vals, dist);
 					float d = vals[0] + vals[1] + vals[2];
