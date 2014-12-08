@@ -75,7 +75,6 @@ void Grid::fitOctopus(int i) {
 
 /* Set neighbors for all particles */
 void Grid::setNeighbors() {
-	#pragma omp parallel for schedule(dynamic, 10)
 	for (int particleInd = 0; particleInd < n; particleInd++)
 	{
 		vector<int>* nVec = neighbors[particleInd];
