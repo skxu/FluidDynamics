@@ -76,7 +76,6 @@ void Grid::fitOctopus(int i) {
 /* Set neighbors for all particles */
 void Grid::setNeighbors() {
   #pragma omp parallel for schedule(dynamic, 10)
-  //float avg = 0;
 	for (int gridCell = 0; gridCell < grid.size(); gridCell++)
 	{
 		for (int a = 0; a < speedOctopus[gridCell].size(); a++)
@@ -89,10 +88,8 @@ void Grid::setNeighbors() {
 				vector<int>* nVec = neighbors[particleInd];
 				__m128 pPos = _mm_load_ps(posVec + 4 * particleInd);
 				int c = 0;
-				//avg += grid[neighbor_grid_index].size();
 				for (; c+4 <= grid[neighbor_grid_index].size(); c+=4)
 				{
-					//int other_particle_index = grid[neighbor_grid_index][c];
 
 					/* DISTANCE CALCULATION */
 					static float CUTOFFVAL = cutoff * cutoff;
@@ -124,7 +121,6 @@ void Grid::setNeighbors() {
 					{
 						if (vals[i] < CUTOFFVAL) {
 							nVec->push_back(grid[neighbor_grid_index][c+i]);
-							//dVec->push_back(vals[i]);
 						}
 					}
 				}
@@ -155,7 +151,6 @@ void Grid::setNeighbors() {
 			}
 		}
 	}
-	//printf("%f\n", avg / grid.size());
 }
 
 
