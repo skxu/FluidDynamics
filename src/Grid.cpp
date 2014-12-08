@@ -88,7 +88,45 @@ void Grid::setNeighbors() {
 				vector<int>* nVec = neighbors[particleInd];
 				__m128 pPos = _mm_load_ps(posVec + 4 * particleInd);
 
-				for (int c = 0; c < grid[neighbor_grid_index].size(); c++)
+				for (int c = 0; c+4 < grid[neighbor_grid_index].size(); c+=4)
+				{
+					//int other_particle_index = grid[neighbor_grid_index][c];
+
+					/* DISTANCE CALCULATION */
+					static float CUTOFFVAL = cutoff * cutoff;
+
+					__m128 oPos1 = _mm_load_ps(posVec + 4 * grid[neighbor_grid_index][c]);
+					__m128 oPos2 = _mm_load_ps(posVec + 4 * grid[neighbor_grid_index][c + 1]);
+					__m128 oPos3 = _mm_load_ps(posVec + 4 * grid[neighbor_grid_index][c + 2]);
+					__m128 oPos4 = _mm_load_ps(posVec + 4 * grid[neighbor_grid_index][c + 3]);
+
+					__m128 dif1 = _mm_sub_ps(pPos, oPos1);
+					__m128 dif2 = _mm_sub_ps(pPos, oPos2);
+					__m128 dif3 = _mm_sub_ps(pPos, oPos3);
+					__m128 dif4 = _mm_sub_ps(pPos, oPos4);
+
+					__m128 dist1 = _mm_mul_ps(dif1, dif1);
+					__m128 dist2 = _mm_mul_ps(dif2, dif2);
+					__m128 dist3 = _mm_mul_ps(dif3, dif3);
+					__m128 dist4 = _mm_mul_ps(dif4, dif4);
+
+					__m128 dist = _mm_hadd_ps(_mm_hadd_ps(dist1, dist2),_mm_hadd_ps(dist3, dist4));
+
+					float vals[4];
+
+					_mm_store_ps(vals, dist);
+
+					/* END DISTANCE CALCULATION*/
+
+					for (int i = 0; i < 4; i++)
+					{
+						if (vals[i] < CUTOFFVAL) {
+							nVec->push_back(grid[neighbor_grid_index][c+i]);
+							dVec->push_back(vals[i]);
+						}
+					}
+				}
+				for (; c < grid[neighbor_grid_index].size(); c++)
 				{
 					int other_particle_index = grid[neighbor_grid_index][c];
 
@@ -104,11 +142,9 @@ void Grid::setNeighbors() {
 					float vals[4];
 
 					_mm_store_ps(vals, dist);
-
-					/* END DISTANCE CALCULATION*/
-
 					float d = vals[0] + vals[1] + vals[2];
 
+					/* END DISTANCE CALCULATION*/
 					if (d < CUTOFFVAL) {
 						nVec->push_back(other_particle_index);
 						//dVec->push_back(d);
