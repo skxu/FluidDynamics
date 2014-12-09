@@ -116,6 +116,10 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 		flatGrid, 0, NULL, NULL);
 	CHK_ERR(err);
 
+	err = clEnqueueWriteBuffer(cv.commands, g_flatOctopus, true, 0, sizeof(int)*(27 + 1)*totalCells,
+		flatGrid, 0, NULL, NULL);
+	CHK_ERR(err);
+
 	err = clEnqueueWriteBuffer(cv.commands, g_posVec, true, 0, sizeof(float)*n * 4,
 		posVec, 0, NULL, NULL);
 	CHK_ERR(err);
