@@ -3,9 +3,9 @@
 Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	posVec = s->x;
 	n = s->n;
-	xDim = ceil(0.25 * xBound / h);
-	yDim = ceil(0.25 * yBound / h);
-	zDim = ceil(0.25 * zBound / h);
+	xDim = ceil(4 * xBound / h);
+	yDim = ceil(4 * yBound / h);
+	zDim = ceil(4 * zBound / h);
 	totalCells = xDim * yDim * zDim;
 	cutoff = h;
 	grid = vector<vector<int> >(totalCells, vector<int>());
@@ -66,9 +66,9 @@ void Grid::fitOctopus(int i) {
 	for (int a = 0; a <= 4; a++){
 		for (int b = 0; b <= 4; b++){
 			for (int c = 0; c <= 4; c++){
-				if (isValidPos(gridPos_x-2+a, gridPos_y-2+b, gridPos-2+c, a, b, c))
+				if (isValidPos(gridPos_x-2+a, gridPos_y-2+b, gridPos_z-2+c, a, b, c))
 				{
-					speedOctopus[i]->push_back(flatten(gridPos_x-2+a, gridPos_y-2+b, gridPos-2+c));
+					speedOctopus[i]->push_back(flatten(gridPos_x-2+a, gridPos_y-2+b, gridPos_z-2+c));
 				}
 			}
 		}
@@ -108,9 +108,9 @@ bool Grid::isValidPos(float gridPos_x, float gridPos_y, float gridPos_z, int a, 
 
 /* get cell index from particle coordinates */
 int Grid::calcIndex(float x, float y, float z){
-	int gridPos_x = floor(x / cutoff);
-	int gridPos_y = floor(y / cutoff);
-	int gridPos_z = floor(z / cutoff);
+	int gridPos_x = floor(4*x / cutoff);
+	int gridPos_y = floor(4*y / cutoff);
+	int gridPos_z = floor(4*z / cutoff);
 	return flatten(gridPos_x, gridPos_y, gridPos_z);
 }
 

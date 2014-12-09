@@ -53,7 +53,7 @@ private:
 	void cleanGrid();
 
 	/* Check if this is within the grid */
-	bool isValidPos(float gridPos_x, float gridPos_y, float gridPos_z);
+	bool isValidPos(float gridPos_x, float gridPos_y, float gridPos_z, int a, int b, int c);
 
 	/* Locate index of cell for this position */
 	int calcIndex(float x, float y, float z);
