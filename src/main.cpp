@@ -95,6 +95,7 @@ int main(int argc, char* argv[]) {
 	//sim_state_t* state = place_particles(&params, box_indicator);
 	sim_state_t* state = place_particles(&params, sphere_indicator_with_water_plane);
 	Grid* grid = new Grid(1.0, 1.0, 1.0, params.h, state);
+	grid->setup(kernel_map, cv);
 	grid->setParticles(kernel_map, cv);
 	normalize_mass(state, &params, grid);
 	printf("mass: %f\n", state->mass);

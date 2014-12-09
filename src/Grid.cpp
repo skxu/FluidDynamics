@@ -128,6 +128,7 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 		*(flatP + curInd) = -1;
 	}
 
+	cl_int err = CL_SUCCESS;
 
 	//copy data from host CPU to GPU
 	err = clEnqueueWriteBuffer(cv.commands, g_flatGrid, true, 0, sizeof(int)*(gridCellsSize + 1)*totalCells,
