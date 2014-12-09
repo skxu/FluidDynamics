@@ -8,7 +8,8 @@ __kernel void neighbors(
 	__global int* grid,
 	int gridCellSize,
 	float h,
-	int n)
+	int n,
+	__global int* octopus)
 {
   size_t idx = get_global_id(0);
 

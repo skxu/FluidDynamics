@@ -77,7 +77,7 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 
 	printf("kkkkkkkkkkkkkkkkkkkkk\n");
 
-	int* flatGrid = new int[(gridCellsSize + 1)*totalCells];
+	int* flatGrid = new int[(gridCellsSize + 1)*totalCells]();
 	for (int i = 0; i < totalCells; i++)
 	{
 		int curInd = 0;
@@ -93,7 +93,7 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 
 
 
-	int* flatOctopus = new int[(27 + 1)*totalCells];
+	int* flatOctopus = new int[(27 + 1)*totalCells]();
 
 	for (int i = 0; i < totalCells; i++)
 	{
@@ -117,7 +117,7 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 		sizeof(int)*(gridCellsSize + 1)*totalCells, NULL, &err);
 	CHK_ERR(err);
 
-	g_flatGrid = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
+	g_flatOctopus = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
 		sizeof(int)*(27 + 1)*totalCells, NULL, &err);
 	CHK_ERR(err);
 
@@ -188,7 +188,7 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 	CHK_ERR(err);
 	err = clSetKernelArg(neighborsK, 9, sizeof(int), &n);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 10, sizeof(int), &g_flatOctopus);
+	err = clSetKernelArg(neighborsK, 10, sizeof(cl_mem), &g_flatOctopus);
 	CHK_ERR(err);
 
 	printf("%f\n", omp_get_wtime() - start);
@@ -227,6 +227,7 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 
 
 	delete[] flatGrid;
+	delete[] flatOctopus;
 
 	printf("%f\n", omp_get_wtime() - start);
 	start = omp_get_wtime();
