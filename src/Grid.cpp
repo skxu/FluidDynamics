@@ -66,7 +66,7 @@ void Grid::fitOctopus(int i) {
 
 	for (int a = gridPos_x - 1; a <= gridPos_x + 1; a++){
 		for (int b = gridPos_y - 1; b <= gridPos_y + 1; b++){
-			for (int c = gridPos_z - 1; c <= gridPos_z - 1; c++){
+			for (int c = gridPos_z - 1; c <= gridPos_z + 1; c++){
 				if (isValidPos(a, b, c))
 				{
 					speedOctopus[i].push_back(flatten(a, b, c));
@@ -74,31 +74,6 @@ void Grid::fitOctopus(int i) {
 			}
 		}
 	}
-
-	for (int a = gridPos_x - 1; a <= gridPos_x + 1; a++){
-		for (int b = gridPos_y - 1; b <= gridPos_y - 1; b++){
-			for (int c = gridPos_z - 0; c <= gridPos_z - 0; c++){
-				if (isValidPos(a, b, c))
-				{
-					speedOctopus[i + totalCells].push_back(flatten(a, b, c));
-				}
-			}
-		}
-	}
-
-	int a = gridPos_x + 1;
-	int b = gridPos_y;
-	int c = gridPos_z;
-
-	if (isValidPos(a, b, c))
-		speedOctopus[i + totalCells].push_back(flatten(a, b, c));
-
-	a = gridPos_x;
-
-	if (isValidPos(a,b,c))
-		speedOctopus[i + totalCells].push_back(flatten(a, b, c));
-
-
 }
 
 void Grid::fitSegments()
@@ -122,7 +97,7 @@ void Grid::fitSegments()
 }
 
 /* Set neighbors for all particles */
-void Grid::setNeighbors() {
+void Grid::setNeighbors() {/*
 	for (int segment = 0; segment < segments.size(); segment++)
 	{
 		for (int iteration = 0; iteration < 2; iteration++)
@@ -131,10 +106,11 @@ void Grid::setNeighbors() {
 			for (int segmentInd = 0; segmentInd < segments[segment]->size(); segmentInd++)
 			{
 				int gridCell = (*segments[segment])[segmentInd];
-
-				for (int a = 0; a < speedOctopus[gridCell + iteration*totalCells].size(); a++)
+				*/
+	for (int gridCell = 0; gridCell < totalCells; gridCell++)
+				for (int a = 0; a < speedOctopus[gridCell].size(); a++)
 				{
-					int neighbor_grid_index = speedOctopus[gridCell + iteration*totalCells][a];
+					int neighbor_grid_index = speedOctopus[gridCell][a];
 
 					for (int b = 0; b < grid[gridCell].size(); b++)
 					{
@@ -142,10 +118,9 @@ void Grid::setNeighbors() {
 						vector<int>* nVec = neighbors[particleInd];
 						__m128 pPos = _mm_load_ps(posVec + 4 * particleInd);
 						int c = 0;
-						for (; c + 4 <= grid[neighbor_grid_index].size(); c += 4)
+						/*for (; c + 4 <= grid[neighbor_grid_index].size(); c += 4)
 						{
 
-							/* DISTANCE CALCULATION */
 							static float CUTOFFVAL = cutoff * cutoff;
 
 							__m128 oPos1 = _mm_load_ps(posVec + 4 * grid[neighbor_grid_index][c]);
@@ -169,8 +144,7 @@ void Grid::setNeighbors() {
 
 							_mm_store_ps(vals, dist);
 
-							/* END DISTANCE CALCULATION*/
-
+						
 							for (int i = 0; i < 4; i++)
 							{
 								if (vals[i] < CUTOFFVAL) {
@@ -179,7 +153,7 @@ void Grid::setNeighbors() {
 									nVec2->push_back(particleInd);
 								}
 							}
-						}
+						} */
 						for (; c < grid[neighbor_grid_index].size(); c++)
 						{
 							int other_particle_index = grid[neighbor_grid_index][c];
@@ -207,9 +181,9 @@ void Grid::setNeighbors() {
 						}
 					}
 				}
-			}
+}/*
 		}
-	}
+	}*/
 }
 
 
