@@ -99,8 +99,7 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
       float dz = zi_f - x[4*j+2];
       float r2 = dx*dx + dy*dy + dz*dz;
       float z = h2-r2;
-      float rho_ij = C*z*z*z;
-      rhoi += rho_ij;
+      if (z > 0) rhoi += C*z*z*z;
     }
     rho[i] = rhoi;
   }
@@ -173,16 +172,18 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
         float r = sqrt(dx*dx + dy*dy + dz*dz);
         assert(r > 0); // this shouldn't be 0 do to floating point precision
         float z = h-r;
-        const float rhoj = rho[j];
-        float w0 = C0/rhoi/rhoj;
-        float wp = w0 * k * (rhoi + rhoj - 2*rho0) * z * z / r / 2.0;
-        float wv = w0 * mu * z;
-        float dvx = v[4*j+0] - vxi;
-        float dvy = v[4*j+1] - vyi;
-        float dvz = v[4*j+2] - vzi;
-        ax += (wp*dx + wv*dvx);
-        ay += (wp*dy + wv*dvy);
-        az += (wp*dz + wv*dvz);
+        if (z > 0) {
+          const float rhoj = rho[j];
+          float w0 = C0/rhoi/rhoj;
+          float wp = w0 * k * (rhoi + rhoj - 2*rho0) * z * z / r / 2.0;
+          float wv = w0 * mu * z;
+          float dvx = v[4*j+0] - vxi;
+          float dvy = v[4*j+1] - vyi;
+          float dvz = v[4*j+2] - vzi;
+          ax += (wp*dx + wv*dvx);
+          ay += (wp*dy + wv*dvy);
+          az += (wp*dz + wv*dvz);
+        }
       }
     }
     a[4*i+0] = ax;
