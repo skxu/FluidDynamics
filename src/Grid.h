@@ -30,8 +30,6 @@ private:
 	vector<int>** pNeighbors;
 	vector<vector<int>*> cNeighbors;
 
-	vector<int> pIndices;
-
 
 	/* h */
 	float cutoff;
