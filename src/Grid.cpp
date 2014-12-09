@@ -27,7 +27,7 @@ void Grid::cleanGrid(){
 	}
 
 #pragma omp parallel for
-	for (int i = 0; i < n; i++)
+	for (int i = 0; i < totalCells; i++)
 	{
 		cNeighbors[i]->clear();
 	}
