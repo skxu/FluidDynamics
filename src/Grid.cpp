@@ -20,6 +20,47 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	for (int i = 0; i < totalCells; i++) fitOctopus(i);
 }
 
+void Grid::setup(std::map<std::string, cl_kernel> kernel_map, cl_vars_t cv)
+{
+	flatGrid = new int[(gridCellsSize + 1)*totalCells]();
+
+	flatOctopus = new int[(27 + 1)*totalCells]();
+
+	for (int i = 0; i < totalCells; i++)
+	{
+		int curInd = 0;
+		int* flatP = flatOctopus + (27 + 1) * i;
+		for (int j = 0; j < speedOctopus[i]->size() && curInd < 27; j++)
+		{
+			int nextElem = (*speedOctopus[i])[j];
+			*(flatP + curInd) = nextElem;
+			curInd++;
+		}
+		*(flatP + curInd) = -1;
+	}
+
+	cl_int err = CL_SUCCESS;
+	g_flatGrid = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
+		sizeof(int)*(gridCellsSize + 1)*totalCells, NULL, &err);
+	CHK_ERR(err);
+
+	g_neighbors = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
+		sizeof(int)*(neighborSize + 1) * n, NULL, &err);
+	CHK_ERR(err);
+
+	g_posVec = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
+		sizeof(float)*n * 4, NULL, &err);
+	CHK_ERR(err);
+
+	g_flatOctopus = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
+		sizeof(int)*(27 + 1)*totalCells, NULL, &err);
+	CHK_ERR(err);
+
+	err = clEnqueueWriteBuffer(cv.commands, g_flatOctopus, true, 0, sizeof(int)*(27 + 1)*totalCells,
+		flatOctopus, 0, NULL, NULL);
+	CHK_ERR(err);
+}
+
 Grid::~Grid(){
 }
 
@@ -74,7 +115,6 @@ void Grid::fitOctopus(int i) {
 /* Set neighbors for all particles */
 void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t cv) {
 
-	int* flatGrid = new int[(gridCellsSize + 1)*totalCells]();
 	for (int i = 0; i < totalCells; i++)
 	{
 		int curInd = 0;
@@ -89,52 +129,9 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 	}
 
 
-
-	int* flatOctopus = new int[(27 + 1)*totalCells]();
-
-	for (int i = 0; i < totalCells; i++)
-	{
-		int curInd = 0;
-		int* flatP = flatOctopus + (27 + 1) * i;
-		for (int j = 0; j < speedOctopus[i]->size() && curInd < 27; j++)
-		{
-			int nextElem = (*speedOctopus[i])[j];
-			*(flatP + curInd) = nextElem;
-			curInd++;
-		}
-		*(flatP + curInd) = -1;
-	}
-
-
-
-	cl_mem g_flatGrid, g_neighbors, g_posVec, g_flatOctopus;
-
-	cl_int err = CL_SUCCESS;
-	g_flatGrid = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
-		sizeof(int)*(gridCellsSize + 1)*totalCells, NULL, &err);
-	CHK_ERR(err);
-
-	g_flatOctopus = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
-		sizeof(int)*(27 + 1)*totalCells, NULL, &err);
-	CHK_ERR(err);
-
-	g_neighbors = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
-		sizeof(int)*(neighborSize + 1) * n, NULL, &err);
-	CHK_ERR(err);
-
-	g_posVec = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
-		sizeof(float)*n * 4, NULL, &err);
-	CHK_ERR(err);
-
-
-
 	//copy data from host CPU to GPU
 	err = clEnqueueWriteBuffer(cv.commands, g_flatGrid, true, 0, sizeof(int)*(gridCellsSize + 1)*totalCells,
 		flatGrid, 0, NULL, NULL);
-	CHK_ERR(err);
-
-	err = clEnqueueWriteBuffer(cv.commands, g_flatOctopus, true, 0, sizeof(int)*(27 + 1)*totalCells,
-		flatOctopus, 0, NULL, NULL);
 	CHK_ERR(err);
 
 	err = clEnqueueWriteBuffer(cv.commands, g_posVec, true, 0, sizeof(float)*n * 4,
@@ -201,16 +198,6 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 	err = clEnqueueReadBuffer(cv.commands, g_neighbors, true, 0, sizeof(int)*(neighborSize + 1) * n,
 		neighbors, 0, NULL, NULL);
 	CHK_ERR(err);
-
-
-	clReleaseMemObject(g_neighbors);
-	clReleaseMemObject(g_flatGrid);
-	clReleaseMemObject(g_posVec);
-	clReleaseMemObject(g_flatOctopus);
-
-
-	delete[] flatGrid;
-	delete[] flatOctopus;
 }
 
 

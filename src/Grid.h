@@ -33,12 +33,16 @@ public:
 	int* getNeighbors(int i);
 	int neighborSize;
 
+	void setup(std::map<std::string, cl_kernel> kernel_map, cl_vars_t cv);
+
 private:
 	vector<vector<int>*> speedOctopus;
 	
 	vector<vector<int> > grid;
 	int* neighbors;
+	int* flatOctopus, *flatGrid;
 
+	cl_mem g_flatGrid, g_neighbors, g_posVec, g_flatOctopus;
 
 	/* h */
 	float cutoff;
