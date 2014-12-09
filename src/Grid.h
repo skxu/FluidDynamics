@@ -21,24 +21,20 @@
 
 using namespace std;
 
-std::map<std::string, cl_kernel>
-kernel_map;
-
-
 class Grid{
 public:
 	Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s);
 	~Grid();
 
 	/* Call this to refresh the particles to the correct cells */
-	void setParticles();
+	void setParticles(std::map<std::string, cl_kernel> kernel_map, cl_vars_t cv);
 
 	/* Get the neighbors of particle i */
 	int* getNeighbors(int i);
 	int neighborSize;
 
 private:
-	vector<vector<int>> grid;
+	vector<vector<int> > grid;
 	int* neighbors;
 
 
@@ -55,7 +51,7 @@ private:
 	int zDim;
 	int totalCells;
 	int gridCellsSize;
-	void setNeighbors();
+	void setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t cv);
 
 	
 	/* Remove everything from cells */

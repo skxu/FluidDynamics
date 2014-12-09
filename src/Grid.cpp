@@ -11,7 +11,7 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 
 	neighborSize = 10;
 
-	grid = vector<vector<int>>(totalCells, vector<int>());
+	grid = vector<vector<int> >(totalCells, vector<int>());
 	neighbors = new int[(neighborSize + 1) * n];
 }
 
@@ -28,7 +28,7 @@ void Grid::cleanGrid(){
 
 /* x = particle positions
    n = number particles */
-void Grid::setParticles(){
+void Grid::setParticles(std::map<std::string, cl_kernel> kernel_map, cl_vars_t cv){
 	cleanGrid();
 	for (int i = 0; i < n; i++){
 		float x = posVec[4 * i];
@@ -37,7 +37,7 @@ void Grid::setParticles(){
 		int index = calcIndex(x, y, z);
 		grid[index].push_back(i);
 	}
-	setNeighbors();
+	setNeighbors(kernel_map, cv);
 }
 
 
@@ -51,7 +51,7 @@ int* Grid::getNeighbors(int i) {
 
 
 /* Set neighbors for all particles */
-void Grid::setNeighbors() {
+void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t cv) {
 	int* flatGrid = new int[(gridCellsSize + 1)*totalCells];
 
 	for (int i = 0; i < totalCells; i++)
