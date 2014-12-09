@@ -26,8 +26,7 @@ public:
 private:
 	vector<vector<int> > grid;
 	vector<vector<int>*> speedOctopus;
-	vector<vector<int>*> segments;
-
+	
 	vector<vector<int>*> neighbors;
 
 
@@ -48,8 +47,6 @@ private:
 
 	/* Precalculate all the neighbors to a grid cell */
 	void fitOctopus(int i);
-
-	void fitSegments();
 
 	/* Remove everything from cells */
 	void cleanGrid();
