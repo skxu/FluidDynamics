@@ -62,30 +62,10 @@ void Grid::fitOctopus(int i) {
 	int gridPos_z = i / (xDim * yDim);
 	int gridPos_y = (i - gridPos_z * xDim * yDim) / xDim;
 	int gridPos_x = i % xDim;
-	
+
 	for (int a = gridPos_x - 1; a <= gridPos_x + 1; a++){
-		for (int b = gridPos_y; b <= gridPos_y; b++){
-			for (int c = gridPos_z; c <= gridPos_z; c++){
-				if (isValidPos(a, b, c))
-				{
-					speedOctopus[i]->push_back(flatten(a, b, c));
-				}
-			}
-		}
-	}
-	for (int a = gridPos_x; a <= gridPos_x; a++){
-		for (int b = gridPos_y-1; b <= gridPos_y+1; b+=2){
-			for (int c = gridPos_z; c <= gridPos_z; c++){
-				if (isValidPos(a, b, c))
-				{
-					speedOctopus[i]->push_back(flatten(a, b, c));
-				}
-			}
-		}
-	}
-	for (int a = gridPos_x; a <= gridPos_x; a++){
-		for (int b = gridPos_y; b <= gridPos_y; b++){
-			for (int c = gridPos_z-1; c <= gridPos_z+1; c+=2){
+		for (int b = gridPos_y - 1; b <= gridPos_y + 1; b++){
+			for (int c = gridPos_z - 1; c <= gridPos_z + 1; c++){
 				if (isValidPos(a, b, c))
 				{
 					speedOctopus[i]->push_back(flatten(a, b, c));
