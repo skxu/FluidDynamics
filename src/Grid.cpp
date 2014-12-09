@@ -73,9 +73,6 @@ void Grid::fitOctopus(int i) {
 
 /* Set neighbors for all particles */
 void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t cv) {
-	double start = omp_get_wtime();
-
-	printf("kkkkkkkkkkkkkkkkkkkkk\n");
 
 	int* flatGrid = new int[(gridCellsSize + 1)*totalCells]();
 	for (int i = 0; i < totalCells; i++)
@@ -129,8 +126,6 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 		sizeof(float)*n * 4, NULL, &err);
 	CHK_ERR(err);
 
-	printf("%f\n", omp_get_wtime() - start);
-	start = omp_get_wtime();
 
 
 	//copy data from host CPU to GPU
@@ -139,7 +134,7 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 	CHK_ERR(err);
 
 	err = clEnqueueWriteBuffer(cv.commands, g_flatOctopus, true, 0, sizeof(int)*(27 + 1)*totalCells,
-		flatGrid, 0, NULL, NULL);
+		flatOctopus, 0, NULL, NULL);
 	CHK_ERR(err);
 
 	err = clEnqueueWriteBuffer(cv.commands, g_posVec, true, 0, sizeof(float)*n * 4,
@@ -147,11 +142,7 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 	CHK_ERR(err);
 
 
-	printf("%f\n", omp_get_wtime() - start);
-	start = omp_get_wtime();
-
-
-	size_t global_work_size[1] = { totalCells };
+	size_t global_work_size[1] = { n };
 	size_t local_work_size[1] = { 128 };
 
 
@@ -191,8 +182,6 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 	err = clSetKernelArg(neighborsK, 10, sizeof(cl_mem), &g_flatOctopus);
 	CHK_ERR(err);
 
-	printf("%f\n", omp_get_wtime() - start);
-	start = omp_get_wtime();
 
 
 	err = clEnqueueNDRangeKernel(cv.commands,
@@ -209,15 +198,9 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 	err = clFinish(cv.commands);
 	CHK_ERR(err);
 
-	printf("%f\n", omp_get_wtime() - start);
-	start = omp_get_wtime();
-
 	err = clEnqueueReadBuffer(cv.commands, g_neighbors, true, 0, sizeof(int)*(neighborSize + 1) * n,
 		neighbors, 0, NULL, NULL);
 	CHK_ERR(err);
-
-	printf("%f\n", omp_get_wtime() - start);
-	start = omp_get_wtime();
 
 
 	clReleaseMemObject(g_neighbors);
@@ -228,9 +211,6 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 
 	delete[] flatGrid;
 	delete[] flatOctopus;
-
-	printf("%f\n", omp_get_wtime() - start);
-	start = omp_get_wtime();
 }
 
 

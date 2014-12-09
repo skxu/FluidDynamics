@@ -33,15 +33,12 @@ if (particleInd < n)
 
 int gridCell = gridPos_x + xDim * gridPos_y + (xDim * yDim) * gridPos_z;
 
-	for (int a = gridPos_x - 1; a <= gridPos_x + 1; a++){
-		for (int b = gridPos_y - 1; b <= gridPos_y + 1; b++){
-			for (int c = gridPos_z - 1; c <= gridPos_z + 1; c++){
-				if (a >= 0 && a < xDim &&
-					b >= 0 && b < yDim &&
-					c >= 0 && c < zDim)
-				{
+	__global int* octoleg = octopus + (27+1) * gridCell;
+ 
+       for (int a = 0; a < 27 && octoleg[a] != -1; a++)
+       {
 
-				int neighbor_grid_index = a + xDim * b + (xDim * yDim) * c;
+				int neighbor_grid_index = octoleg[a];
 
 				__global int* neighborVec = grid + (gridCellSize+1)*neighbor_grid_index; 
 
@@ -63,10 +60,8 @@ int gridCell = gridPos_x + xDim * gridPos_y + (xDim * yDim) * gridPos_z;
 						nVec[curNeighborInd] = other_particle_index;
 						curNeighborInd++;
 					}
-				}
-				}
-			}
-		}
+                }
+
 	}
 
 	nVec[curNeighborInd] = -1;
