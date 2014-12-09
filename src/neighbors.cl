@@ -14,6 +14,9 @@ __kernel void neighbors(
 
   int particleInd = idx;
 
+if (particleInd < n)
+{
+
   __global int* nVec = neighbors + (neighborSize+1)*particleInd;
   int curNeighborInd = 0;
 
@@ -41,7 +44,7 @@ int gridCell = gridPos_x + xDim * gridPos_y + (xDim * yDim) * gridPos_z;
 
 				__global int* neighborVec = grid + (gridCellSize+1)*neighbor_grid_index; 
 
-				for (int d = 0; d < gridCellSize; d++)
+				for (int d = 0; d < gridCellSize && neighborVec[d] != -1; d++)
 				{
 					int other_particle_index = neighborVec[d];
 					__global float* opPos = posVec + 4 * other_particle_index;
@@ -66,4 +69,5 @@ int gridCell = gridPos_x + xDim * gridPos_y + (xDim * yDim) * gridPos_z;
 	}
 
 	nVec[curNeighborInd] = -1;
+}
 }

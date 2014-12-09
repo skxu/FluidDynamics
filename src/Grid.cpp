@@ -152,6 +152,11 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 			    neighbors, 0, NULL, NULL);
   CHK_ERR(err);
 
+  clReleaseMemObject(g_neighbors); 
+  clReleaseMemObject(g_flatGrid);
+  clReleaseMemObject(g_posVec);
+
+
 	delete [] flatGrid;
 }
 
