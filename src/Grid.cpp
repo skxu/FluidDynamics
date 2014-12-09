@@ -53,7 +53,23 @@ int* Grid::getNeighbors(int i) {
 
 /*  PRIVATE METHODS  */
 
+/* For cell index i, calculate grid inds for 3x3x3 area around it */
+void Grid::fitOctopus(int i) {
+	int gridPos_z = i / (xDim * yDim);
+	int gridPos_y = (i - gridPos_z * xDim * yDim) / xDim;
+	int gridPos_x = i % xDim;
 
+	for (int a = gridPos_x - 1; a <= gridPos_x + 1; a++){
+		for (int b = gridPos_y - 1; b <= gridPos_y + 1; b++){
+			for (int c = gridPos_z - 1; c <= gridPos_z + 1; c++){
+				if (isValidPos(a, b, c))
+				{
+					speedOctopus[i]->push_back(flatten(a, b, c));
+				}
+			}
+		}
+	}
+}
 
 /* Set neighbors for all particles */
 void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t cv) {
