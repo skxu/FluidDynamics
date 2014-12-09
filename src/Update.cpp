@@ -22,9 +22,11 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
   float h9 = h4 * h4 * h;
   float C  = 315.0 * s->mass / 64.0 / PI / h9;
 
-  #pragma omp parallel for schedule(auto)
+  float results[4];
+  #pragma omp parallel for schedule(dynamic, 10) private(results)
   for (int i = 0; i < n; i++) {
-    
+    __m128 hh2 = _mm_set1_ps(h2);
+    __m128 CC = _mm_set1_ps(C);
     float xi_f = x[4*i+0];
     float yi_f = x[4*i+1];
     float zi_f = x[4*i+2];
@@ -33,7 +35,7 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
     float rhoi = 0.0;
     vector<int>* neighbors = grid->getNeighbors(i);
     int nidx = 0;
-	/*
+
     for (nidx; nidx + 4 < neighbors->size(); nidx+= 4) {
 
       int j = (*neighbors)[nidx];
@@ -42,18 +44,20 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
       int j4 = (*neighbors)[nidx+3];
 
       __m128 xj = _mm_load_ps(x+4*j);
+      __m128 xj2 = _mm_load_ps(x+4*j2);
+      __m128 xj3 = _mm_load_ps(x+4*j3);
+      __m128 xj4 = _mm_load_ps(x+4*j4);
+
       __m128 dx = _mm_sub_ps(xi,xj);
       __m128 r = _mm_mul_ps(dx, dx);
       
-      __m128 xj2 = _mm_load_ps(x+4*j2);
       __m128 dx2 = _mm_sub_ps(xi, xj2);
       __m128 r2 = _mm_mul_ps(dx2, dx2);
 
-      __m128 xj3 = _mm_load_ps(x+4*j3);
       __m128 dx3 = _mm_sub_ps(xi, xj3);
       __m128 r3 = _mm_mul_ps(dx3, dx3);
 
-      __m128 xj4 = _mm_load_ps(x+4*j4);
+      
       __m128 dx4 = _mm_sub_ps(xi, xj4);
       __m128 r4 = _mm_mul_ps(dx4, dx4);
 
@@ -63,12 +67,7 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
       __m128 sum2 = _mm_hadd_ps(r3, r4);
       __m128 sum3 = _mm_hadd_ps(sum1, sum2);
 
-
-      __m128 hh2 = _mm_set1_ps(h2);
-
       __m128 z = _mm_sub_ps(hh2, sum3); 
-      
-      __m128 CC = _mm_set1_ps(C);
 
       __m128 final = _mm_mul_ps(CC, z);
       final = _mm_mul_ps(final, z);
@@ -78,19 +77,10 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
       _mm_storeu_ps(results, final);
 
       for (int i = 0; i < 4; i++) {
-        rhoi += results[i];
+        rhoi += max(0.0f, results[i]);
       }
-      /*
-      float dx = xi - x[4*j+0];
-      float dy = yi - x[4*j+1];
-      float dz = zi - x[4*j+2];
-      float r2 = dx*dx + dy*dy + dz*dz;
-      float z = h2-r2;
-      float rho_ij = C*z*z*z;
-      rhoi += rho_ij;
-      
-
-    }*/
+    }
+    
 
     for (nidx; nidx < neighbors->size(); nidx++) {
       int j = (*neighbors)[nidx];
@@ -98,8 +88,8 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
       float dy = yi_f - x[4*j+1];
       float dz = zi_f - x[4*j+2];
       float r2 = dx*dx + dy*dy + dz*dz;
-      float z = h2-r2;
-      if (z > 0) rhoi += C*z*z*z;
+      float z = max(0.0f, h2-r2);
+      rhoi += C*z*z*z;
     }
     rho[i] = rhoi;
   }
