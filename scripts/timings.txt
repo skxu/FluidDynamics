@@ -1,0 +1,137 @@
+/********************************
+ *******  71k Particles *********
+ ********************************/
+sph-naive-no-grid
+    TOO LONG
+
+sph-naive-grid 
+    Total time to run: 546.9
+
+sph-openmp-v1 (16 threads)
+    Total time to run: 86.854663
+    Total time spent writing to disk: 0.782834
+    Total time spent computing accel: 23.247747
+    Total time spent on init: 0.160248
+    Total time spent checking state: 0.263882
+    Total time spent setting particles: 60.570536
+    Total time spent on leapfrog step: 1.821588
+
+sph-openmp-v1 (12 threads)
+    Total time to run: 105.656298
+    Total time spent writing to disk: 0.803476
+    Total time spent computing accel: 30.066871
+    Total time spent on init: 0.153643
+    Total time spent checking state: 0.323107
+    Total time spent setting particles: 71.903991
+    Total time spent on leapfrog step: 2.396243
+
+sph-openmp-v1 (8 threads)
+    Total time to run: 110.240713
+    Total time spent writing to disk: 0.671270
+    Total time spent computing accel: 28.333967
+    Total time spent on init: 0.163409
+    Total time spent checking state: 0.250290
+    Total time spent setting particles: 78.767067
+    Total time spent on leapfrog step: 2.044041
+
+sph-openmp-v1 (4 threads) 
+    Total time to run: 190.997440
+    Total time spent writing to disk: 0.677925
+    Total time spent computing accel: 53.235882
+    Total time spent on init: 0.156190
+    Total time spent checking state: 0.469787
+    Total time spent setting particles: 132.989118
+    Total time spent on leapfrog step: 3.458255
+
+sph-openmp-v1 (2 threads)
+    Total time to run: 350.480774
+    Total time spent writing to disk: 0.683202
+    Total time spent computing accel: 102.389399
+    Total time spent on init: 0.180931
+    Total time spent checking state: 0.926319
+    Total time spent setting particles: 240.063094
+    Total time spent on leapfrog step: 6.227299
+
+sph-openmp-v1 (1 thread)
+    Total time to run: 549.193886
+    Total time spent writing to disk: 0.610857
+    Total time spent computing accel: 171.014843
+    Total time spent on init: 0.193363
+    Total time spent checking state: 1.634567
+    Total time spent setting particles: 366.434910
+    Total time spent on leapfrog step: 9.295077
+
+/********************************
+ *******  19k Particles *********
+ ********************************/
+
+ sph-naive-no-grid
+    Total time to run: 183.656912 x 50 (~2h 30m)
+    Total time spent writing to disk: 0.003420 x 50
+    Total time spent computing accel: 182.374802 x 50
+    Total time spent on init: 1.262976 x 50
+    Total time spent checking state: 0.004406 x 50
+    Total time spent on leapfrog step: 0.011188 x 50
+
+sph-naive-grid 
+    Total time to run: 118.840901
+    Total time spent writing to disk: 0.170505
+    Total time spent computing accel: 34.050123
+    Total time spent on init: 0.057533
+    Total time spent checking state: 0.429065
+    Total time spent setting particles: 82.925555
+    Total time spent on leapfrog step: 1.199402
+
+sph-openmp-v1 (16 threads)
+    Total time to run: 20.301283
+    Total time spent writing to disk: 0.257183
+    Total time spent computing accel: 5.244695
+    Total time spent on init: 0.044561
+    Total time spent checking state: 0.082184
+    Total time spent setting particles: 14.241003
+    Total time spent on leapfrog step: 0.423479
+
+sph-openmp-v1 (12 threads)
+    Total time to run: 24.378148
+    Total time spent writing to disk: 0.254763
+    Total time spent computing accel: 6.678276
+    Total time spent on init: 0.045633
+    Total time spent checking state: 0.098187
+    Total time spent setting particles: 16.771644
+    Total time spent on leapfrog step: 0.522699
+
+sph-openmp-v1 (8 threads)
+    Total time to run: 25.352181
+    Total time spent writing to disk: 0.170944
+    Total time spent computing accel: 6.514034
+    Total time spent on init: 0.043598
+    Total time spent checking state: 0.079473
+    Total time spent setting particles: 18.021861
+    Total time spent on leapfrog step: 0.513247
+
+sph-openmp-v1 (4 threads) 
+    Total time to run: 43.355234
+    Total time spent writing to disk: 0.171336
+    Total time spent computing accel: 12.180129
+    Total time spent on init: 0.047355
+    Total time spent checking state: 0.130809
+    Total time spent setting particles: 29.995810
+    Total time spent on leapfrog step: 0.820877
+
+sph-openmp-v1 (2 threads)
+    Total time to run: 80.614683
+    Total time spent writing to disk: 0.168916
+    Total time spent computing accel: 22.576194
+    Total time spent on init: 0.052377
+    Total time spent checking state: 0.249425
+    Total time spent setting particles: 56.044675
+    Total time spent on leapfrog step: 1.513799
+
+sph-openmp-v1 (1 thread)
+    Total time to run: 120.178302
+    Total time spent writing to disk: 0.161185
+    Total time spent computing accel: 33.932999
+    Total time spent on init: 0.053786
+    Total time spent checking state: 0.432855
+    Total time spent setting particles: 83.188553
+    Total time spent on leapfrog step: 2.400579
