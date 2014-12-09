@@ -204,6 +204,7 @@ void leapfrog_step(sim_state_t* s, sim_param_t* p, float dt)
   float* x       = s->x;
   int n          = s->n;
 
+  #pragma omp parallel for
   for (int i = 0; i < 4*n; i++) {
     vh[i] += a[i] * dt;
     v[i] = vh[i] + a[i] * dt / 2;
@@ -231,6 +232,7 @@ void leapfrog_start(sim_state_t* s, sim_param_t* p, float dt)
   float* x       = s->x;
   int n          = s->n;
 
+  #pragma omp parallel for
   for (int i = 0; i < 4*n; i++) {
     vh[i] = v[i] + a[i] * dt / 2;
     v[i] += a[i] * dt;
@@ -298,6 +300,7 @@ void reflect_bc(sim_state_t* s, sim_param_t* p)
   float* v  = s->v;
   float* x  = s->x;
   int n     = s->n;
+  #pragma omp parallel for
   for (int i = 0; i < n; i++) {
     if (x[4*i+0] < XMIN) damp_reflect(0, i, XMIN, s, p);
     if (x[4*i+0] >= XMAX) damp_reflect(0, i, XMAX, s, p); // fix this
