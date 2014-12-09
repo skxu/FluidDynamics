@@ -21,14 +21,13 @@ public:
 	void setParticles();
 
 	/* Get the neighbors of particle i */
-	vector<int>* getNeighbors(int i);
+	int* getNeighbors(int i);
 
 private:
-	vector<vector<int> > grid;
-	vector<vector<int>*> speedOctopus;
-	
-	vector<int>** pNeighbors;
-	vector<vector<int>*> cNeighbors;
+	vector<vector<int>> grid;
+	int** gridPointers;
+	int* neighbors;
+	int* gridSizes;
 
 
 	/* h */
@@ -43,12 +42,10 @@ private:
 	int yDim;
 	int zDim;
 	int totalCells;
-
+	int neighborSize;
 	void setNeighbors();
 
-	/* Precalculate all the neighbors to a grid cell */
-	void fitOctopus(int i);
-
+	
 	/* Remove everything from cells */
 	void cleanGrid();
 
