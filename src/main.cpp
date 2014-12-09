@@ -37,7 +37,7 @@ void write_frame_data(ofstream* fp, int n, float* x) {
 
 void init_params(sim_param_t* params) {
   params->fname = "../outputs/run.txt"; /* File name */
-  params->nframes = 150; /* Number of frames */
+  params->nframes = 20; /* Number of frames */
   params->npframe = 50; /* Steps per frame */
   params->h = 3e-2; /* Particle size */
   params->dt = 4e-4; /* Time step */
