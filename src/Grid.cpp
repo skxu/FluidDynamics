@@ -9,6 +9,7 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	totalCells = xDim * yDim * zDim;
 	cutoff = h;
 	grid = vector<vector<int> >(totalCells, vector<int>());
+	pIndices = vector<int>(n);
 	pNeighbors = new vector<int>*[n];
 	cNeighbors = vector<vector<int>*>();
 	for (int i = 0; i < totalCells; i++) cNeighbors.push_back(new vector<int>());
@@ -38,13 +39,27 @@ void Grid::cleanGrid(){
    n = number particles */
 void Grid::setParticles(){
 	cleanGrid();
+#pragma omp parallel for
 	for (int i = 0; i < n; i++){
 		float x = posVec[4 * i];
 		float y = posVec[4 * i + 1];
 		float z = posVec[4 * i + 2];
 		int index = calcIndex(x, y, z);
-		grid[index].push_back(i);
-		pNeighbors[i] = cNeighbors[index];
+		pIndices[i] = index;
+	}
+#pragma omp parallel for schedule(dynamic)
+	for (int i = 0; i < totalCells; i++)
+	{
+		for (int pIndex = 0; pIndex < n; pIndex++)
+		{
+			int gridCell = pIndices[pIndex];
+
+			if (i == gridCell)
+			{
+				grid[i].push_back(pIndex);
+				pNeighbors[pIndex] = cNeighbors[i];
+			}
+		}
 	}
 	setNeighbors();
 }
