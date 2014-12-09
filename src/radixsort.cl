@@ -5,9 +5,9 @@ __kernel void neighbors(
 	int* neighbors,
 	int neighborSize,
 	float* posVec,
-	int** grid,
-	int* gridSizes,
-	float h2,
+	int* flatGrid,
+	int gridCellsSize,
+	float h,
 	int n)
 {
   size_t idx = get_global_id(0);
@@ -35,10 +35,9 @@ __kernel void neighbors(
 
 					int neighbor_grid_index = flatten(a,b,c);
 
-					int* neighborVec = grid[neighbor_grid_index];
-					int neighborVecSize = gridSizes[neighbor_grid_index];
+					int* neighborVec = grid + (gridCellsSize+1)*neighbor_grid_index;
 
-					for (int d = 0; d < neighborVecSize; d++)
+					for (int d = 0; neighborVec[d] != -1 && d < gridCellsSize; d++)
 					{
 						int other_particle_index = neighborVec[d];
 						float* opPos = posVec + 4 * other_particle_index;
@@ -51,7 +50,7 @@ __kernel void neighbors(
 						float dz - oz - z;
 
 						float dist = dx * dx + dy * dy + dz * dz;
-						if (dist < h2 && curNeighborInd < neighborSize)
+						if (dist < h*h && curNeighborInd < neighborSize)
 						{
 							nVec[curNeighborInd] = other_particle_index;
 							curNeighborInd++;

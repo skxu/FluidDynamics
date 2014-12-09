@@ -12,8 +12,6 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	neighborSize = 10;
 
 	grid = vector<vector<int>>(totalCells, vector<int>());
-	gridPointers = new int*[totalCells];
-	gridSizes = new int[totalCells];
 	neighbors = new int[(neighborSize + 1) * n];
 }
 
@@ -39,11 +37,6 @@ void Grid::setParticles(){
 		int index = calcIndex(x, y, z);
 		grid[index].push_back(i);
 	}
-	for (int i = 0; i < totalCells; i++)
-	{
-		gridPointers[i] = &(grid[i][0]);
-		gridSizes[i] = grid[i].size();
-	}
 	setNeighbors();
 }
 
@@ -59,7 +52,101 @@ int* Grid::getNeighbors(int i) {
 
 /* Set neighbors for all particles */
 void Grid::setNeighbors() {
+	int* flatGrid = new int[(gridCellsSize + 1)*totalCells];
 
+	for (int i = 0; i < totalCells; i++)
+	{
+		int curInd = 0;
+		int* flatP = flatGrid + (gridCellsSize + 1) * i;
+		for (int j = 0; j < grid[i].size() && curInd < gridCellsSize; j++)
+		{
+			int nextElem = grid[i][j];
+			*(flatP + curInd) = nextElem;
+		}
+		*(flatP + curInd) = -1;
+	}
+
+
+
+	cl_mem g_flatGrid, g_neighbors, g_posVec;
+
+	cl_int err = CL_SUCCESS;
+	g_flatGrid = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
+		sizeof(int)*(gridCellsSize + 1)*totalCells, NULL, &err);
+	CHK_ERR(err);
+
+	g_neighbors = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
+		sizeof(int)*(neighborSize + 1) * n, NULL, &err);
+	CHK_ERR(err);
+
+	g_posVec = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
+		sizeof(float)*n*4, NULL, &err);
+	CHK_ERR(err);
+
+	//copy data from host CPU to GPU
+	err = clEnqueueWriteBuffer(cv.commands, g_flatGrid, true, 0, sizeof(int)*(gridCellsSize + 1)*totalCells,
+		flatGrid, 0, NULL, NULL);
+	CHK_ERR(err);
+
+	err = clEnqueueWriteBuffer(cv.commands, g_posVec, true, 0, sizeof(float)*n * 4,
+		posVec, 0, NULL, NULL);
+	CHK_ERR(err);
+
+
+	size_t global_work_size[1] = { n };
+	size_t local_work_size[1] = { 128 };
+
+
+	adjustWorkSize(global_work_size[0], local_work_size[0]);
+	global_work_size[0] = std::max(local_work_size[0], global_work_size[0]);
+	int left_over = 0;
+
+	/* CS194: Implement radix sort here */
+
+	/* get the kernels */
+
+	cl_kernel neighborsK = kernel_map["neighbors"];
+
+
+	/* These arguments to reassemble never change */
+
+	err = clSetKernelArg(neighborsK, 1, sizeof(int), &xDim);
+	CHK_ERR(err);
+	err = clSetKernelArg(neighborsK, 2, sizeof(int), &yDim);
+	CHK_ERR(err);
+	err = clSetKernelArg(neighborsK, 3, sizeof(int), &zDim);
+	CHK_ERR(err);
+	err = clSetKernelArg(neighborsK, 4, sizeof(cl_mem), &g_neighbors);
+	CHK_ERR(err);
+	err = clSetKernelArg(neighborsK, 5, sizeof(int), &neighborSize);
+	CHK_ERR(err);
+	err = clSetKernelArg(neighborsK, 6, sizeof(cl_mem), &g_posVec);
+	CHK_ERR(err);
+	err = clSetKernelArg(neighborsK, 7, sizeof(cl_mem), &g_flatGrid);
+	CHK_ERR(err);
+	err = clSetKernelArg(neighborsK, 8, sizeof(int), &gridCellsSize);
+	CHK_ERR(err);
+	err = clSetKernelArg(neighborsK, 9, sizeof(float), &cutoff);
+	CHK_ERR(err);
+	err = clSetKernelArg(neighborsK, 10, sizeof(int), &n);
+	CHK_ERR(err);
+
+	
+		err = clEnqueueNDRangeKernel(cv.commands,
+			neighborsK,
+			1,//work_dim,
+			NULL, //global_work_offset
+			global_work_size, //global_work_size
+			local_work_size, //local_work_size
+			0, //num_events_in_wait_list
+			NULL, //event_wait_list
+			NULL //
+			);
+		CHK_ERR(err);
+		err = clFinish(cv.commands);
+		CHK_ERR(err);
+
+	delete [] flatGrid;
 }
 
 
