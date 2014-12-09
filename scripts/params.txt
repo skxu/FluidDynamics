@@ -12,3 +12,15 @@ Water (76k particles) Sphere Drop into Plane
   params->g = 9.8; /* Gravity strength */
   params->damp = 0.8; /* Damp */
   params->spacing = 1.25; /* Spacing */
+
+Sticky Fluid (19k particles) (Sphere into Plane):
+  params->nframes = 100; /* Number of frames */
+  params->npframe = 50; /* Steps per frame */
+  params->h = 3e-2; /* Particle size */
+  params->dt = 4e-4; /* Time step */
+  params->rho0 = 1000; /* Reference density */
+  params->k = 1000; /* Bulk modulus */
+  params->mu = 10.0; /* Viscosity */
+  params->g = 9.8; /* Gravity strength */
+  params->damp = 1.0; /* Damp */
+  params->spacing = 1.2; /* Spacing */
