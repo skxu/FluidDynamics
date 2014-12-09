@@ -27,7 +27,8 @@ private:
 	vector<vector<int> > grid;
 	vector<vector<int>*> speedOctopus;
 	
-	vector<vector<int>*> neighbors;
+	vector<int>** pNeighbors;
+	vector<vector<int>*> cNeighbors;
 
 
 	/* h */
