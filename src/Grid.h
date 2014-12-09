@@ -10,7 +10,20 @@
 
 #include "Variables.h"
 
+#include <cstring>
+#include <cstdio>
+#include <cstdlib>
+#include <string>
+#include <cassert>
+#include <cmath>
+#include <unistd.h>
+#include "clhelp.h"
+
 using namespace std;
+
+std::map<std::string, cl_kernel>
+kernel_map;
+
 
 class Grid{
 public:
@@ -21,14 +34,12 @@ public:
 	void setParticles();
 
 	/* Get the neighbors of particle i */
-	vector<int>* getNeighbors(int i);
+	int* getNeighbors(int i);
+	int neighborSize;
 
 private:
-	vector<vector<int> > grid;
-	vector<vector<int>*> speedOctopus;
-	
-	vector<int>** pNeighbors;
-	vector<vector<int>*> cNeighbors;
+	vector<vector<int>> grid;
+	int* neighbors;
 
 
 	/* h */
@@ -43,12 +54,10 @@ private:
 	int yDim;
 	int zDim;
 	int totalCells;
-
+	int gridCellsSize;
 	void setNeighbors();
 
-	/* Precalculate all the neighbors to a grid cell */
-	void fitOctopus(int i);
-
+	
 	/* Remove everything from cells */
 	void cleanGrid();
 

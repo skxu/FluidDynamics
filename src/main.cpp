@@ -51,6 +51,30 @@ void init_params(sim_param_t* params) {
 
 int main(int argc, char* argv[]) {
   
+	std::string kernel_source_str;
+
+	std::string arraycompact_kernel_file =
+		std::string("neighbors.cl");
+
+	std::list<std::string> kernel_names;
+	std::string neighbors_name_str = std::string("neighbors");
+
+	kernel_names.push_back(neighbors_name_str);
+
+	cl_vars_t cv;
+
+
+	readFile(arraycompact_kernel_file,
+		kernel_source_str);
+
+	initialize_ocl(cv);
+
+	compile_ocl_program(kernel_map, cv,
+		kernel_source_str.c_str(),
+		kernel_names);
+
+
+
   omp_set_num_threads(16);
 
 	double start = omp_get_wtime(); //benchmarking starts here
