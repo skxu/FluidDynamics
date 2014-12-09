@@ -10,11 +10,12 @@
 #include <assert.h>
 #include <ctime>
 
-#include <omp.h>
+#include "omp.h"
 
 using namespace std;
 
 void check_state(sim_state_t* s) {
+	#pragma omp parallel for
 	for (int i = 0; i < s->n; ++i) {
 		float xi = s->x[4 * i + 0];
 		float yi = s->x[4 * i + 1];
