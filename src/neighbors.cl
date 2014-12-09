@@ -1,8 +1,8 @@
 __kernel void neighbors(
-	__global int* neighbors,
 	int xDim,
 	int yDim,
 	int zDim,
+	__global int* neighbors,
 	int neighborSize,
 	__global float* posVec,
 	__global int* grid,

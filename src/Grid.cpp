@@ -12,6 +12,7 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	neighborSize = 10;
 
 	grid = vector<vector<int> >(totalCells, vector<int>());
+	gridCellsSize = 30;
 	neighbors = new int[(neighborSize + 1) * n];
 }
 
@@ -62,6 +63,7 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 		{
 			int nextElem = grid[i][j];
 			*(flatP + curInd) = nextElem;
+			curInd++;
 		}
 		*(flatP + curInd) = -1;
 	}
@@ -110,25 +112,25 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 
 	/* These arguments to reassemble never change */
 
-	err = clSetKernelArg(neighborsK, 1, sizeof(int), &xDim);
+	err = clSetKernelArg(neighborsK, 0, sizeof(int), &xDim);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 2, sizeof(int), &yDim);
+	err = clSetKernelArg(neighborsK, 1, sizeof(int), &yDim);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 3, sizeof(int), &zDim);
+	err = clSetKernelArg(neighborsK, 2, sizeof(int), &zDim);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 4, sizeof(cl_mem), &g_neighbors);
+	err = clSetKernelArg(neighborsK, 3, sizeof(cl_mem), &g_neighbors);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 5, sizeof(int), &neighborSize);
+	err = clSetKernelArg(neighborsK, 4, sizeof(int), &neighborSize);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 6, sizeof(cl_mem), &g_posVec);
+	err = clSetKernelArg(neighborsK, 5, sizeof(cl_mem), &g_posVec);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 7, sizeof(cl_mem), &g_flatGrid);
+	err = clSetKernelArg(neighborsK, 6, sizeof(cl_mem), &g_flatGrid);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 8, sizeof(int), &gridCellsSize);
+	err = clSetKernelArg(neighborsK, 7, sizeof(int), &gridCellsSize);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 9, sizeof(float), &cutoff);
+	err = clSetKernelArg(neighborsK, 8, sizeof(float), &cutoff);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 10, sizeof(int), &n);
+	err = clSetKernelArg(neighborsK, 9, sizeof(int), &n);
 	CHK_ERR(err);
 
 	
@@ -145,6 +147,10 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 		CHK_ERR(err);
 		err = clFinish(cv.commands);
 		CHK_ERR(err);
+
+  err = clEnqueueReadBuffer(cv.commands, g_neighbors, true, 0, sizeof(int)*(neighborSize + 1) * n,
+			    neighbors, 0, NULL, NULL);
+  CHK_ERR(err);
 
 	delete [] flatGrid;
 }
