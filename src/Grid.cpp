@@ -14,6 +14,10 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	grid = vector<vector<int> >(totalCells, vector<int>());
 	gridCellsSize = 30;
 	neighbors = new int[(neighborSize + 1) * n];
+
+	speedOctopus = vector<vector<int>*>();
+	for (int i = 0; i < totalCells; i++) speedOctopus.push_back(new vector<int>());
+	for (int i = 0; i < totalCells; i++) fitOctopus(i);
 }
 
 Grid::~Grid(){
@@ -66,6 +70,7 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 		{
 			int nextElem = grid[i][j];
 			*(flatP + curInd) = nextElem;
+			curInd++;
 		}
 		*(flatP + curInd) = -1;
 	}
@@ -82,6 +87,7 @@ void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t c
 		{
 			int nextElem = (*speedOctopus[i])[j];
 			*(flatP + curInd) = nextElem;
+			curInd++;
 		}
 		*(flatP + curInd) = -1;
 	}
