@@ -9,15 +9,15 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	totalCells = xDim * yDim * zDim;
 	cutoff = h;
 	grid = vector<vector<int> >(totalCells, vector<int>());
-	neighbors = vector<vector<int>*>();
-	for (int i = 0; i < n; i++) neighbors.push_back(new vector<int>());
+	pNeighbors = new vector<int>*[n];
+	cNeighbors = vector<vector<int>*>();
+	for (int i = 0; i < totalCells; i++) cNeighbors.push_back(new vector<int>());
 	speedOctopus = vector<vector<int>*>();
 	for (int i = 0; i < totalCells; i++) speedOctopus.push_back(new vector<int>());
 	for (int i = 0; i < totalCells; i++) fitOctopus(i);
 }
 
 Grid::~Grid(){
-	for (int i = 0; i < n; i++) delete neighbors[i];
 }
 
 void Grid::cleanGrid(){
@@ -29,7 +29,7 @@ void Grid::cleanGrid(){
 #pragma omp parallel for
 	for (int i = 0; i < n; i++)
 	{
-		neighbors[i]->clear();
+		cNeighbors[i]->clear();
 	}
 }
 
@@ -44,6 +44,7 @@ void Grid::setParticles(){
 		float z = posVec[4 * i + 2];
 		int index = calcIndex(x, y, z);
 		grid[index].push_back(i);
+		pNeighbors[i] = cNeighbors[index];
 	}
 	setNeighbors();
 }
@@ -51,7 +52,7 @@ void Grid::setParticles(){
 
 /* Get neighbors for a particle */
 vector<int>* Grid::getNeighbors(int i) {
-	return neighbors[i];
+	return pNeighbors[i];
 }
 
 /*  PRIVATE METHODS  */
@@ -80,19 +81,15 @@ void Grid::setNeighbors() {
 #pragma omp parallel for schedule(static, 8)
 	for (int gridCell = 0; gridCell < totalCells; gridCell++)
 	{
+		vector<int>* nVec = cNeighbors[gridCell];
+
 		for (int a = 0; a < speedOctopus[gridCell]->size(); a++)
 		{
 			int neighbor_grid_index = (*speedOctopus[gridCell])[a];
-
-			for (int b = 0; b < grid[gridCell].size(); b++)
+			for (int c = 0; c < grid[neighbor_grid_index].size(); c++)
 			{
-				int particleInd = grid[gridCell][b];
-				vector<int>* nVec = neighbors[particleInd];
-				for (int c = 0; c < grid[neighbor_grid_index].size(); c++)
-				{
-					int other_particle_index = grid[neighbor_grid_index][c];
-					nVec->push_back(other_particle_index);
-				}
+				int other_particle_index = grid[neighbor_grid_index][c];
+				nVec->push_back(other_particle_index);
 			}
 		}
 	}
