@@ -8,6 +8,7 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	zDim = ceil(zBound / h);
 	totalCells = xDim * yDim * zDim;
 	cutoff = h;
+	cutoffSq = h*h;
 	grid = vector<vector<int> >(totalCells, vector<int>());
 	neighbors = vector<vector<int>*>();
 	for (int i = 0; i < n; i++) neighbors.push_back(new vector<int>());
@@ -73,7 +74,6 @@ void Grid::fitOctopus(int i) {
 
 /* Set neighbors for all particles */
 void Grid::setNeighbors() {
-	static float CUTOFFVAL = cutoff * cutoff;
 	for (int gridCell = 0; gridCell < grid.size(); gridCell++)
 	{
 		for (int a = 0; a < speedOctopus[gridCell].size(); a++)
@@ -98,7 +98,7 @@ void Grid::setNeighbors() {
 					float d = dx*dx + dy*dy + dz*dz;
 
 					/* END DISTANCE CALCULATION*/
-					if (d < CUTOFFVAL) {
+					if (d < cutoffSq) {
 						nVec->push_back(other_particle_index);
 					} 
 				}
