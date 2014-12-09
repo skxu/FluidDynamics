@@ -55,44 +55,60 @@ int* Grid::getNeighbors(int i) {
 void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t cv) {
 	double start = omp_get_wtime();
 
-printf("kkkkkkkkkkkkkkkkkkkkk\n");
-int* flatOctopus = new int[(27 + 1)*totalCells];
+	printf("kkkkkkkkkkkkkkkkkkkkk\n");
 
-for (int i = 0; i < totalCells; i++)
-{
-	int curInd = 0;
-	int* flatP = flatOctopus + (27 + 1) * i;
-	for (int j = 0; j < speedOctopus[i]->size() && curInd < 27; j++)
+	int* flatGrid = new int[(gridCellsSize + 1)*totalCells];
+	for (int i = 0; i < totalCells; i++)
 	{
-		int nextElem = (*speedOctopus[i])[j];
-		*(flatP + curInd) = nextElem;
+		int curInd = 0;
+		int* flatP = flatGrid + (gridCellsSize + 1) * i;
+		for (int j = 0; j < grid[i].size() && curInd < gridCellsSize; j++)
+		{
+			int nextElem = grid[i][j];
+			*(flatP + curInd) = nextElem;
+		}
+		*(flatP + curInd) = -1;
 	}
-	*(flatP + curInd) = -1;
-}
 
 
 
-cl_mem g_flatGrid, g_neighbors, g_posVec, g_flatOctopus;
+	int* flatOctopus = new int[(27 + 1)*totalCells];
 
-cl_int err = CL_SUCCESS;
-g_flatGrid = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
-	sizeof(int)*(gridCellsSize + 1)*totalCells, NULL, &err);
-CHK_ERR(err);
+	for (int i = 0; i < totalCells; i++)
+	{
+		int curInd = 0;
+		int* flatP = flatOctopus + (27 + 1) * i;
+		for (int j = 0; j < speedOctopus[i]->size() && curInd < 27; j++)
+		{
+			int nextElem = (*speedOctopus[i])[j];
+			*(flatP + curInd) = nextElem;
+		}
+		*(flatP + curInd) = -1;
+	}
 
-g_flatGrid = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
-	sizeof(int)*(27 + 1)*totalCells, NULL, &err);
-CHK_ERR(err);
+
+
+	cl_mem g_flatGrid, g_neighbors, g_posVec, g_flatOctopus;
+
+	cl_int err = CL_SUCCESS;
+	g_flatGrid = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
+		sizeof(int)*(gridCellsSize + 1)*totalCells, NULL, &err);
+	CHK_ERR(err);
+
+	g_flatGrid = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
+		sizeof(int)*(27 + 1)*totalCells, NULL, &err);
+	CHK_ERR(err);
 
 	g_neighbors = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
 		sizeof(int)*(neighborSize + 1) * n, NULL, &err);
 	CHK_ERR(err);
 
 	g_posVec = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
-		sizeof(float)*n*4, NULL, &err);
+		sizeof(float)*n * 4, NULL, &err);
 	CHK_ERR(err);
 
-printf("%f\n", omp_get_wtime() - start);
-start = omp_get_wtime();
+	printf("%f\n", omp_get_wtime() - start);
+	start = omp_get_wtime();
 
 
 	//copy data from host CPU to GPU
@@ -105,8 +121,8 @@ start = omp_get_wtime();
 	CHK_ERR(err);
 
 
-printf("%f\n", omp_get_wtime() - start);
-start = omp_get_wtime();
+	printf("%f\n", omp_get_wtime() - start);
+	start = omp_get_wtime();
 
 
 	size_t global_work_size[1] = { totalCells };
@@ -149,45 +165,45 @@ start = omp_get_wtime();
 	err = clSetKernelArg(neighborsK, 10, sizeof(int), &g_flatOctopus);
 	CHK_ERR(err);
 
-printf("%f\n", omp_get_wtime() - start);
-start = omp_get_wtime();
-
-	
-		err = clEnqueueNDRangeKernel(cv.commands,
-			neighborsK,
-			1,//work_dim,
-			NULL, //global_work_offset
-			global_work_size, //global_work_size
-			local_work_size, //local_work_size
-			0, //num_events_in_wait_list
-			NULL, //event_wait_list
-			NULL //
-			);
-		CHK_ERR(err);
-		err = clFinish(cv.commands);
-		CHK_ERR(err);
-
-printf("%f\n", omp_get_wtime() - start);
-start = omp_get_wtime();
-
-  err = clEnqueueReadBuffer(cv.commands, g_neighbors, true, 0, sizeof(int)*(neighborSize + 1) * n,
-			    neighbors, 0, NULL, NULL);
-  CHK_ERR(err);
-
-printf("%f\n", omp_get_wtime() - start);
-start = omp_get_wtime();
+	printf("%f\n", omp_get_wtime() - start);
+	start = omp_get_wtime();
 
 
-  clReleaseMemObject(g_neighbors); 
-  clReleaseMemObject(g_flatGrid);
-  clReleaseMemObject(g_posVec);
-  clReleaseMemObject(g_flatOctopus);
+	err = clEnqueueNDRangeKernel(cv.commands,
+		neighborsK,
+		1,//work_dim,
+		NULL, //global_work_offset
+		global_work_size, //global_work_size
+		local_work_size, //local_work_size
+		0, //num_events_in_wait_list
+		NULL, //event_wait_list
+		NULL //
+		);
+	CHK_ERR(err);
+	err = clFinish(cv.commands);
+	CHK_ERR(err);
+
+	printf("%f\n", omp_get_wtime() - start);
+	start = omp_get_wtime();
+
+	err = clEnqueueReadBuffer(cv.commands, g_neighbors, true, 0, sizeof(int)*(neighborSize + 1) * n,
+		neighbors, 0, NULL, NULL);
+	CHK_ERR(err);
+
+	printf("%f\n", omp_get_wtime() - start);
+	start = omp_get_wtime();
 
 
-	delete [] flatGrid;
+	clReleaseMemObject(g_neighbors);
+	clReleaseMemObject(g_flatGrid);
+	clReleaseMemObject(g_posVec);
+	clReleaseMemObject(g_flatOctopus);
 
-printf("%f\n", omp_get_wtime() - start);
-start = omp_get_wtime();
+
+	delete[] flatGrid;
+
+	printf("%f\n", omp_get_wtime() - start);
+	start = omp_get_wtime();
 }
 
 
