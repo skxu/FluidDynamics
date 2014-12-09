@@ -4,7 +4,7 @@ using namespace std;
 
 int box_indicator(float x, float y, float z)
 {
-	return (x < 0.5) && (y < 0.5) && (z < 0.5);
+	return (x < 0.4) && (z < 0.4) || (z < 0.1);
 }
 
 int sphere_indicator_with_water_plane(float x, float y, float z)

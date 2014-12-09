@@ -38,16 +38,16 @@ void write_frame_data(ofstream* fp, int n, float* x) {
 
 void init_params(sim_param_t* params) {
   params->fname = "../../outputs/sph-openmp-v1.txt"; /* File name */
-  params->nframes = 100; /* Number of frames */
+  params->nframes = 150; /* Number of frames */
   params->npframe = 50; /* Steps per frame */
   params->h = 3e-2; /* Particle size */
   params->dt = 4e-4; /* Time step */
   params->rho0 = 1000; /* Reference density */
-  params->k = 1000; /* Bulk modulus */
-  params->mu = 10.0; /* Viscosity */
+  params->k = 200; /* Bulk modulus */
+  params->mu = 0.2; /* Viscosity */
   params->g = 9.8; /* Gravity strength */
-  params->damp = 1.0; /* Damp */
-  params->spacing = 1.2; /* Spacing */
+  params->damp = 0.97; /* Damp */
+  params->spacing = 1.3; /* Spacing */
 }
 
 int main(int argc, char* argv[]) {
@@ -66,8 +66,8 @@ int main(int argc, char* argv[]) {
 
 	sim_param_t params;
 	init_params(&params);
-	//sim_state_t* state = place_particles(&params, box_indicator);
-	sim_state_t* state = place_particles(&params, sphere_indicator_with_water_plane);
+	sim_state_t* state = place_particles(&params, box_indicator);
+	//sim_state_t* state = place_particles(&params, sphere_indicator_with_water_plane);
 	Grid* grid = new Grid(1.0, 1.0, 1.0, params.h, state);
 	grid->setParticles();
 	normalize_mass(state, &params, grid);
