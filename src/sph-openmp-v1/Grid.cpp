@@ -122,9 +122,9 @@ bool Grid::isValidPos(float gridPos_x, float gridPos_y, float gridPos_z){
 
 /* get cell index from particle coordinates */
 int Grid::calcIndex(float x, float y, float z){
-	int gridPos_x = floor(x / cutoff);
-	int gridPos_y = floor(y / cutoff);
-	int gridPos_z = floor(z / cutoff);
+	int gridPos_x = int(x / cutoff);
+	int gridPos_y = int(y / cutoff);
+	int gridPos_z = int(z / cutoff);
 	return flatten(gridPos_x, gridPos_y, gridPos_z);
 }
 
