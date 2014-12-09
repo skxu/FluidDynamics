@@ -1,6 +1,7 @@
 /********************************
  *******  71k Particles *********
  ********************************/
+ 
 sph-naive-no-grid
     TOO LONG
 
@@ -8,13 +9,13 @@ sph-naive-grid
     Total time to run: 546.9
 
 sph-openmp-v1 (16 threads)
-    Total time to run: 86.854663
-    Total time spent writing to disk: 0.782834
-    Total time spent computing accel: 23.247747
-    Total time spent on init: 0.160248
-    Total time spent checking state: 0.263882
-    Total time spent setting particles: 60.570536
-    Total time spent on leapfrog step: 1.821588
+    Total time to run: 83.514308
+    Total time spent writing to disk: 0.759811
+    Total time spent computing accel: 20.625213
+    Total time spent on init: 0.149417
+    Total time spent checking state: 0.257346
+    Total time spent setting particles: 59.758295
+    Total time spent on leapfrog step: 1.955295
 
 sph-openmp-v1 (12 threads)
     Total time to run: 105.656298

@@ -32,10 +32,10 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
     int nidx = 0;
     float rhoi = 0.0;
 
-    /**
+    
     __m128 finalsum = _mm_setzero_ps();
     __m128 xi = _mm_load_ps(x+4*i);
-    for (nidx; nidx + 4 < neighbors->size(); nidx+= 4) {
+    for (nidx; nidx + 4 <= neighbors->size(); nidx+= 4) {
 
       int j = (*neighbors)[nidx];
       int j2 = (*neighbors)[nidx+1];
@@ -83,7 +83,7 @@ void compute_density(sim_state_t* s, sim_param_t* params, Grid* grid)
     for (int t = 0; t < 4; t++) {
       rhoi += results[t];
     }
-    **/
+    
 
     for (nidx; nidx < neighbors->size(); nidx++) {
       int j = (*neighbors)[nidx];
