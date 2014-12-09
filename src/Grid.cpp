@@ -3,9 +3,9 @@
 Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	posVec = s->x;
 	n = s->n;
-	xDim = ceil(xBound / h);
-	yDim = ceil(yBound / h);
-	zDim = ceil(zBound / h);
+	xDim = ceil(0.25 * xBound / h);
+	yDim = ceil(0.25 * yBound / h);
+	zDim = ceil(0.25 * zBound / h);
 	totalCells = xDim * yDim * zDim;
 	cutoff = h;
 	grid = vector<vector<int> >(totalCells, vector<int>());
@@ -63,12 +63,12 @@ void Grid::fitOctopus(int i) {
 	int gridPos_y = (i - gridPos_z * xDim * yDim) / xDim;
 	int gridPos_x = i % xDim;
 
-	for (int a = gridPos_x - 1; a <= gridPos_x + 1; a++){
-		for (int b = gridPos_y - 1; b <= gridPos_y + 1; b++){
-			for (int c = gridPos_z - 1; c <= gridPos_z + 1; c++){
-				if (isValidPos(a, b, c))
+	for (int a = 0; a <= 4; a++){
+		for (int b = 0; b <= 4; b++){
+			for (int c = 0; c <= 4; c++){
+				if (isValidPos(gridPos_x-2+a, gridPos_y-2+b, gridPos-2+c, a, b, c))
 				{
-					speedOctopus[i]->push_back(flatten(a, b, c));
+					speedOctopus[i]->push_back(flatten(gridPos_x-2+a, gridPos_y-2+b, gridPos-2+c));
 				}
 			}
 		}
@@ -97,10 +97,13 @@ void Grid::setNeighbors() {
 
 
 
-bool Grid::isValidPos(float gridPos_x, float gridPos_y, float gridPos_z){
+bool Grid::isValidPos(float gridPos_x, float gridPos_y, float gridPos_z, int a, int b, int c){
 	return gridPos_x >= 0 && gridPos_x < xDim &&
 		gridPos_y >= 0 && gridPos_y < yDim &&
-		gridPos_z >= 0 && gridPos_z < zDim;
+		gridPos_z >= 0 && gridPos_z < zDim &&
+		(((a != 0 && a != 4) || (b != 0 && b !=4)) &&
+		((b != 0 && b != 4) || (c != 0 && c !=4)) &&
+		((a != 0 && a != 4) || (c != 0 && c !=4)));
 }
 
 /* get cell index from particle coordinates */
