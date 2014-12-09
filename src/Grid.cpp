@@ -11,7 +11,8 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 
 	neighborSize = 10;
 
-	grid = vector<vector<int>>(totalCells, vector<int>());
+	grid = vector<vector<int> >(totalCells, vector<int>());
+	gridCellsSize = 30;
 	neighbors = new int[(neighborSize + 1) * n];
 }
 
@@ -28,7 +29,7 @@ void Grid::cleanGrid(){
 
 /* x = particle positions
    n = number particles */
-void Grid::setParticles(){
+void Grid::setParticles(std::map<std::string, cl_kernel> kernel_map, cl_vars_t cv){
 	cleanGrid();
 	for (int i = 0; i < n; i++){
 		float x = posVec[4 * i];
@@ -37,7 +38,7 @@ void Grid::setParticles(){
 		int index = calcIndex(x, y, z);
 		grid[index].push_back(i);
 	}
-	setNeighbors();
+	setNeighbors(kernel_map, cv);
 }
 
 
@@ -51,29 +52,36 @@ int* Grid::getNeighbors(int i) {
 
 
 /* Set neighbors for all particles */
-void Grid::setNeighbors() {
-	int* flatGrid = new int[(gridCellsSize + 1)*totalCells];
+void Grid::setNeighbors(std::map<std::string, cl_kernel> kernel_map, cl_vars_t cv) {
+	double start = omp_get_wtime();
 
-	for (int i = 0; i < totalCells; i++)
+printf("kkkkkkkkkkkkkkkkkkkkk\n");
+int* flatOctopus = new int[(27 + 1)*totalCells];
+
+for (int i = 0; i < totalCells; i++)
+{
+	int curInd = 0;
+	int* flatP = flatOctopus + (27 + 1) * i;
+	for (int j = 0; j < speedOctopus[i]->size() && curInd < 27; j++)
 	{
-		int curInd = 0;
-		int* flatP = flatGrid + (gridCellsSize + 1) * i;
-		for (int j = 0; j < grid[i].size() && curInd < gridCellsSize; j++)
-		{
-			int nextElem = grid[i][j];
-			*(flatP + curInd) = nextElem;
-		}
-		*(flatP + curInd) = -1;
+		int nextElem = (*speedOctopus[i])[j];
+		*(flatP + curInd) = nextElem;
 	}
+	*(flatP + curInd) = -1;
+}
 
 
 
-	cl_mem g_flatGrid, g_neighbors, g_posVec;
+cl_mem g_flatGrid, g_neighbors, g_posVec, g_flatOctopus;
 
-	cl_int err = CL_SUCCESS;
-	g_flatGrid = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
-		sizeof(int)*(gridCellsSize + 1)*totalCells, NULL, &err);
-	CHK_ERR(err);
+cl_int err = CL_SUCCESS;
+g_flatGrid = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
+	sizeof(int)*(gridCellsSize + 1)*totalCells, NULL, &err);
+CHK_ERR(err);
+
+g_flatGrid = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
+	sizeof(int)*(27 + 1)*totalCells, NULL, &err);
+CHK_ERR(err);
 
 	g_neighbors = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
 		sizeof(int)*(neighborSize + 1) * n, NULL, &err);
@@ -82,6 +90,10 @@ void Grid::setNeighbors() {
 	g_posVec = clCreateBuffer(cv.context, CL_MEM_READ_WRITE,
 		sizeof(float)*n*4, NULL, &err);
 	CHK_ERR(err);
+
+printf("%f\n", omp_get_wtime() - start);
+start = omp_get_wtime();
+
 
 	//copy data from host CPU to GPU
 	err = clEnqueueWriteBuffer(cv.commands, g_flatGrid, true, 0, sizeof(int)*(gridCellsSize + 1)*totalCells,
@@ -93,7 +105,11 @@ void Grid::setNeighbors() {
 	CHK_ERR(err);
 
 
-	size_t global_work_size[1] = { n };
+printf("%f\n", omp_get_wtime() - start);
+start = omp_get_wtime();
+
+
+	size_t global_work_size[1] = { totalCells };
 	size_t local_work_size[1] = { 128 };
 
 
@@ -110,26 +126,31 @@ void Grid::setNeighbors() {
 
 	/* These arguments to reassemble never change */
 
-	err = clSetKernelArg(neighborsK, 1, sizeof(int), &xDim);
+	err = clSetKernelArg(neighborsK, 0, sizeof(int), &xDim);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 2, sizeof(int), &yDim);
+	err = clSetKernelArg(neighborsK, 1, sizeof(int), &yDim);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 3, sizeof(int), &zDim);
+	err = clSetKernelArg(neighborsK, 2, sizeof(int), &zDim);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 4, sizeof(cl_mem), &g_neighbors);
+	err = clSetKernelArg(neighborsK, 3, sizeof(cl_mem), &g_neighbors);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 5, sizeof(int), &neighborSize);
+	err = clSetKernelArg(neighborsK, 4, sizeof(int), &neighborSize);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 6, sizeof(cl_mem), &g_posVec);
+	err = clSetKernelArg(neighborsK, 5, sizeof(cl_mem), &g_posVec);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 7, sizeof(cl_mem), &g_flatGrid);
+	err = clSetKernelArg(neighborsK, 6, sizeof(cl_mem), &g_flatGrid);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 8, sizeof(int), &gridCellsSize);
+	err = clSetKernelArg(neighborsK, 7, sizeof(int), &gridCellsSize);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 9, sizeof(float), &cutoff);
+	err = clSetKernelArg(neighborsK, 8, sizeof(float), &cutoff);
 	CHK_ERR(err);
-	err = clSetKernelArg(neighborsK, 10, sizeof(int), &n);
+	err = clSetKernelArg(neighborsK, 9, sizeof(int), &n);
 	CHK_ERR(err);
+	err = clSetKernelArg(neighborsK, 10, sizeof(int), &g_flatOctopus);
+	CHK_ERR(err);
+
+printf("%f\n", omp_get_wtime() - start);
+start = omp_get_wtime();
 
 	
 		err = clEnqueueNDRangeKernel(cv.commands,
@@ -146,7 +167,27 @@ void Grid::setNeighbors() {
 		err = clFinish(cv.commands);
 		CHK_ERR(err);
 
+printf("%f\n", omp_get_wtime() - start);
+start = omp_get_wtime();
+
+  err = clEnqueueReadBuffer(cv.commands, g_neighbors, true, 0, sizeof(int)*(neighborSize + 1) * n,
+			    neighbors, 0, NULL, NULL);
+  CHK_ERR(err);
+
+printf("%f\n", omp_get_wtime() - start);
+start = omp_get_wtime();
+
+
+  clReleaseMemObject(g_neighbors); 
+  clReleaseMemObject(g_flatGrid);
+  clReleaseMemObject(g_posVec);
+  clReleaseMemObject(g_flatOctopus);
+
+
 	delete [] flatGrid;
+
+printf("%f\n", omp_get_wtime() - start);
+start = omp_get_wtime();
 }
 
 

@@ -50,7 +50,11 @@ void init_params(sim_param_t* params) {
 }
 
 int main(int argc, char* argv[]) {
-  
+	std::map<std::string, cl_kernel>
+	kernel_map;
+
+	cl_vars_t cv;  
+	
 	std::string kernel_source_str;
 
 	std::string arraycompact_kernel_file =
@@ -61,7 +65,6 @@ int main(int argc, char* argv[]) {
 
 	kernel_names.push_back(neighbors_name_str);
 
-	cl_vars_t cv;
 
 
 	readFile(arraycompact_kernel_file,
@@ -92,7 +95,7 @@ int main(int argc, char* argv[]) {
 	//sim_state_t* state = place_particles(&params, box_indicator);
 	sim_state_t* state = place_particles(&params, sphere_indicator_with_water_plane);
 	Grid* grid = new Grid(1.0, 1.0, 1.0, params.h, state);
-	grid->setParticles();
+	grid->setParticles(kernel_map, cv);
 	normalize_mass(state, &params, grid);
 	printf("mass: %f\n", state->mass);
 
@@ -126,7 +129,7 @@ int main(int argc, char* argv[]) {
 	frog_time += omp_get_wtime() - time_start;
 	time_start = omp_get_wtime();
 
-	grid->setParticles();
+	grid->setParticles(kernel_map, cv);
 
 	set_time += omp_get_wtime() - time_start;
 	time_start = omp_get_wtime();
@@ -157,7 +160,7 @@ int main(int argc, char* argv[]) {
 			check_time += omp_get_wtime() - time_start;
 			time_start = omp_get_wtime();
 
-			grid->setParticles();
+			grid->setParticles(kernel_map, cv);
 
 			set_time += omp_get_wtime() - time_start;
 		}
