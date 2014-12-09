@@ -12,6 +12,7 @@
 #include "scene.h"
 #include <string>
 #include <sstream>
+#include <iomanip>
 
 // Main variables in the program.  
 #define MAINPROGRAM 
@@ -63,7 +64,7 @@ void display() {
   double diff_time_s = getSecondsFromTimeVal(snapshotentv) - start_time_s;
   if (diff_time_s > 0.2) {
     std::ostringstream stream;
-    stream << "../images/out" << timeidx << ".png";
+    stream << "../images/out" << setfill('0') << setw(3) << timeidx << ".png";
     std::string fname = stream.str();
 
     glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
@@ -185,7 +186,8 @@ void initVars() {
   eye = glm::vec3(0,-2,0.2);
   center = glm::vec3(0,0,0.2);
   up = glm::vec3(0,0,1);
-  Transform::up(40, eye, up);
+  Transform::up(30, eye, up);
+  Transform::left(-30, eye, up);
   timeidx = 0;
   gettimeofday(&starttv, NULL);
   pauseanim = true;

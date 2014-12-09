@@ -3,3 +3,6 @@ src/solveFluid
 render-simple/*.o
 render-simple/fluidsim
 src/sph-*/solveFluid
+render-save-img/*.o
+render-save-img/fluidsim
+presentation/*.png

@@ -39,11 +39,11 @@ void write_frame_data(ofstream* fp, int n, float* x) {
 void init_params(sim_param_t* params) {
   params->fname = "../../outputs/sph-openmp-simd.txt"; /* File name */
   params->nframes = 20; /* Number of frames */
-  params->npframe = 50; /* Steps per frame */
+  params->npframe = 150; /* Steps per frame */
   params->h = 4e-2; /* Particle size */
   params->dt = 4e-4; /* Time step */
   params->rho0 = 1000; /* Reference density */
-  params->k = 700; /* Bulk modulus */
+  params->k = 600; /* Bulk modulus */
   params->mu = 0.1; /* Viscosity */
   params->g = 9.8; /* Gravity strength */
   params->damp = 0.8; /* Damp */
