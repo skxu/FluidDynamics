@@ -25,7 +25,7 @@ public:
 
 private:
 	vector<vector<int> > grid;
-	vector<vector<int> > speedOctopus;
+	vector<vector<int>*> speedOctopus;
 	vector<vector<int>*> segments;
 
 	vector<vector<int>*> neighbors;

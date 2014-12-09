@@ -11,7 +11,8 @@ Grid::Grid(float xBound, float yBound, float zBound, float h, sim_state_t* s){
 	grid = vector<vector<int> >(totalCells, vector<int>());
 	neighbors = vector<vector<int>*>();
 	for (int i = 0; i < n; i++) neighbors.push_back(new vector<int>());
-	speedOctopus = vector<vector<int> >(totalCells * 2, vector<int>());
+	speedOctopus = vector<vector<int>*>();
+       for (int i = 0; i < totalCells; i++) speedOctopus.push_back(new vector<int>());
 	for (int i = 0; i < totalCells; i++) fitOctopus(i);
 	segments = vector<vector<int>*>();
 	for (int i = 0; i < 8; i++) segments.push_back(new vector<int>());
@@ -66,10 +67,30 @@ void Grid::fitOctopus(int i) {
 
 	for (int a = gridPos_x - 1; a <= gridPos_x + 1; a++){
 		for (int b = gridPos_y - 1; b <= gridPos_y + 1; b++){
-			for (int c = gridPos_z - 1; c <= gridPos_z + 1; c++){
+			for (int c = gridPos_z - 1; c <= gridPos_z - 1; c++){
 				if (isValidPos(a, b, c))
 				{
-					speedOctopus[i].push_back(flatten(a, b, c));
+					speedOctopus[i]->push_back(flatten(a, b, c));
+				}
+			}
+		}
+	}
+       for (int a = gridPos_x - 1; a <= gridPos_x + 1; a++){
+		for (int b = gridPos_y - 1; b <= gridPos_y - 1; b++){
+			for (int c = gridPos_z; c <= gridPos_z; c++){
+				if (isValidPos(a, b, c))
+				{
+					speedOctopus[i]->push_back(flatten(a, b, c));
+				}
+			}
+		}
+	}
+	for (int a = gridPos_x; a <= gridPos_x; a++){
+		for (int b = gridPos_y - 1; b <= gridPos_y; b++){
+			for (int c = gridPos_z; c <= gridPos_z; c++){
+				if (isValidPos(a, b, c))
+				{
+					speedOctopus[i]->push_back(flatten(a, b, c));
 				}
 			}
 		}
@@ -108,9 +129,9 @@ void Grid::setNeighbors() {/*
 	int gridCell = (*segments[segment])[segmentInd];
 	*/
 	for (int gridCell = 0; gridCell < totalCells; gridCell++)
-		for (int a = 0; a < speedOctopus[gridCell].size(); a++)
+		for (int a = 0; a < speedOctopus[gridCell]->size(); a++)
 		{
-		int neighbor_grid_index = speedOctopus[gridCell][a];
+		int neighbor_grid_index = (*speedOctopus[gridCell])[a];
 
 		for (int b = 0; b < grid[gridCell].size(); b++)
 		{
