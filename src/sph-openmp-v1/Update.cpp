@@ -144,7 +144,7 @@ void compute_accel(sim_state_t* state, sim_param_t* params, Grid* grid)
   if (DEBUG >= 3) {
     start_time = omp_get_wtime();
   }
-  #pragma omp parallel for schedule(static, 32)
+  #pragma omp parallel for
   for (int i = 0; i < n; i++) {
     float xi = x[4*i+0];
     float yi = x[4*i+1];

@@ -78,7 +78,7 @@ void Grid::fitOctopus(int i) {
 
 /* Set neighbors for all particles */
 void Grid::setNeighbors() {
-#pragma omp parallel for schedule(static, 8)
+#pragma omp parallel for schedule(static, 32)
 	for (int gridCell = 0; gridCell < totalCells; gridCell++)
 	{
 		vector<int>* nVec = cNeighbors[gridCell];
@@ -114,5 +114,5 @@ int Grid::calcIndex(float x, float y, float z){
 /* flatten indices */
 int Grid::flatten(float gridPos_x, float gridPos_y, float gridPos_z)
 {
-	return gridPos_x + xDim * gridPos_y + (xDim * yDim) * gridPos_z;
+	return gridPos_x + xDim * (gridPos_y + yDim * gridPos_z);
 }
