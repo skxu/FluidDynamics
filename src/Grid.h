@@ -38,6 +38,8 @@ public:
 	int neighborSize;
 
 private:
+	vector<vector<int>*> speedOctopus;
+	
 	vector<vector<int>> grid;
 	int* neighbors;
 
@@ -56,6 +58,9 @@ private:
 	int totalCells;
 	int gridCellsSize;
 	void setNeighbors();
+
+	/* Precalculate all the neighbors to a grid cell */
+	void fitOctopus(int i);
 
 	
 	/* Remove everything from cells */
